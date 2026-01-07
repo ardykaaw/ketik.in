@@ -1,0 +1,53 @@
+name: Deploy to Production (Hostinger)
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  web-deploy:
+    name: 🎉 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
+
+      - name: ⚡️ Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, bcmath, intl, gd, pdo_mysql
+
+      - name: 📦 Install Composer Dependencies
+        run: composer install --no-progress --no-dev --prefer-dist --optimize-autoloader
+
+      - name: ⚡️ Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 🔨 Build Assets
+        run: |
+          npm ci
+          npm run build
+          rm -rf node_modules
+
+      - name: 📂 Sync files (via FTP)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: public_html/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/storage/*.key
+            **/tests/**
+            **/.env.example
+            **/.env
+            **/deployment_guide.md
+
+      # Optional: Run Artisan commands via HTTP route if SSH is restricted
+      # Or rely on User to run migrations manually once via SSH for safety in Shared Hosting
