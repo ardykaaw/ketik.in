@@ -1,0 +1,292 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\Content;
+use App\Services\AiService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class FeatureController extends Controller
+{
+    protected $aiService;
+
+    public function __construct(AiService $aiService)
+    {
+        $this->aiService = $aiService;
+    }
+
+    public function storyTelling()
+    {
+        return view('features.story-telling');
+    }
+
+    public function generateStory(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'genre' => 'required|string',
+            'target' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateStory(
+                $request->topic,
+                $request->genre,
+                $request->target
+            );
+
+            // Save to Library
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'story',
+                'title' => $request->topic, // Use topic as title for now
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'genre', 'target']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Cerita berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function ebook()
+    {
+        return view('features.ebook');
+    }
+
+    public function generateEbook(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'target' => 'required|string',
+            'outline' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateEbook(
+                $request->topic,
+                $request->target,
+                $request->outline
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'ebook',
+                'title' => $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'target', 'outline']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'E-book berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function opini()
+    {
+        return view('features.opini');
+    }
+
+    public function generateOpinion(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'stance' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateOpinion(
+                $request->topic,
+                $request->stance
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'opini',
+                'title' => $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'stance']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Opini berhasil diterbitkan!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function script()
+    {
+        return view('features.script');
+    }
+
+    public function generateScript(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'platform' => 'required|string',
+            'duration' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateScript(
+                $request->topic,
+                $request->platform,
+                $request->duration
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'script',
+                'title' => $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'platform', 'duration']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Script berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function essay()
+    {
+        return view('features.essay');
+    }
+
+    public function generateEssay(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'type' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateEssay(
+                $request->topic,
+                $request->type
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'essay',
+                'title' => $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'type']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Essay berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function eKinerja()
+    {
+        return view('features.e-kinerja');
+    }
+
+    public function generateEKinerja(Request $request)
+    {
+        $request->validate([
+            'pegawai_nama' => 'required|string',
+            'pegawai_nip' => 'required|string',
+            'pegawai_golongan' => 'required|string',
+            'pegawai_jabatan' => 'required|string',
+            'pegawai_unit' => 'required|string',
+            'atasan_nama' => 'required|string',
+            'atasan_jabatan' => 'required|string',
+            'rhk_atasan' => 'required|array',
+            'rhk_atasan.*' => 'required|string',
+            'rhk' => 'required|array',
+            'rhk.*' => 'required|string',
+            'rhk_jenis' => 'required|array',
+            'rhk_jenis.*' => 'required|string',
+            'periode' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateEKinerja($request->all());
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'e-kinerja',
+                'title' => 'SKP ASN: ' . $request->pegawai_nama . ' - ' . $request->periode,
+                'content' => $generatedText,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Rincian SKP ASN berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function news()
+    {
+        return view('features.news');
+    }
+
+    public function generateNews(Request $request)
+    {
+        $request->validate([
+            'topic' => 'required|string|max:500',
+            'style' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateNews(
+                $request->topic,
+                $request->style
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'news',
+                'title' => $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'style']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Berita berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function speech()
+    {
+        return view('features.speech');
+    }
+
+    public function generateSpeech(Request $request)
+    {
+        $request->validate([
+            'event' => 'required|string|max:500',
+            'audience' => 'required|string',
+            'tone' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateSpeech(
+                $request->event,
+                $request->audience,
+                $request->tone
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'speech',
+                'title' => 'Sambutan: ' . $request->event,
+                'content' => $generatedText,
+                'parameters' => $request->only(['event', 'audience', 'tone']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Kata sambutan berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+}
