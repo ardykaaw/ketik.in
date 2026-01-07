@@ -2,7 +2,7 @@
     <div class="card card-md border-0 shadow-lg position-relative mx-auto" style="border-radius: 28px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 25px 50px -12px rgba(35, 79, 112, 0.15);">
         <div class="card-status-top bg-primary" style="height: 4px; border-radius: 24px 24px 0 0;"></div>
         <div class="card-body p-5">
-            <h2 class="h1 text-center mb-2 fw-bold text-dark" style="font-size: 1.75rem;">Selamat Datang Kembali</h2>
+            <h2 class="h1 text-center mb-2 fw-bold text-dark" style="font-size: 1.75rem;">Selamat Datangs Kembali</h2>
             <p class="text-center text-secondary mb-4 small">Lanjutkan perjalanan kreatif Anda bersama Ketik.in.</p>
             
             @if (session('error'))
