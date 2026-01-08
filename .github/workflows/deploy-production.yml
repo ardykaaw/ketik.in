@@ -38,9 +38,13 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          protocol: ftp
-          timeout: 300000 # 5 minutes timeout
-          retries: 3 # Retry failed uploads
+          protocol: ftps
+          port: 21
+          timeout: 600000 # 10 minutes
+          retries: 5 # Retry 5 times
+          # Attempt to reduce concurrency for shared hosting stability
+          # Note: If action doesn't support these explicit flags, it often ignores them
+          args: --parallel=2
           server-dir: public_html/
           exclude: |
             **/.git*
