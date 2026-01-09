@@ -301,6 +301,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('feature.copywriting') }}" class="nav-link {{ request()->routeIs('feature.copywriting') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /><path d="M16 19h6" /></svg>
+                            Copywriting (Ads)
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('feature.essay') }}" class="nav-link {{ request()->routeIs('feature.essay') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
                             Essay
@@ -313,6 +319,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="{{ route('feature.e-kinerja-atasan') }}" class="nav-link {{ request()->routeIs('feature.e-kinerja-atasan') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
+                            E-Kinerja (Atasan)
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="{{ route('feature.news') }}" class="nav-link {{ request()->routeIs('feature.news') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16 6h3a1 1 0 0 1 1 1v11a2 2 0 0 1 -4 0v-13a1 1 0 0 0 -1 -1h-10a1 1 0 0 0 -1 1v12a3 3 0 0 0 3 3h11" /><path d="M8 8l4 0" /><path d="M8 12l4 0" /><path d="M8 16l4 0" /></svg>
                             Berita AI
@@ -322,6 +334,12 @@
                         <a href="{{ route('feature.speech') }}" class="nav-link {{ request()->routeIs('feature.speech') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 2m0 3a3 3 0 0 1 3 -3h0a3 3 0 0 1 3 3v5a3 3 0 0 1 -3 3h0a3 3 0 0 1 -3 -3z" /><path d="M5 10a7 7 0 0 0 14 0" /><path d="M8 21l8 0" /><path d="M12 17l0 4" /></svg>
                             Kata Sambutan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('feature.social-media') }}" class="nav-link {{ request()->routeIs('feature.social-media') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="16" height="16" rx="4" /><circle cx="12" cy="12" r="3" /><line x1="16.5" y1="7.5" x2="16.5" y2="7.501" /></svg>
+                            Social Media
                         </a>
                     </li>
 
@@ -339,7 +357,8 @@
                             Pengaturan
                         </a>
                     </li>
-                </ul>
+
+          </ul>
 
                 <!-- Footer -->
                 <div class="sidebar-footer">
@@ -414,5 +433,44 @@
         });
     </script>
     @stack('scripts')
+    <!-- Global Loading Script for AI Generation -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Intercept all forms that generate AI content
+        const forms = document.querySelectorAll('form');
+        
+        forms.forEach(form => {
+          form.addEventListener('submit', function(e) {
+            // Check if form is valid before showing alert
+            if (this.checkValidity()) {
+              const submitBtn = this.querySelector('button[type="submit"]');
+              
+              // Prevent double click
+              if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses...';
+              }
+
+              // Check Dark Mode
+              const isDarkMode = document.body.classList.contains('theme-dark');
+
+              // Show SweetAlert Loading
+              Swal.fire({
+                title: 'Sedang Berpikir...',
+                text: 'AI sedang menyusun tulisan terbaik untuk Anda. Mohon tunggu sebentar.',
+                icon: 'info', // Use standard icon instead of broken image
+                background: isDarkMode ? '#1e293b' : '#ffffff',
+                color: isDarkMode ? '#ffffff' : '#000000',
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                didOpen: () => {
+                  Swal.showLoading();
+                }
+              });
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

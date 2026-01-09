@@ -145,8 +145,8 @@ class AiService
                    ...dan seterusnya.
 
                    ### 3. PERILAKU KERJA (BerAKHLAK)
-                   Pilih Core Value paling relevan, lalu berikan:
-                   - **Ekspektasi Khusus Pimpinan**: (Berikan 2-3 kalimat formal pimpinan)
+                   Pilih Core Value paling relevan.
+                   (Bagian Ekspektasi Khusus Pimpinan dikosongkan karena akan diisi terpisah oleh atasan).
 
                    Gunakan Bahasa Indonesia Kedinasan yang baku. Pastikan Target angka logis sesuai periode.";
         
@@ -181,6 +181,65 @@ class AiService
     }
 
     /**
+     * Generate Social Media Content.
+     */
+    public function generateSocialMedia(string $topic, string $platform, string $style)
+    {
+        $prompt = "Buatkan konten Social Media untuk platform: {$platform}. 
+                   Topik: {$topic}. 
+                   Gaya Bahasa: {$style}. 
+                   
+                   Panduan per Platform:
+                   - Instagram: Sertakan Caption menarik, paragraf pendek, dan 10-15 #Hashtag relevan.
+                   - Twitter (X): Buat dalam bentuk Thread (Utas) pendek atau satu tweet punchline yang viral.
+                   - LinkedIn: Gunakan nada profesional, paragraf pembuka yang kuat (hook), insight bisnis/karir, dan penutup diskusi.
+                   - TikTok/Reels: Buat naskah video pendek (Hook, Isi, CTA).
+                   - Facebook: Tulisan storytelling yang engaging.
+
+                   Gunakan Bahasa Indonesia yang sesuai dengan platform tersebut.";
+        
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Supervisor Perspective for e-Kinerja.
+     */
+    public function generateEKinerjaAtasan(array $data)
+    {
+        $atasan = "Nama: {$data['atasan_nama']}, Jabatan: {$data['atasan_jabatan']}, Unit: {$data['atasan_unit']}";
+        $bawahan = "Nama: {$data['bawahan_nama']}, Jabatan: {$data['bawahan_jabatan']}";
+        $periode = $data['periode'];
+
+        $tugas_list = "";
+        foreach ($data['tugas_pokok'] as $index => $tugas) {
+            $tugas_list .= "- Tugas " . ($index + 1) . ": \"{$tugas}\"\n";
+        }
+
+        $prompt = "Anda adalah asisten ahli kepegawaian (HR) untuk instansi pemerintah.
+                   Tugas Anda: Membantu ATASAN menyusun 'Ekspektasi Khusus Pimpinan' dan 'Umpan Balik' untuk SKP bawahannya.
+
+                   CONTEXT:
+                   - ATASAN (Penilai): {$atasan}
+                   - BAWAHAN (Dinilai): {$bawahan}
+                   - PERIODE: {$periode}
+
+                   TUGAS POKOK BAWAHAN:
+                   {$tugas_list}
+
+                   OUTPUT FORMAT (Markdown):
+                   
+                   ### 1. EKSPEKTASI KHUSUS PIMPINAN
+                   (Berikan 3-5 poin ekspektasi spesifik dari atasan kepada bawahan terkait perilaku kerja BerAKHLAK dan pencapaian target di atas. Gunakan bahasa motivasi namun tegas).
+
+                   ### 2. UMPAN BALIK BERKELANJUTAN
+                   (Berikan narasi feedback konstruktif untuk pengembangan bawahan kedepan berdasarkan tugas pokoknya).
+
+                   Gunakan Bahasa Indonesia Kedinasan yang profesional.";
+        
+        return $this->generate($prompt);
+    }
+
+    /**
      * Refine existing content based on user instructions.
      */
     public function refineContent(string $originalContent, string $instruction): string
@@ -191,6 +250,34 @@ class AiService
                    "Tugas Anda: Perbarui konten di atas berdasarkan instruksi tersebut. " .
                    "Pertahankan gaya penulisan yang sudah ada namun terapkan perubahan yang diminta. " .
                    "Kembalikan hanya konten hasil pembaruan tanpa basa-basi. Gunakan Bahasa Indonesia.";
+        
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Copywriting (Marketing Text).
+     */
+    public function generateCopywriting(string $productName, string $description, string $targetAudience, string $platform, string $framework, string $tone)
+    {
+        $prompt = "Bertindaklah sebagai Senior Copywriter profesional kelas dunia dengan pengalaman 20 tahun.
+                   Tugas Anda: Membuat teks copywriting yang persuasif dan menjual (High-Converting Copy).
+
+                   PARAMETER:
+                   - Produk/Brand: {$productName}
+                   - Deskripsi Produk: {$description}
+                   - Target Audiens: {$targetAudience}
+                   - Platform/Media: {$platform}
+                   - Kerangka (Framework): {$framework}
+                   - Nada (Tone): {$tone}
+
+                   INSTRUKSI:
+                   1. Terapkan kerangka {$framework} secara ketat dan jelas dalam struktur tulisan.
+                   2. Sesuaikan gaya bahasa untuk platform {$platform} (misal: gunakan hashtag untuk Instagram, headline kuat untuk Landing Page, subjek menarik untuk Email).
+                   3. Gunakan bahasa yang {$tone}, hipnotik, dan memancing emosi pembaca untuk bertindak (Action).
+                   4. Gunakan Bahasa Indonesia yang natural, mengalir, dan powerful (boleh sedikit slang sopan jika target audiens anak muda).
+                   
+                   OUTPUT:
+                   Berikan langsung hasil copywriting-nya. Jika platform membutuhkan pernak-pernik (seperti Subject Line untuk Email atau Headline untuk Ads), sertakan juga.";
         
         return $this->generate($prompt);
     }

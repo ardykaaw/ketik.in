@@ -224,6 +224,41 @@ class FeatureController extends Controller
         }
     }
 
+    public function eKinerjaAtasan()
+    {
+        return view('features.e-kinerja-atasan');
+    }
+
+    public function generateEKinerjaAtasan(Request $request)
+    {
+        $request->validate([
+            'atasan_nama' => 'required|string',
+            'atasan_jabatan' => 'required|string',
+            'atasan_unit' => 'required|string',
+            'bawahan_nama' => 'required|string',
+            'bawahan_jabatan' => 'required|string',
+            'tugas_pokok' => 'required|array',
+            'tugas_pokok.*' => 'required|string',
+            'periode' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateEKinerjaAtasan($request->all());
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'e-kinerja-atasan',
+                'title' => 'Ekspektasi Pimpinan: ' . $request->bawahan_nama . ' - ' . $request->periode,
+                'content' => $generatedText,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Ekspektasi Pimpinan berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
     public function news()
     {
         return view('features.news');
@@ -285,6 +320,80 @@ class FeatureController extends Controller
             ]);
 
             return redirect()->route('library.show', $content)->with('success', 'Kata sambutan berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function socialMedia()
+    {
+        return view('features.social-media');
+    }
+
+    public function generateSocialMedia(Request $request)
+    {
+        $request->validate([
+            'platform' => 'required|string',
+            'topic' => 'required|string|max:500',
+            'style' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateSocialMedia(
+                $request->topic,
+                $request->platform,
+                $request->style
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'social-media',
+                'title' => $request->platform . ': ' . $request->topic,
+                'content' => $generatedText,
+                'parameters' => $request->only(['topic', 'platform', 'style']),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Konten Social Media berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    public function copywriting()
+    {
+        return view('features.copywriting');
+    }
+
+    public function generateCopywriting(Request $request)
+    {
+        $request->validate([
+            'product_name' => 'required|string',
+            'description' => 'required|string',
+            'target_audience' => 'required|string',
+            'platform' => 'required|string',
+            'framework' => 'required|string',
+            'tone' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateCopywriting(
+                $request->product_name,
+                $request->description,
+                $request->target_audience,
+                $request->platform,
+                $request->framework,
+                $request->tone
+            );
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'copywriting',
+                'title' => 'Copywriting: ' . $request->product_name,
+                'content' => $generatedText,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Copywriting berhasil dibuat!');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }

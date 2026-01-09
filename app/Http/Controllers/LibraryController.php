@@ -33,6 +33,23 @@ class LibraryController extends Controller
         return view('library.show', compact('content'));
     }
 
+    public function update(Request $request, Content $content)
+    {
+        if ($content->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $request->validate([
+            'content' => 'required|string',
+        ]);
+
+        $content->update([
+            'content' => $request->content
+        ]);
+
+        return response()->json(['message' => 'Konten berhasil disimpan']);
+    }
+
     public function refine(Request $request, Content $content)
     {
         if ($content->user_id !== auth()->id()) {

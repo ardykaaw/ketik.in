@@ -31,8 +31,8 @@
                                 </div>
 
                                 <div class="mb-4">
-                                    <label class="form-label fw-bold">Deskripsi / Outline Singkat</label>
-                                    <textarea name="outline" class="form-control border-2" rows="4" placeholder="Jelaskan tentang apa buku ini atau sebutkan kerangka babnya..." style="border-radius: 12px;" required>{{ old('outline') }}</textarea>
+                                    <label class="form-label fw-bold">Ide Utama / Premis Buku</label>
+                                    <textarea name="outline" class="form-control border-2" rows="4" placeholder="Ceritakan ide buku Anda secara singkat. Contoh: Panduan praktis digital marketing untuk UMKM pemula agar bisa jualan laris di TikTok..." style="border-radius: 12px;" required>{{ old('outline') }}</textarea>
                                 </div>
 
                                 <div class="row g-3 mb-4">

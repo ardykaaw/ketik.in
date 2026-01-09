@@ -43,11 +43,20 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/e-kinerja', [FeatureController::class, 'eKinerja'])->name('feature.e-kinerja');
         Route::post('/e-kinerja', [FeatureController::class, 'generateEKinerja'])->name('feature.e-kinerja.generate')->middleware('throttle:ai');
 
+        Route::get('/e-kinerja-atasan', [FeatureController::class, 'eKinerjaAtasan'])->name('feature.e-kinerja-atasan');
+        Route::post('/e-kinerja-atasan', [FeatureController::class, 'generateEKinerjaAtasan'])->name('feature.e-kinerja-atasan.generate')->middleware('throttle:ai');
+
         Route::get('/berita', [FeatureController::class, 'news'])->name('feature.news');
         Route::post('/berita', [FeatureController::class, 'generateNews'])->name('feature.news.generate')->middleware('throttle:ai');
 
         Route::get('/kata-sambutan', [FeatureController::class, 'speech'])->name('feature.speech');
         Route::post('/kata-sambutan', [FeatureController::class, 'generateSpeech'])->name('feature.speech.generate')->middleware('throttle:ai');
+
+        Route::get('/social-media', [FeatureController::class, 'socialMedia'])->name('feature.social-media');
+        Route::post('/social-media', [FeatureController::class, 'generateSocialMedia'])->name('feature.social-media.generate')->middleware('throttle:ai');
+
+        Route::get('/copywriting', [FeatureController::class, 'copywriting'])->name('feature.copywriting');
+        Route::post('/copywriting', [FeatureController::class, 'generateCopywriting'])->name('feature.copywriting.generate')->middleware('throttle:ai');
 
         Route::post('/library/{content}/refine', [LibraryController::class, 'refine'])->name('library.refine')->middleware('throttle:ai');
     });
@@ -55,6 +64,7 @@ Route::middleware(['auth'])->group(function () {
     // Library
     Route::get('/library', [LibraryController::class, 'index'])->name('library.index');
     Route::get('/library/{content}', [LibraryController::class, 'show'])->name('library.show');
+    Route::put('/library/{content}', [LibraryController::class, 'update'])->name('library.update'); // Add this line
     Route::get('/library/{content}/export', [LibraryController::class, 'exportPdf'])->name('library.export');
     Route::delete('/library/{content}', [LibraryController::class, 'destroy'])->name('library.destroy');
     

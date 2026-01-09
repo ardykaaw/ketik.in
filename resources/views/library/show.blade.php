@@ -25,9 +25,9 @@
                     </div>
                 </div>
 
-                <div class="card border-0 shadow-lg mb-4" style="border-radius: 24px; background: #fff url('https://www.transparenttextures.com/patterns/clean-gray-paper.png');">
+                <div class="card border-0 shadow-lg mb-4 paper-card">
                     <div class="card-body p-5">
-                        <div id="generated-content" class="prose max-w-none" style="font-size: 1.15rem; line-height: 1.8; color: #334155; white-space: pre-wrap;">{{ $content->content }}</div>
+                        <div id="generated-content" class="prose max-w-none">{{ $content->content }}</div>
                     </div>
                     <div class="card-footer bg-light border-0 p-4" style="border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;">
                         <div class="row align-items-center">
@@ -137,7 +137,8 @@
             // Add upload buttons and attachments to list items
             const listItems = contentDiv.querySelectorAll('li');
             listItems.forEach((li, index) => {
-                const text = li.innerText;
+                // IMPORTANT: Use innerHTML to preserve Bold/Italic/Links from AI
+                const originalHtml = li.innerHTML;
                 
                 // Get attachments for this action item
                 const itemAttachments = attachmentsData.filter(att => att.action_item_index === index);
@@ -145,7 +146,7 @@
                 // Build attachments HTML
                 let attachmentsHtml = '';
                 if (itemAttachments.length > 0) {
-                    attachmentsHtml = '<div class="mt-2 ms-4"><small class="text-muted fw-bold">Bukti Dukung:</small><div class="d-flex flex-wrap gap-2 mt-1">';
+                    attachmentsHtml = '<div class="mt-2 text-start"><small class="text-muted fw-bold">Bukti Dukung:</small><div class="d-flex flex-wrap gap-2 mt-1">';
                     itemAttachments.forEach(att => {
                         attachmentsHtml += `
                             <div class="badge bg-success-lt d-flex align-items-center gap-1 py-2 px-2">
@@ -166,12 +167,12 @@
                 
                 li.innerHTML = `
                     <div class="d-flex align-items-start justify-content-between group-hover-action">
-                        <div class="flex-grow-1">
-                            <span class="item-text">${text}</span>
+                        <div class="flex-grow-1 list-content">
+                            ${originalHtml}
                             ${attachmentsHtml}
                         </div>
                         <div class="actions ms-2 d-flex gap-1" style="opacity: 0; transition: opacity 0.2s;">
-                            <button onclick="openUploadModal(${index}, \`${text.replace(/`/g, '\\`').replace(/\$/g, '\\$')}\`)" class="btn btn-sm btn-ghost-success p-1 border-0" title="Upload Bukti Dukung">
+                            <button onclick="openUploadModal(${index}, this)" class="btn btn-sm btn-ghost-success p-1 border-0" title="Upload Bukti Dukung">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paperclip" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" /></svg>
                             </button>
                             <button onclick="editItem(this)" class="btn btn-sm btn-ghost-primary p-1 border-0" title="Edit">
@@ -193,20 +194,31 @@
             });
         });
 
-        function openUploadModal(index, text) {
+        function openUploadModal(index, btn) {
+            // Get text from the list item, stripping HTML tags for the preview
+            const liContent = btn.closest('.group-hover-action').querySelector('.list-content').innerText;
+            const previewText = liContent.substring(0, 100) + (liContent.length > 100 ? '...' : ''); // Truncate
+
             document.getElementById('actionItemIndex').value = index;
-            document.getElementById('actionItemPreview').innerHTML = `<strong>Item #${index + 1}:</strong> ${text}`;
+            document.getElementById('actionItemPreview').innerHTML = `<strong>Item #${index + 1}:</strong> ${previewText}`;
             const modal = new bootstrap.Modal(document.getElementById('uploadModal'));
             modal.show();
         }
 
         async function editItem(btn) {
-            const span = btn.closest('li').querySelector('.item-text');
-            const currentContent = span.innerHTML;
+            // Edit HTML content
+            const contentContainer = btn.closest('.group-hover-action').querySelector('.list-content');
+            
+            // Remove the attachment div temporarily to get just the text content for editing
+            const attachmentsDiv = contentContainer.querySelector('.mt-2.text-start'); 
+            const attachmentsHtmlStore = attachmentsDiv ? attachmentsDiv.outerHTML : '';
+            if(attachmentsDiv) attachmentsDiv.remove();
+
+            const currentHtml = contentContainer.innerHTML;
 
             const { value: newHtml } = await Swal.fire({
                 title: 'Edit Rencana Aksi',
-                html: '<div id="quill-editor" style="height: 200px;">' + currentContent + '</div>',
+                html: '<div id="quill-editor" style="height: 200px;">' + currentHtml + '</div>',
                 showCancelButton: true,
                 confirmButtonText: 'Simpan Perubahan',
                 cancelButtonText: 'Batal',
@@ -230,18 +242,80 @@
             });
 
             if (newHtml) {
-                span.innerHTML = newHtml;
-                const Toast = Swal.mixin({
-                    toast: true,
-                    position: 'top-end',
-                    showConfirmButton: false,
-                    timer: 2000,
-                    timerProgressBar: true
+                // 1. Update DOM immediately for feedback
+                contentContainer.innerHTML = newHtml + attachmentsHtmlStore;
+
+                // 2. Prepare content for saving (Strip UI elements)
+                const fullContentDiv = document.getElementById('generated-content').cloneNode(true);
+                
+                // Remove all Action Buttons (.actions)
+                fullContentDiv.querySelectorAll('.actions').forEach(el => el.remove());
+                
+                // Remove all Attachment previews (.mt-2.text-start) - we only want the text/structure
+                fullContentDiv.querySelectorAll('.mt-2.text-start').forEach(el => el.remove());
+                
+                // Remove wrapper divs if we want raw list? 
+                // No, the list structure <div class="d-flex ..."> is generated by JS in show.blade.php from Markdown.
+                // IF we save HTML, we save the DIVs. 
+                // Problem: Next load, marked.parse will see DIVs and not touch them? Or maybe it will.
+                // Better approach: We are saving the *rendered HTML* now.
+                // The Controller saves it.
+                // Next reload: line 135 `contentDiv.innerHTML = marked.parse(rawContent)`
+                // If rawContent is HTML, marked basically returns it as is (if configured, or strict).
+                // But wait, line 138 `listItems.forEach` adds the buttons AGAIN.
+                // So if we save the DIVs (.group-hover-action), we get nested structure?
+                // Address this by Stripping the `.group-hover-action` wrapper and keeping just `li` content?
+                // Actually, `li` contains `.group-hover-action`.
+                // If we save the HTML of `ul > li`, the `li` has the wrapper.
+                // Next load: JS finds `li`. It appends `.actions` again?
+                // Line 168: `li.innerHTML = ...` REPLACES content.
+                // So if we save the wrapper, the JS will WRAP the wrapper. Double wrapper!
+                
+                // FIX: We must UNWRAP the content before saving.
+                // We want to save what the AI gave us (roughly).
+                // Iterate clean clone list items and unwrap their content.
+                fullContentDiv.querySelectorAll('li').forEach(li => {
+                   const listContent = li.querySelector('.list-content');
+                   if (listContent) {
+                       // Keep only the HTML inside list-content (minus attachments which we removed above)
+                       li.innerHTML = listContent.innerHTML;
+                   }
                 });
-                Toast.fire({
-                    icon: 'success',
-                    title: 'Berhasil diperbarui'
-                });
+
+                const finalContent = fullContentDiv.innerHTML;
+
+                // 3. Send to Server
+                try {
+                    const response = await fetch('{{ route('library.update', $content) }}', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ content: finalContent })
+                    });
+                    
+                    if (!response.ok) throw new Error('Gagal menyimpan ke server');
+
+                    const Toast = Swal.mixin({
+                        toast: true,
+                        position: 'top-end',
+                        showConfirmButton: false,
+                        timer: 2000,
+                        timerProgressBar: true
+                    });
+                    Toast.fire({
+                        icon: 'success',
+                        title: 'Berhasil diperbarui & Disimpan'
+                    });
+
+                } catch (error) {
+                    Swal.fire('Error', 'Gagal menyimpan perubahan: ' + error.message, 'error');
+                }
+
+            } else {
+                // Restore if cancelled
+                contentContainer.innerHTML = currentHtml + attachmentsHtmlStore;
             }
         }
 
@@ -287,37 +361,123 @@
         }
     </script>
     <style>
+        /* Light Mode (Default) */
+        .paper-card {
+            border-radius: 24px;
+            background: #fff url('https://www.transparenttextures.com/patterns/clean-gray-paper.png');
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .prose {
+            font-size: 1.1rem;
+            line-height: 1.6; /* Reduced from 1.8 */
+            color: #334155;
+            white-space: pre-wrap;
+        }
         .prose h1, .prose h2, .prose h3 {
-            margin-top: 2rem;
-            margin-bottom: 1rem;
+            margin-top: 1.5rem; /* Reduced from 2rem */
+            margin-bottom: 0.75rem; /* Reduced from 1rem */
             font-weight: 700;
             color: #1e293b;
         }
         .prose p {
-            margin-bottom: 1.25rem;
+            margin-bottom: 0.85rem; /* Reduced from 1.25rem */
         }
         .prose ul, .prose ol {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             padding-left: 1.5rem;
         }
         .prose li {
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.5rem; /* Slightly more space between items */
+            position: relative;
+        }
+        /* FIX: Remove margins from paragraphs inside lists to align text with numbers */
+        /* Target the new .list-content wrapper's first child */
+        .prose li .list-content > :first-child {
+            margin-top: 0 !important;
+            margin-bottom: 0.25rem !important;
+        }
+        /* Keep spacing for subsequent paragraphs */
+        .prose li .list-content p + p {
+            margin-top: 0.5rem !important;
         }
         .prose blockquote {
             border-left: 4px solid #3b82f6;
             padding-left: 1rem;
-            margin: 1.5rem 0;
+            margin: 1.25rem 0;
             font-style: italic;
             color: #475569;
         }
         .prose table {
             width: 100%;
             border-collapse: collapse;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
             border: 1px solid #e2e8f0;
             background: white;
             font-size: 0.95rem;
         }
+
+        /* Dark Mode Overrides */
+        [data-theme="dark"] .paper-card {
+            background-color: #1e293b !important; /* Slate-800 */
+            background-image: none !important; /* Force kill texture */
+            border: 1px solid #334155;
+            color: #f8fafc !important;
+        }
+        [data-theme="dark"] .prose {
+            color: #f8fafc !important; /* Force White */
+        }
+        /* Wildcard Safety Net for ANY text inside prose in dark mode */
+        [data-theme="dark"] .prose * {
+            color: inherit !important; /* Inherit from .prose */
+        }
+        [data-theme="dark"] .prose h1, 
+        [data-theme="dark"] .prose h2, 
+        [data-theme="dark"] .prose h3,
+        [data-theme="dark"] .prose strong,
+        [data-theme="dark"] .prose b {
+            color: #ffffff !important; /* Pure White */
+        }
+        [data-theme="dark"] .prose p,
+        [data-theme="dark"] .prose li,
+        [data-theme="dark"] .prose ul,
+        [data-theme="dark"] .prose ol {
+            color: #e2e8f0 !important; /* Slate-200 */
+        }
+        [data-theme="dark"] .prose blockquote {
+            color: #cbd5e1 !important; /* Slate-300 */
+            border-left-color: #60a5fa !important;
+        }
+        [data-theme="dark"] .prose table {
+            background: #0f172a !important; /* Slate-900 */
+            border-color: #334155 !important;
+            color: #e2e8f0 !important;
+        }
+        [data-theme="dark"] .prose th {
+            background-color: #1e293b !important;
+            border-bottom-color: #334155 !important;
+            color: #ffffff !important;
+        }
+        [data-theme="dark"] .prose td {
+            border-bottom-color: #334155 !important;
+            color: #cbd5e1 !important;
+        }
+        [data-theme="dark"] .prose a {
+            color: #60a5fa !important; /* Light Blue for Links */
+            text-decoration: underline;
+        }
+        [data-theme="dark"] .prose code {
+            color: #e2e8f0 !important;
+            background-color: #334155 !important; /* Lighter slate for contrast */
+            padding: 0.2rem 0.4rem;
+            border-radius: 0.25rem;
+        }
+        [data-theme="dark"] .prose pre {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border: 1px solid #334155;
+        }
+
+        /* Table Styles (Common) */
         .doc-canvas {
             background: #fff;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
