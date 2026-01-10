@@ -83,7 +83,7 @@
         </div>
     </div>
     <div class="text-center text-secondary mt-4">
-        Belum punya akun? <a href="{{ route('register') }}" class="text-primary fw-bold ms-1">Daftar Gratis</a>
+        Belum punya akun? <a href="{{ route('register') }}" class="text-primary fw-bold ms-1">Daftar Disini</a>
     </div>
 
     @push('scripts')
