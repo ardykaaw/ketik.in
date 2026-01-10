@@ -11,6 +11,7 @@ class Content extends Model
         'type',
         'title',
         'content',
+        'prompt',
         'parameters',
     ];
 

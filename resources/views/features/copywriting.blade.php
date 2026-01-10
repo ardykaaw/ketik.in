@@ -24,7 +24,7 @@
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold">Deskripsi Produk / Penawaran Utama</label>
-                                <textarea name="description" class="form-control border-2" rows="4" placeholder="Jelaskan keunggulan produk Anda, fitur kunci, atau promo yang sedang berjalan..." style="border-radius: 12px;" required></textarea>
+                                <textarea name="description" class="form-control border-2" rows="4" maxlength="5000" placeholder="Jelaskan keunggulan produk Anda, fitur kunci, atau promo yang sedang berjalan..." style="border-radius: 12px;" required></textarea>
                             </div>
 
                             <div class="row mb-4">

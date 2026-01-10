@@ -20,7 +20,7 @@
                                 <div class="card-body p-5">
                                     <div class="mb-4">
                                         <label class="form-label fs-3 fw-bold mb-3">Topik atau Premis Cerita</label>
-                                        <textarea name="topic" class="form-control border-2 bg-light p-4" rows="6" placeholder="Misal: Seorang penjelajah waktu yang terjebak di era Kerajaan Majapahit..." style="border-radius: 12px; font-size: 1.1rem;" required>{{ old('topic') }}</textarea>
+                                        <textarea name="topic" class="form-control border-2 bg-light p-4" rows="6" maxlength="5000" placeholder="Misal: Seorang penjelajah waktu yang terjebak di era Kerajaan Majapahit..." style="border-radius: 12px; font-size: 1.1rem;" required>{{ old('topic') }}</textarea>
                                     </div>
                                     <div class="row g-3">
                                         <div class="col-md-6">

@@ -111,7 +111,7 @@
                                             </div>
                                             <div class="col-md-9">
                                                 <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) Anda</label>
-                                                <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" placeholder="Tugas spesifik Anda..." style="border-radius: 10px;" required></textarea>
+                                                <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" maxlength="5000" placeholder="Tugas spesifik Anda..." style="border-radius: 10px;" required></textarea>
                                             </div>
                                             <div class="col-md-3">
                                                 <label class="form-label fw-semibold">Jenis</label>

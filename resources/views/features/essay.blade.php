@@ -18,7 +18,7 @@
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold fs-4">Konteks / Latar Belakang (Opsional)</label>
-                                <textarea name="context" class="form-control border-2" rows="5" placeholder="Berikan sedikit latar belakang tentang topik ini..." style="border-radius: 12px;">{{ old('context') }}</textarea>
+                                <textarea name="context" class="form-control border-2" rows="5" maxlength="5000" placeholder="Berikan sedikit latar belakang tentang topik ini..." style="border-radius: 12px;">{{ old('context') }}</textarea>
                             </div>
 
                             <div class="row g-4 mb-4">

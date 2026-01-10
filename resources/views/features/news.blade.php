@@ -28,7 +28,7 @@
                                 <div class="col-12">
                                     <label class="form-label fs-4 fw-bold mb-2 text-dark">Topik Berita</label>
                                     <textarea name="topic" rows="4" class="form-control form-control-lg border-2" 
-                                        placeholder="Contoh: Peresmian gedung baru Ketik.in di Jakarta Pusat..." 
+                                        placeholder="Contoh: Peresmian gedung baru Ketik.in di Jakarta Pusat..." maxlength="5000"
                                         style="border-radius: 12px; resize: none;">{{ old('topic') }}</textarea>
                                     <div class="form-hint mt-2">Uraikan kejadian, subjek, dan lokasi dengan jelas untuk hasil maksimal.</div>
                                 </div>

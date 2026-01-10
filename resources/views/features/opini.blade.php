@@ -23,7 +23,7 @@
 
                             <div class="mb-4">
                                 <label class="form-label fw-bold fs-4">Argumen Utama / Poin Kunci (Opsional)</label>
-                                <textarea name="stance" class="form-control border-2 p-3" rows="5" placeholder="Sebutkan posisi Anda atau beberapa poin yang ingin Anda tekankan..." style="border-radius: 12px;">{{ old('stance') }}</textarea>
+                                <textarea name="stance" class="form-control border-2 p-3" rows="5" maxlength="5000" placeholder="Sebutkan posisi Anda atau beberapa poin yang ingin Anda tekankan..." style="border-radius: 12px;">{{ old('stance') }}</textarea>
                             </div>
 
                             <div class="text-center">

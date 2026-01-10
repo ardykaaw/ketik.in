@@ -27,7 +27,7 @@
                                     @csrf
                                     <div class="mb-4">
                                         <label class="form-label fw-bold">Topik atau Judul Video</label>
-                                        <input type="text" name="topic" class="form-control form-control-lg border-2" placeholder="Misal: Review iPhone 15 Pro dalam 60 detik" style="border-radius: 12px;" value="{{ old('topic') }}" required>
+                                        <input type="text" name="topic" class="form-control form-control-lg border-2" placeholder="Misal: Review iPhone 15 Pro dalam 60 detik" style="border-radius: 12px;" value="{{ old('topic') }}" maxlength="5000" required>
                                     </div>
 
                                     <div class="row g-3 mb-4">

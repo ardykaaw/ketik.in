@@ -43,7 +43,7 @@
                 </div>
 
                 <!-- Refinement Card -->
-                <div class="card border-1 border-primary shadow-sm" style="border-radius: 20px; border-style: dashed !important; background: #fdfdff;">
+                <div class="card border-1 border-primary shadow-sm mb-4" style="border-radius: 20px; border-style: dashed !important; background: #fdfdff;">
                     <div class="card-body p-4">
                         <h4 class="fw-bold mb-3 d-flex align-items-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path d="M7 11V7l5-5 5 5v4"></path><path d="M12 2v20"></path><path d="M7 13v4l5 5 5-5v-4"></path></svg>
@@ -63,6 +63,24 @@
                         </form>
                     </div>
                 </div>
+
+                <!-- Prompt Visibility Section -->
+                @if($content->prompt)
+                <div class="card border-0 shadow-sm" style="border-radius: 20px;">
+                    <div class="card-header bg-transparent border-0 cursor-pointer" data-bs-toggle="collapse" data-bs-target="#promptCollapse" aria-expanded="false" aria-controls="promptCollapse">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <h4 class="fw-bold mb-0 text-muted d-flex align-items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><line x1="3" y1="6" x2="3" y2="19" /><line x1="12" y1="6" x2="12" y2="19" /><line x1="21" y1="6" x2="21" y2="19" /></svg>
+                                Lihat Prompt / Instruksi Awal
+                            </h4>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-down text-muted" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="6 9 12 15 18 9" /></svg>
+                        </div>
+                    </div>
+                    <div class="collapse" id="promptCollapse">
+                        <div class="card-body pt-0 text-muted" style="white-space: pre-wrap;">{{ $content->prompt }}</div>
+                    </div>
+                </div>
+                @endif
 
                 <!-- Supporting Documents Section (Bukti Dukung) - Per Action Item -->
                 @if($content->type === 'e-kinerja')

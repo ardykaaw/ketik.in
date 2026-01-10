@@ -89,7 +89,7 @@
 
                         <div class="mb-4">
                             <label class="form-label fw-bold">Topik atau Ide Konten <span class="text-danger">*</span></label>
-                            <textarea class="form-control" name="topic" rows="4" placeholder="Contoh: Tips produktivitas kerja remote, Promo diskon 50%, atau Review gadget terbaru..." required></textarea>
+                            <textarea class="form-control" name="topic" rows="4" maxlength="5000" placeholder="Contoh: Tips produktivitas kerja remote, Promo diskon 50%, atau Review gadget terbaru..." required></textarea>
                             <small class="form-hint">Jelaskan apa yang ingin Anda bahas secara singkat.</small>
                         </div>
 

@@ -7,30 +7,58 @@ use Gemini;
 
 class AiService
 {
-    protected Client $client;
+    protected array $apiKeys;
 
     public function __construct()
     {
-        $apiKey = config('gemini.api_key');
-        if (!$apiKey) {
-            throw new \Exception('Gemini API Key is not configured.');
+        $this->apiKeys = config('gemini.api_keys', []);
+        
+        if (empty($this->apiKeys)) {
+            throw new \Exception('Gemini API Keys are not configured.');
         }
-        $this->client = Gemini::client($apiKey);
     }
 
     /**
-     * Generate content based on a prompt.
+     * Generate content based on a prompt with Multi-Key Rotation.
      */
     public function generate(string $prompt): string
     {
-        try {
-            $model = config('gemini.model', 'gemini-flash-latest');
-            $result = $this->client->generativeModel($model)->generateContent($prompt);
-            return $result->text();
-        } catch (\Exception $e) {
-            \Log::error('Gemini Generation Error: ' . $e->getMessage());
-            throw new \Exception('Gagal menghasilkan konten dari AI. Silakan coba lagi nanti.');
+        $model = config('gemini.model', 'gemini-flash-latest');
+        $errors = [];
+
+        // Shuffle keys once to distribute load, then iterate (Round-Robin style for this request)
+        // If one fails, we fall back to the next one in the list.
+        $keys = $this->apiKeys;
+        shuffle($keys); 
+
+        foreach ($keys as $apiKey) {
+            try {
+                // Initialize client with the current key
+                $client = Gemini::client($apiKey);
+                
+                $result = $client->generativeModel($model)->generateContent($prompt);
+                return $result->text(); // Success! Return immediately.
+
+            } catch (\Exception $e) {
+                // Log the error for this specific key but don't fail yet
+                \Log::warning("Gemini Key Rotation Error: " . $e->getMessage());
+                $errors[] = $e->getMessage();
+
+                // If it's NOT a quota error, maybe we shouldn't retry? 
+                // But for robustness, let's try another key anyway unless it's a prompt safety issue (which would likely be rejected by all).
+                // However, "Quota exceeded" is the main target here.
+                if (str_contains($e->getMessage(), 'Safety') || str_contains($e->getMessage(), 'blocked')) {
+                     // If blocked by safety, changing keys won't help. Stop.
+                     throw new \Exception('Konten diblokir oleh filter keamanan AI. Coba ubah topik atau kata-kata Anda.');
+                }
+                
+                continue; // Try next key
+            }
         }
+
+        // If we reach here, ALL keys failed.
+        \Log::error('All Gemini Keys Failed. Errors: ' . implode(', ', $errors));
+        throw new \Exception('Semua akun AI sedang sibuk (Limit Tercapai). Mohon tunggu beberapa saat lagi.');
     }
 
     /**

@@ -99,7 +99,7 @@
                                         <div class="row g-3">
                                             <div class="col-md-12">
                                                 <label class="form-label fw-semibold">Deskripsi Tugas Pokok / RHK Bawahan</label>
-                                                <textarea name="tugas_pokok[]" class="form-control border-2 bg-white" rows="2" placeholder="Apa tugas utama atau RHK yang dinilai?" style="border-radius: 10px;" required></textarea>
+                                                <textarea name="tugas_pokok[]" class="form-control border-2 bg-white" rows="2" maxlength="5000" placeholder="Apa tugas utama atau RHK yang dinilai?" style="border-radius: 10px;" required></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -139,7 +139,7 @@
                 <div class="row g-3">
                     <div class="col-md-12">
                         <label class="form-label fw-semibold">Deskripsi Tugas Pokok / RHK Bawahan</label>
-                        <textarea name="tugas_pokok[]" class="form-control border-2 bg-white" rows="2" placeholder="Apa tugas utama atau RHK yang dinilai?" style="border-radius: 10px;" required></textarea>
+                        <textarea name="tugas_pokok[]" class="form-control border-2 bg-white" rows="2" maxlength="5000" placeholder="Apa tugas utama atau RHK yang dinilai?" style="border-radius: 10px;" required></textarea>
                     </div>
                 </div>
             `;

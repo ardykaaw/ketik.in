@@ -28,7 +28,7 @@
                                 <div class="col-12">
                                     <label class="form-label fs-4 fw-bold mb-2 text-dark">Nama Acara / Kegiatan</label>
                                     <input type="text" name="event" class="form-control form-control-lg border-2" 
-                                        placeholder="Contoh: Peresmian Kantor Baru atau Pernikahan..." 
+                                        placeholder="Contoh: Peresmian Kantor Baru atau Pernikahan..." maxlength="5000" 
                                         style="border-radius: 12px;" value="{{ old('event') }}">
                                 </div>
 

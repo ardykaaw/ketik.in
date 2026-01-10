@@ -16,6 +16,37 @@ class FeatureController extends Controller
         $this->aiService = $aiService;
     }
 
+    private function validateRequest(Request $request, array $rules)
+    {
+        $messages = [
+            'required' => 'Kolom :attribute wajib diisi ya.',
+            'string' => 'Kolom :attribute harus berupa teks.',
+            'max' => 'Waduh, :attribute terlalu panjang. Maksimal :max karakter agar AI tidak pusing.',
+            'min' => ':attribute terlalu pendek, tambahkan sedikit lagi.',
+        ];
+
+        $attributes = [
+            'topic' => 'topik/ide',
+            'genre' => 'genre cerita',
+            'target' => 'target pembaca',
+            'outline' => 'outline',
+            'stance' => 'posisi opini',
+            'platform' => 'platform',
+            'duration' => 'durasi',
+            'type' => 'jenis esai',
+            'style' => 'gaya bahasa',
+            'event' => 'nama acara',
+            'audience' => 'audiens',
+            'tone' => 'nada bicara',
+            'framework' => 'kerangka copywriting',
+            'description' => 'deskripsi produk',
+            'product_name' => 'nama produk',
+            'target_audience' => 'target audiens',
+        ];
+
+        return $request->validate($rules, $messages, $attributes);
+    }
+
     public function storyTelling()
     {
         return view('features.story-telling');
@@ -23,8 +54,8 @@ class FeatureController extends Controller
 
     public function generateStory(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'genre' => 'required|string',
             'target' => 'required|string',
         ]);
@@ -40,8 +71,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'story',
-                'title' => $request->topic, // Use topic as title for now
+                'title' => 'Cerita: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => $request->topic,
                 'parameters' => $request->only(['topic', 'genre', 'target']),
             ]);
 
@@ -58,8 +90,8 @@ class FeatureController extends Controller
 
     public function generateEbook(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'target' => 'required|string',
             'outline' => 'required|string',
         ]);
@@ -74,8 +106,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'ebook',
-                'title' => $request->topic,
+                'title' => 'E-Book: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => "Topik: " . $request->topic . "\n\nData Outline: " . $request->outline,
                 'parameters' => $request->only(['topic', 'target', 'outline']),
             ]);
 
@@ -92,8 +125,8 @@ class FeatureController extends Controller
 
     public function generateOpinion(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'stance' => 'required|string',
         ]);
 
@@ -106,8 +139,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'opini',
-                'title' => $request->topic,
+                'title' => 'Opini: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => "Topik Opini: " . $request->topic . "\n\nPosisi: " . $request->stance,
                 'parameters' => $request->only(['topic', 'stance']),
             ]);
 
@@ -124,8 +158,8 @@ class FeatureController extends Controller
 
     public function generateScript(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'platform' => 'required|string',
             'duration' => 'required|string',
         ]);
@@ -140,8 +174,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'script',
-                'title' => $request->topic,
+                'title' => 'Script: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => "Topik: " . $request->topic . "\n\nPlatform: " . $request->platform . "\nDurasi: " . $request->duration,
                 'parameters' => $request->only(['topic', 'platform', 'duration']),
             ]);
 
@@ -158,8 +193,8 @@ class FeatureController extends Controller
 
     public function generateEssay(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'type' => 'required|string',
         ]);
 
@@ -172,8 +207,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'essay',
-                'title' => $request->topic,
+                'title' => 'Esai: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => $request->topic,
                 'parameters' => $request->only(['topic', 'type']),
             ]);
 
@@ -215,6 +251,7 @@ class FeatureController extends Controller
                 'type' => 'e-kinerja',
                 'title' => 'SKP ASN: ' . $request->pegawai_nama . ' - ' . $request->periode,
                 'content' => $generatedText,
+                'prompt' => 'Data E-Kinerja Pegawai: ' . json_encode($request->all(), JSON_PRETTY_PRINT),
                 'parameters' => $request->all(),
             ]);
 
@@ -250,6 +287,7 @@ class FeatureController extends Controller
                 'type' => 'e-kinerja-atasan',
                 'title' => 'Ekspektasi Pimpinan: ' . $request->bawahan_nama . ' - ' . $request->periode,
                 'content' => $generatedText,
+                'prompt' => 'Data E-Kinerja Atasan: ' . json_encode($request->all(), JSON_PRETTY_PRINT),
                 'parameters' => $request->all(),
             ]);
 
@@ -266,8 +304,8 @@ class FeatureController extends Controller
 
     public function generateNews(Request $request)
     {
-        $request->validate([
-            'topic' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'topic' => 'required|string|max:5000',
             'style' => 'required|string',
         ]);
 
@@ -280,8 +318,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'news',
-                'title' => $request->topic,
+                'title' => 'Berita: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => $request->topic,
                 'parameters' => $request->only(['topic', 'style']),
             ]);
 
@@ -298,8 +337,8 @@ class FeatureController extends Controller
 
     public function generateSpeech(Request $request)
     {
-        $request->validate([
-            'event' => 'required|string|max:500',
+        $this->validateRequest($request, [
+            'event' => 'required|string|max:5000',
             'audience' => 'required|string',
             'tone' => 'required|string',
         ]);
@@ -314,8 +353,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'speech',
-                'title' => 'Sambutan: ' . $request->event,
+                'title' => 'Sambutan: ' . \Str::words($request->event, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => "Acara: " . $request->event . "\n\nAudiens: " . $request->audience,
                 'parameters' => $request->only(['event', 'audience', 'tone']),
             ]);
 
@@ -332,9 +372,9 @@ class FeatureController extends Controller
 
     public function generateSocialMedia(Request $request)
     {
-        $request->validate([
+        $this->validateRequest($request, [
             'platform' => 'required|string',
-            'topic' => 'required|string|max:500',
+            'topic' => 'required|string|max:5000',
             'style' => 'required|string',
         ]);
 
@@ -348,8 +388,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'social-media',
-                'title' => $request->platform . ': ' . $request->topic,
+                'title' => 'Sosmed: ' . \Str::words($request->topic, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => $request->topic,
                 'parameters' => $request->only(['topic', 'platform', 'style']),
             ]);
 
@@ -366,9 +407,9 @@ class FeatureController extends Controller
 
     public function generateCopywriting(Request $request)
     {
-        $request->validate([
+        $this->validateRequest($request, [
             'product_name' => 'required|string',
-            'description' => 'required|string',
+            'description' => 'required|string|max:5000',
             'target_audience' => 'required|string',
             'platform' => 'required|string',
             'framework' => 'required|string',
@@ -388,8 +429,9 @@ class FeatureController extends Controller
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'copywriting',
-                'title' => 'Copywriting: ' . $request->product_name,
+                'title' => 'Copywriting: ' . \Str::words($request->product_name, 5, '...'),
                 'content' => $generatedText,
+                'prompt' => "Produk: " . $request->product_name . "\n\nDeskripsi: " . $request->description,
                 'parameters' => $request->all(),
             ]);
 

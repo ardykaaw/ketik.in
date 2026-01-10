@@ -32,7 +32,7 @@
 
                                 <div class="mb-4">
                                     <label class="form-label fw-bold">Ide Utama / Premis Buku</label>
-                                    <textarea name="outline" class="form-control border-2" rows="4" placeholder="Ceritakan ide buku Anda secara singkat. Contoh: Panduan praktis digital marketing untuk UMKM pemula agar bisa jualan laris di TikTok..." style="border-radius: 12px;" required>{{ old('outline') }}</textarea>
+                                    <textarea name="outline" class="form-control border-2" rows="4" maxlength="5000" placeholder="Ceritakan ide buku Anda secara singkat. Contoh: Panduan praktis digital marketing untuk UMKM pemula agar bisa jualan laris di TikTok..." style="border-radius: 12px;" required>{{ old('outline') }}</textarea>
                                 </div>
 
                                 <div class="row g-3 mb-4">
