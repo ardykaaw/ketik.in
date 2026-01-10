@@ -5,6 +5,18 @@
             <h2 class="h1 text-center mb-2 fw-bold text-dark" style="font-size: 1.75rem;">Selamat Datangs Kembali</h2>
             <p class="text-center text-secondary mb-4 small">Lanjutkan perjalanan kreatif Anda bersama Ketik.in.</p>
             
+            @if (session('status'))
+            <div class="alert alert-important alert-success alert-dismissible shadow-sm mb-4" role="alert" style="border-radius: 12px;">
+                <div class="d-flex">
+                    <div>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon alert-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                    </div>
+                    <div>{{ session('status') }}</div>
+                </div>
+                <a class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="close"></a>
+            </div>
+            @endif
+
             @if (session('error'))
             <div class="alert alert-important alert-danger alert-dismissible shadow-sm mb-4" role="alert" style="border-radius: 12px;">
                 <div class="d-flex">
@@ -80,6 +92,23 @@
             const input = document.getElementById(id);
             input.type = input.type === 'password' ? 'text' : 'password';
         }
+
+        // Show SweetAlert for unverified account error
+        @if($errors->has('email'))
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Akun Belum Diverifikasi',
+                    html: '<p class="mb-0">{{ $errors->first('email') }}</p>',
+                    confirmButtonText: 'Mengerti',
+                    confirmButtonColor: '#3b82f6',
+                    allowOutsideClick: false,
+                    customClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    }
+                });
+            });
+        @endif
     </script>
     <style>
         .form-control:focus {

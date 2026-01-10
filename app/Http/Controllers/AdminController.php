@@ -12,9 +12,9 @@ class AdminController extends Controller
     public function index()
     {
         $stats = [
-            'users_count' => User::count(),
-            'premium_users' => User::where('premium_until', '>', now())->count(),
-            'new_users_today' => User::whereDate('created_at', today())->count(),
+            'users_count' => User::where('is_active', true)->count(),
+            'premium_users' => User::where('is_active', true)->where('premium_until', '>', now())->count(),
+            'new_users_today' => User::where('is_active', true)->whereDate('created_at', today())->count(),
             'content_count' => \App\Models\Content::count(),
         ];
         return view('admin.dashboard', compact('stats'));
@@ -22,7 +22,7 @@ class AdminController extends Controller
 
     public function users()
     {
-        $users = User::latest()->paginate(10);
+        $users = User::where('is_active', true)->latest()->paginate(10);
         return view('admin.users.index', compact('users'));
     }
 
@@ -40,7 +40,8 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
-            'email_verified_at' => now(), // Admin-created users are pre-verified
+            'is_active' => true, // Admin-created users are active immediately
+            'email_verified_at' => now(), 
         ]);
 
         return back()->with('success', 'Pengguna berhasil ditambahkan.');
@@ -83,7 +84,7 @@ class AdminController extends Controller
     public function subscriptions()
     {
         // Show all users so admin can manage any subscription
-        $users = User::latest()->paginate(10);
+        $users = User::where('is_active', true)->latest()->paginate(10);
         return view('admin.subscriptions.index', compact('users'));
     }
 
@@ -103,5 +104,23 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', "Masa aktif {$user->name} berhasil diperpanjang {$request->days} hari.");
+    }
+
+    /* --- Verification Logic --- */
+    public function verifications()
+    {
+        // Users who are NOT active and NOT admin
+        $pendingUsers = User::where('is_active', false)
+            ->where('role', '!=', 'admin')
+            ->latest()
+            ->paginate(15);
+            
+        return view('admin.verifications.index', compact('pendingUsers'));
+    }
+
+    public function approveUser(User $user)
+    {
+        $user->update(['is_active' => true]);
+        return back()->with('success', "Akun {$user->name} berhasil diverifikasi dan diaktifkan.");
     }
 }

@@ -93,6 +93,10 @@ Route::middleware(['auth'])->group(function () {
         // Admin Subscriptions
         Route::get('/admin/subscriptions', [AdminController::class, 'subscriptions'])->name('admin.subscriptions');
         Route::post('/admin/subscriptions/{user}/extend', [AdminController::class, 'extendSubscription'])->name('admin.subscriptions.extend');
+
+        // Admin Verifications
+        Route::get('/admin/verifications', [AdminController::class, 'verifications'])->name('admin.verifications');
+        Route::post('/admin/verifications/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.verifications.approve');
     });
 });
 

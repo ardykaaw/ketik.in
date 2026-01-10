@@ -20,6 +20,8 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'lynk_id',
+        'is_active',
         'avatar',
         'password',
         'role',
@@ -30,8 +32,13 @@ class User extends Authenticatable
     protected static function booted()
     {
         static::creating(function ($user) {
-            $user->premium_until = now()->addMonth();
+            $user->premium_until = now()->addYear(); // 1 Year Subscription
             $user->plan_name = 'Premium Plan';
+            
+            // Only set is_active to false if not explicitly set (e.g., by admin)
+            if (!isset($user->is_active)) {
+                $user->is_active = false; // Must be verified by admin
+            }
         });
     }
 

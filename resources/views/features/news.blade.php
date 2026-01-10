@@ -27,9 +27,12 @@
                             <div class="row g-4">
                                 <div class="col-12">
                                     <label class="form-label fs-4 fw-bold mb-2 text-dark">Topik Berita</label>
-                                    <textarea name="topic" rows="4" class="form-control form-control-lg border-2" 
+                                    <textarea name="topic" rows="4" class="form-control form-control-lg border-2 @error('topic') is-invalid @enderror" 
                                         placeholder="Contoh: Peresmian gedung baru Ketik.in di Jakarta Pusat..." maxlength="5000"
                                         style="border-radius: 12px; resize: none;">{{ old('topic') }}</textarea>
+                                    @error('topic')
+                                        <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
                                     <div class="form-hint mt-2">Uraikan kejadian, subjek, dan lokasi dengan jelas untuk hasil maksimal.</div>
                                 </div>
 
@@ -47,7 +50,7 @@
                                         @foreach($styles as $style)
                                             <div class="col-6 col-md-3">
                                                 <input type="radio" class="btn-check" name="style" id="style_{{ $style['id'] }}" value="{{ $style['id'] }}" {{ old('style') == $style['id'] ? 'checked' : ($loop->first ? 'checked' : '') }}>
-                                                <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2" for="style_{{ $style['id'] }}" style="border-radius: 15px; border-width: 2px;">
+                                                <label class="btn btn-outline-primary w-100 py-3 d-flex flex-column align-items-center gap-2 @error('style') border-danger @enderror" for="style_{{ $style['id'] }}" style="border-radius: 15px; border-width: 2px;">
                                                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-{{ $style['icon'] }}" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                                                         <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                                         @if($style['icon'] == 'building')<path d="M3 21l18 0"></path><path d="M9 8l1 0"></path><path d="M9 12l1 0"></path><path d="M9 16l1 0"></path><path d="M14 8l1 0"></path><path d="M14 12l1 0"></path><path d="M14 16l1 0"></path><path d="M5 21v-16a2 2 0 0 1 2 -2h10a2 2 0 0 1 2 2v16"></path>@endif
@@ -60,6 +63,9 @@
                                             </div>
                                         @endforeach
                                     </div>
+                                    @error('style')
+                                        <div class="text-danger small mt-2">{{ $message }}</div>
+                                    @enderror
                                 </div>
 
                                 <div class="col-12 mt-5">
