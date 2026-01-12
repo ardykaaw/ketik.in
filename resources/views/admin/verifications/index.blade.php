@@ -20,7 +20,7 @@
         <div class="card-body border-bottom py-3">
             <div class="d-flex align-items-center">
                 <div class="text-muted">
-                    Pastikan Anda telah mengecek dashboard <strong>Lynk.id</strong> untuk memverifikasi pembayaran user ini sebelum mengaktifkan akun.
+                    Pastikan Anda telah mengecek dashboard <strong>Lynk.id</strong> untuk memverifikasi pembayaran dan nomor telepon user ini sebelum mengaktifkan akun.
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
                     <tr>
                         <th class="w-1 py-3">No.</th>
                         <th class="py-3">Nama Pengguna</th>
-                        <th class="py-3">Email & Lynk.id</th>
+                        <th class="py-3">Email & No. Telepon</th>
                         <th class="py-3">Tanggal Daftar</th>
                         <th class="text-end py-3 px-4">Aksi</th>
                     </tr>
@@ -56,7 +56,7 @@
                             <div class="d-flex flex-column">
                                 <span class="fw-bold">{{ $user->email }}</span>
                                 <span class="text-muted small">
-                                    Lynk.id: <strong class="text-primary">{{ $user->lynk_id ?? '-' }}</strong>
+                                    No. Telepon: <strong class="text-primary">{{ $user->phone ?? '-' }}</strong>
                                 </span>
                             </div>
                         </td>

@@ -8,40 +8,42 @@
             <form action="{{ route('register') }}" method="POST" autocomplete="off" novalidate>
                 @csrf
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Nama Lengkap</label>
+                    <label class="form-label fw-bold">Nama Lengkap (Sesuai Lynk.id)</label>
                     <div class="input-icon">
                         <span class="input-icon-addon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="7" r="4" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /></svg>
                         </span>
-                        <input type="text" name="name" class="form-control border-2 @error('name') is-invalid @enderror" placeholder="Nama Anda" value="{{ old('name') }}" required autofocus style="border-radius: 10px;">
+                        <input type="text" name="name" class="form-control border-2 @error('name') is-invalid @enderror" placeholder="Nama sesuai akun Lynk.id" value="{{ old('name') }}" required autofocus style="border-radius: 10px;">
                     </div>
+                    <div class="form-text small text-muted">Gunakan nama yang sama dengan akun Lynk.id Anda.</div>
                     @error('name')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Username Lynk.id (Untuk Verifikasi)</label>
+                    <label class="form-label fw-bold">No. Telepon (Sesuai Lynk.id)</label>
                     <div class="input-icon">
                         <span class="input-icon-addon">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" /><path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" /></svg>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-phone" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 4h4l2 5l-2.5 1.5a11 11 0 0 0 5 5l1.5 -2.5l5 2v4a2 2 0 0 1 -2 2a16 16 0 0 1 -15 -15a2 2 0 0 1 2 -2" /></svg>
                         </span>
-                        <input type="text" name="lynk_id" class="form-control border-2 @error('lynk_id') is-invalid @enderror" placeholder="Username Lynk.id Pembelian" value="{{ old('lynk_id') }}" required style="border-radius: 10px;">
+                        <input type="tel" name="phone" id="phone" class="form-control border-2 @error('phone') is-invalid @enderror" placeholder="08xxxxxxxxxx" value="{{ old('phone') }}" required pattern="[0-9+]*" inputmode="numeric" style="border-radius: 10px;" oninput="this.value = this.value.replace(/[^0-9+]/g, '')">
                     </div>
-                    <div class="form-text small text-muted">Isi dengan username Lynk.id yang Anda gunakan saat membeli akses Premium. Admin akan mencocokkan data ini.</div>
-                    @error('lynk_id')
+                    <div class="form-text small text-muted">Gunakan nomor telepon yang sama dengan akun Lynk.id Anda (contoh: 081234567890).</div>
+                    @error('phone')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Alamat Email</label>
+                    <label class="form-label fw-bold">Email (Sesuai Lynk.id)</label>
                     <div class="input-icon">
                         <span class="input-icon-addon">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="5" width="18" height="14" rx="2" /><polyline points="3 7 12 13 21 7" /></svg>
                         </span>
-                        <input type="email" name="email" class="form-control border-2 @error('email') is-invalid @enderror" placeholder="email@contoh.com" value="{{ old('email') }}" required style="border-radius: 10px;">
+                        <input type="email" name="email" class="form-control border-2 @error('email') is-invalid @enderror" placeholder="Email sesuai akun Lynk.id" value="{{ old('email') }}" required style="border-radius: 10px;">
                     </div>
+                    <div class="form-text small text-muted">Gunakan email yang sama dengan akun Lynk.id Anda.</div>
                     @error('email')
                     <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
