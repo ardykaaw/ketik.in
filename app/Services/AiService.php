@@ -37,28 +37,66 @@ class AiService
                 $client = Gemini::client($apiKey);
                 
                 $result = $client->generativeModel($model)->generateContent($prompt);
-                return $result->text(); // Success! Return immediately.
+                
+                // Robust response extraction
+                // Check if response has candidates
+                if (!isset($result->candidates) || empty($result->candidates)) {
+                    throw new \Exception('AI tidak memberikan respons. Coba lagi atau ubah permintaan Anda.');
+                }
+
+                $candidate = $result->candidates[0];
+
+                // Check finish reason
+                if (isset($candidate->finishReason)) {
+                    $finishReason = $candidate->finishReason;
+                    
+                    if ($finishReason === 'SAFETY') {
+                        throw new \Exception('Konten diblokir oleh filter keamanan AI. Coba ubah topik atau kata-kata Anda agar lebih netral.');
+                    }
+                    
+                    if ($finishReason === 'RECITATION') {
+                        throw new \Exception('Konten terlalu mirip dengan materi berhak cipta. Coba ubah permintaan Anda dengan kata-kata berbeda.');
+                    }
+                    
+                    if ($finishReason === 'MAX_TOKENS') {
+                        throw new \Exception('Respons terlalu panjang dan terpotong. Coba permintaan yang lebih spesifik atau singkat.');
+                    }
+                }
+
+                // Extract text from parts
+                if (!isset($candidate->content->parts) || empty($candidate->content->parts)) {
+                    throw new \Exception('AI memberikan respons kosong. Coba lagi atau ubah permintaan Anda.');
+                }
+
+                // Get text from first part
+                $text = $candidate->content->parts[0]->text ?? null;
+                
+                if (empty($text)) {
+                    throw new \Exception('AI memberikan respons kosong. Coba lagi atau ubah permintaan Anda.');
+                }
+
+                return $text; // Success! Return immediately.
 
             } catch (\Exception $e) {
                 // Log the error for this specific key but don't fail yet
                 \Log::warning("Gemini Key Rotation Error: " . $e->getMessage());
                 $errors[] = $e->getMessage();
 
-                // If it's NOT a quota error, maybe we shouldn't retry? 
-                // But for robustness, let's try another key anyway unless it's a prompt safety issue (which would likely be rejected by all).
-                // However, "Quota exceeded" is the main target here.
-                if (str_contains($e->getMessage(), 'Safety') || str_contains($e->getMessage(), 'blocked')) {
-                     // If blocked by safety, changing keys won't help. Stop.
-                     throw new \Exception('Konten diblokir oleh filter keamanan AI. Coba ubah topik atau kata-kata Anda.');
+                // If it's a user-facing error (our custom messages), don't retry with other keys
+                if (str_contains($e->getMessage(), 'diblokir') || 
+                    str_contains($e->getMessage(), 'berhak cipta') ||
+                    str_contains($e->getMessage(), 'terpotong') ||
+                    str_contains($e->getMessage(), 'respons kosong')) {
+                    throw $e; // Re-throw immediately
                 }
                 
-                continue; // Try next key
+                continue; // Try next key for quota/network errors
             }
         }
 
         // If we reach here, ALL keys failed.
         \Log::error('All Gemini Keys Failed. Errors: ' . implode(', ', $errors));
-        throw new \Exception('Semua akun AI sedang sibuk (Limit Tercapai). Mohon tunggu beberapa saat lagi.');
+        throw new \Exception('Sistem AI sedang sibuk. Mohon tunggu beberapa saat dan coba lagi.');
     }
 
     /**
