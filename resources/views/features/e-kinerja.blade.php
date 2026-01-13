@@ -110,7 +110,7 @@
                                                 <textarea name="rhk_atasan[]" class="form-control border-2 bg-white" rows="2" placeholder="Tugas besar atasan yang Anda dukung..." style="border-radius: 10px;" required></textarea>
                                             </div>
                                             <div class="col-md-9">
-                                                <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) Anda</label>
+                                                <label class="form-label fw-semibold">Tugas Pokok dan Fungsi (Tupoksi) Anda</label>
                                                 <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" maxlength="5000" placeholder="Tugas spesifik Anda..." style="border-radius: 10px;" required></textarea>
                                             </div>
                                             <div class="col-md-3">
