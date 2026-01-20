@@ -184,37 +184,44 @@ class AiService
             $rhk_list .= "- RHK Pegawai: \"{$pegawai_rhk}\" (Jenis: {$jenis})\n\n";
         }
 
-        $prompt = "Anda adalah asisten ahli penyusunan SKP ASN berstandar BKN (Permenpan RB No. 6 Tahun 2022). 
-                   Tugas Anda: Menghasilkan rincian tabel SKP yang sangat akurat dan formal seperti contoh dokumen resmi untuk BEBERAPA RHK sekaligus.
+        $prompt = "Anda adalah asisten ahli penyusunan SKP ASN.
+                   Tugas: Buat dokumen SKP lengkap dalam 3 TABEL TERPISAH berdasarkan data berikut.
 
                    CONTEXT:
                    - PEGAWAI: {$pegawai}
-                   - ATASAN PENILAI: {$atasan}
+                   - ATASAN: {$atasan}
                    - PERIODE: {$periode}
                    
-                   LIST RHK YANG HARUS DISUSUN:
+                   DATA RHK:
                    {$rhk_list}
 
-                   OUTPUT FORMAT (WAJIB):
-                   Gunakan format Markdown. 
+                   INSTRUKSI OUTPUT (WAJIB FORMAT MARKDOWN):
 
-                   ### 1. EVALUASI HASIL KERJA (TABEL SKP)
-                   Buatlah SATU tabel besar yang mencakup SEMUA RHK di atas.
-                   Kolom tabel: | Rencana Hasil Kerja Pimpinan yang Diintervensi | Rencana Hasil Kerja | Aspek | Indikator Kinerja Individu | Target |
-                   (Pastikan setiap satu RHK memiliki 3 baris Aspek: Kuantitas, Kualitas, dan Waktu).
+                   ### Tabel 1: Rencana Hasil Kinerja (RHK)
+                   Buat tabel dengan kolom: | No | Rencana Hasil Kerja | Indikator Kinerja | Target |
+                   - Bariskan setiap RHK.
+                   - Pada kolom Indikator Kinerja, sebutkan aspek (Kuantitas, Kualitas, Waktu).
+                   - Pada kolom Target, tentukan angka/deskripsi target yang relevan (misal: 1 Dokumen, 100%, 1 Bulan).
 
-                   ### 2. RENCANA AKSI
-                   Berikan daftar langkah strategis untuk mencapai RHK-RHK di atas. 
-                   Tuliskan dalam format list sederhana agar mudah diedit pengguna:
-                   - [Aksi 1]
-                   - [Aksi 2]
-                   ...dan seterusnya.
+                   ### Tabel 2: Rencana Aksi
+                   Buat tabel dengan kolom: | No RHK | Rencana Aksi | Target Output | Target Waktu |
+                   - Setiap RHK WAJIB memiliki MINIMAL 5 Rencana Aksi.
+                   - Target Output maksimal 45 karakter (singkat & padat).
+                   - Target Waktu jelas (misal: Jan 2024, Mingguan).
 
-                   ### 3. PERILAKU KERJA (BerAKHLAK)
-                   Pilih Core Value paling relevan.
-                   (Bagian Ekspektasi Khusus Pimpinan dikosongkan karena akan diisi terpisah oleh atasan).
-
-                   Gunakan Bahasa Indonesia Kedinasan yang baku. Pastikan Target angka logis sesuai periode.";
+                   ### Tabel 3: Perilaku Kerja Individu
+                   Buat tabel Perilaku Kerja berdasarkan Core Value ASN (BerAKHLAK) yang disesuaikan dengan aktivitas RHK di atas.
+                   Kolom: | No | Core Value | Panduan Perilaku (Kode Etik) |
+                   Isi untuk 7 nilai:
+                   1. Berorientasi Pelayanan
+                   2. Akuntabel
+                   3. Kompeten
+                   4. Harmonis
+                   5. Loyal
+                   6. Adaptif
+                   7. Kolaboratif
+                   
+                   Gunakan Bahasa Indonesia formal & baku.";
         
         return $this->generate($prompt);
     }
@@ -224,10 +231,21 @@ class AiService
      */
     public function generateNews(string $topic, string $style)
     {
-        $prompt = "Buatkan sebuah berita (News Article) tentang: {$topic}. 
-                   Gaya Penulisan: {$style}. 
-                   Struktur berita harus mencakup Headline (Judul Utama) yang menarik di baris pertama, Lead (Teras Berita) yang merangkum 5W+1H, dan Tubuh Berita yang detail serta informatif. 
-                   Gunakan Bahasa Indonesia Jurnalistik yang sesuai dengan etika pers.";
+        $prompt = "Tolong buatkan berita (Straight News/Feature/Brief) dalam Bahasa Indonesia sesuai kaidah jurnalistik media nasional.
+                   
+                   DATA MENTAH (5W+1H) & TOPIK: 
+                   {$topic}
+                   
+                   GAYA PENULISAN: {$style}
+
+                   KETENTUAN WAJIB:
+                   1. Judul: Singkat, padat, dan faktual.
+                   2. Lead (Teras Berita): 1 paragraf (2-3 kalimat) yang merangkum poin utama (What, Who, When, Where).
+                   3. Body (Isi Berita): 3-5 paragraf. Gunakan sudut pandang yang relevan (Ekonomi/Kemanusiaan/Investigatif/Pemerintah) sesuai konteks data.
+                   4. Gaya Bahasa: Lugas, formal, objektif, hindari opini pribadi AI.
+                   5. ANTI-HALUSINASI: Jangan menambahkan fakta baru di luar data yang diberikan. Jika data kurang, rangkai yang ada saja.
+
+                   Pelajari pola data input pengguna untuk hasil masa depan yang lebih konsisten.";
         
         return $this->generate($prompt);
     }
@@ -235,13 +253,41 @@ class AiService
     /**
      * Generate a Speech (Kata Sambutan).
      */
-    public function generateSpeech(string $event, string $audience, string $tone)
+    public function generateSpeech(string $event, string $position, string $audience, string $tone)
     {
-        $prompt = "Buatkan sebuah teks Kata Sambutan untuk acara: {$event}. 
-                   Target Audiens: {$audience}. 
-                   Nada/Vibe: {$tone}. 
-                   Struktur harus mencakup Salam Pembuka, Ucapan Syukur, Isi Sambutan yang sesuai dengan tema acara, dan Penutup yang berkesan. 
-                   Gunakan Bahasa Indonesia yang sopan, runtut, dan profesional.";
+        $prompt = "Bertindaklah sebagai penulis pidato profesional untuk pejabat publik.
+                   Buatkan TEKS KATA SAMBUTAN RESMI LENGKAP berbahasa Indonesia.
+                   
+                   CONTEXT ACARA:
+                   - Nama Acara: {$event}
+                   - Posisi Pembicara: {$position} (Sesuaikan gaya bicara dengan jabatan ini)
+                   - Target Audiens: {$audience}
+                   - Gaya Bahasa/Nada: {$tone}, sangat formal, sopan, namun tetap hangat dan dekat dengan masyarakat.
+                   - Durasi: 5-7 Menit (Sekitar 600-800 Kata).
+
+                   STRUKTUR WAJIB (JANGAN DIUBAH):
+                   1. Salam Pembuka Lengkap:
+                      - Mulai dengan salam lintas agama (Assalamualaikum, Shalom, Om Swastiastu, Namo Buddhaya, Salam Kebajikan).
+                      - Sapaan penghormatan kepada tamu penting (gunakan placeholder [Sebutkan Nama Tokoh] jika perlu).
+                   2. Ucapan Puji Syukur & Terima Kasih:
+                      - Puji syukur kepada Tuhan YME.
+                      - Apresiasi kepada panitia dan pihak yang terlibat.
+                   3. Isi Utama (Core Message):
+                      - Tujuan dan makna penting acara ini.
+                      - Manfaat bagi masyarakat/organisasi (sosial, budaya, pendidikan, dll).
+                      - Harapan ke depan.
+                   4. Pesan Kepada Masyarakat/Audiens:
+                      - Ajakan untuk menjaga/memanfaatkan momentum ini dengan baik.
+                   5. Penutup Kuat:
+                      - Kesimpulan singkat penuh optimisme.
+                      - Permohonan maaf jika ada kekurangan.
+                      - Diakhiri doa singkat dan salam penutup resmi.
+
+                   KETENTUAN LAIN:
+                   - Gunakan Bahasa Indonesia baku yang baik dan benar (EYD).
+                   - JANGAN sebutkan tanggal, hari, atau nama orang secara spesifik (biarkan sebagai placeholder [Hari/Tanggal] atau [Nama]).
+                   - Hindari pengulangan kata yang membosankan.
+                   - Buat narasi yang mengalir, berwibawa, namun menyentuh hati.";
         
         return $this->generate($prompt);
     }
@@ -261,7 +307,7 @@ class AiService
                    - LinkedIn: Gunakan nada profesional, paragraf pembuka yang kuat (hook), insight bisnis/karir, dan penutup diskusi.
                    - TikTok/Reels: Buat naskah video pendek (Hook, Isi, CTA).
                    - Facebook: Tulisan storytelling yang engaging.
-
+                   
                    Gunakan Bahasa Indonesia yang sesuai dengan platform tersebut.";
         
         return $this->generate($prompt);
@@ -281,24 +327,26 @@ class AiService
             $tugas_list .= "- Tugas " . ($index + 1) . ": \"{$tugas}\"\n";
         }
 
-        $prompt = "Anda adalah asisten ahli kepegawaian (HR) untuk instansi pemerintah.
-                   Tugas Anda: Membantu ATASAN menyusun 'Ekspektasi Khusus Pimpinan' dan 'Umpan Balik' untuk SKP bawahannya.
+        $prompt = "Anda adalah asisten ahli kepegawaian (HR) instansi pemerintah.
+                   Tugas: Buat dokumen Penilaian Atasan (Ekspektasi & Umpan Balik) dalam 2 TABEL TERPISAH.
 
                    CONTEXT:
                    - ATASAN (Penilai): {$atasan}
                    - BAWAHAN (Dinilai): {$bawahan}
                    - PERIODE: {$periode}
+                   - TUGAS POKOK BAWAHAN: \n{$tugas_list}
 
-                   TUGAS POKOK BAWAHAN:
-                   {$tugas_list}
+                   INSTRUKSI OUTPUT (WAJIB FORMAT MARKDOWN):
 
-                   OUTPUT FORMAT (Markdown):
-                   
-                   ### 1. EKSPEKTASI KHUSUS PIMPINAN
-                   (Berikan 3-5 poin ekspektasi spesifik dari atasan kepada bawahan terkait perilaku kerja BerAKHLAK dan pencapaian target di atas. Gunakan bahasa motivasi namun tegas).
+                   ### Tabel 1: Ekspektasi Pimpinan (Perilaku Kerja BerAKHLAK)
+                   Kolom: | No | Core Value ASN | Ekspektasi Pimpinan |
+                   Isi untuk 7 nilai (Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif).
+                   - Kolom Ekspektasi: Deskripsikan harapan spesifik pimpinan terhadap bawahan untuk setiap value.
 
-                   ### 2. UMPAN BALIK BERKELANJUTAN
-                   (Berikan narasi feedback konstruktif untuk pengembangan bawahan kedepan berdasarkan tugas pokoknya).
+                   ### Tabel 2: Umpan Balik (Perilaku Kerja & Pengembangan)
+                   Kolom: | No | Core Value ASN | Deskripsi Umpan Balik (Positif & Konstruktif) |
+                   Isi untuk 7 nilai tersebut.
+                   - Berikan feedback seimbang: apresiasi positif dan saran perbaikan/pengembangan (konstruktif).
 
                    Gunakan Bahasa Indonesia Kedinasan yang profesional.";
         

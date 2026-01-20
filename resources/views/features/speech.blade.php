@@ -32,6 +32,13 @@
                                         style="border-radius: 12px;" value="{{ old('event') }}">
                                 </div>
 
+                                <div class="col-12">
+                                    <label class="form-label fs-4 fw-bold mb-2 text-dark">Posisi Pembicara</label>
+                                    <input type="text" name="position" class="form-control form-control-lg border-2" 
+                                        placeholder="Contoh: Bupati, Ketua Panitia, Kepala Desa..." maxlength="255" 
+                                        style="border-radius: 12px;" value="{{ old('position') }}">
+                                </div>
+
                                 <div class="col-md-12">
                                     <label class="form-label fs-4 fw-bold mb-2 text-dark">Target Audiens</label>
                                     <input type="text" name="audience" class="form-control form-control-lg border-2" 

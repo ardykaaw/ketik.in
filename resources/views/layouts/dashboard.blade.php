@@ -434,31 +434,127 @@
     </script>
     @stack('scripts')
     <!-- Global Loading Script for AI Generation -->
+    <!-- Global Loading Script for AI Generation -->
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        // Intercept all forms that generate AI content
+        // --- SMART AUTO-SAVE SYSTEM ---
         const forms = document.querySelectorAll('form');
-        
+        const STORAGE_PREFIX = 'ketik_draft_';
+
+        forms.forEach(form => {
+            // Unique ID for this form based on action URL
+            const formId = STORAGE_PREFIX + btoa(form.action).slice(0, 16);
+            
+            // 1. Restore Logic
+            const restoreData = () => {
+                const draft = localStorage.getItem(formId);
+                if (draft) {
+                    try {
+                        const data = JSON.parse(draft);
+                        let restoredCount = 0;
+                        
+                        Object.keys(data).forEach(name => {
+                            const input = form.querySelector(`[name="${name}"]`);
+                            if (input && !input.value) { // Only restore if empty (don't overwrite server-side old input)
+                                input.value = data[name];
+                                restoredCount++;
+                            }
+                        });
+
+                        if (restoredCount > 0) {
+                             // Show small toast
+                             const toast = document.createElement('div');
+                             toast.className = 'position-fixed bottom-0 end-0 p-3';
+                             toast.style.zIndex = '1100';
+                             toast.innerHTML = `
+                                <div class="toast show align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                                    <div class="d-flex">
+                                        <div class="toast-body">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-floppy me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 4h10l4 4v10a2 2 0 0 1 -2 2h-12a2 2 0 0 1-2-2v-12a2 2 0 0 1 2-2" /><path d="M12 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" /><path d="M14 4l0 4" /></svg>
+                                            Draf tulisan Anda dipulihkan otomatis.
+                                        </div>
+                                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                    </div>
+                                </div>
+                             `;
+                             document.body.appendChild(toast);
+                             setTimeout(() => toast.remove(), 4000);
+                        }
+                    } catch (e) {
+                        console.error('Failed to restore draft', e);
+                    }
+                }
+            };
+
+            // Call restore immediately
+            restoreData();
+
+            // 2. Save Logic (Debounced)
+            let saveTimeout;
+            const saveDraft = () => {
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                     // Skip csrf token and passwords
+                     if (key !== '_token' && key !== 'password' && typeof value === 'string') {
+                         data[key] = value;
+                     }
+                });
+                localStorage.setItem(formId, JSON.stringify(data));
+                
+                // Visual Indicator 'Disimpan...'
+                showSavingIndicator();
+            };
+
+            const showSavingIndicator = () => {
+                let indicator = document.getElementById('save-indicator');
+                if (!indicator) {
+                    indicator = document.createElement('div');
+                    indicator.id = 'save-indicator';
+                    indicator.className = 'text-muted small position-fixed bottom-0 start-0 p-3';
+                    indicator.style.zIndex = '1000';
+                    indicator.style.transition = 'opacity 0.5s';
+                    document.body.appendChild(indicator);
+                }
+                indicator.innerHTML = '<span class="status-dot status-dot-animated bg-green me-2"></span>Menyimpan draf otomatis...';
+                indicator.style.opacity = '1';
+                
+                setTimeout(() => {
+                    indicator.style.opacity = '0';
+                }, 2000);
+            };
+
+            form.addEventListener('input', () => {
+                clearTimeout(saveTimeout);
+                saveTimeout = setTimeout(saveDraft, 1000); // Save 1s after typing stops
+            });
+
+            // 3. Clear Logic on Success
+            // If the user submits, we don't clear immediately because it might fail.
+            // We only clear if likely successful or specifically requested. 
+            // Actually, keeping the draft until manually cleared or successfully redirected is safer.
+            // For now, let's keep it. If they come back, it restores. If they change it, it updates.
+        });
+
+
+        // --- FORM SUBMISSION & SMART TIMEOUT ---
         forms.forEach(form => {
           form.addEventListener('submit', function(e) {
-            // Check if form is valid before showing alert
             if (this.checkValidity()) {
               const submitBtn = this.querySelector('button[type="submit"]');
               
-              // Prevent double click
               if (submitBtn) {
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status"></span>Memproses...';
               }
 
-              // Check Dark Mode
               const isDarkMode = document.body.classList.contains('theme-dark');
 
-              // Show SweetAlert Loading
-              Swal.fire({
+              // Initial Loading Alert
+              let popup = Swal.fire({
                 title: 'Sedang Berpikir...',
                 text: 'AI sedang menyusun tulisan terbaik untuk Anda. Mohon tunggu sebentar.',
-                icon: 'info', // Use standard icon instead of broken image
+                icon: 'info',
                 background: isDarkMode ? '#1e293b' : '#ffffff',
                 color: isDarkMode ? '#ffffff' : '#000000',
                 showConfirmButton: false,
@@ -467,6 +563,42 @@
                   Swal.showLoading();
                 }
               });
+
+              // Smart Timeout Logic (60 Seconds)
+              setTimeout(() => {
+                  Swal.update({
+                      title: 'Sedang Bekerja Keras...',
+                      text: 'Permintaan ini butuh waktu lebih lama karena AI sedang menyusun tabel/konten yang detail. Mohon jangan tutup halaman ini.',
+                      icon: 'warning',
+                      showConfirmButton: false
+                  });
+              }, 60000); // 1 minute warning
+
+              // Extended Timeout Logic (90 Seconds) - Reassure Safety
+              setTimeout(() => {
+                  Swal.update({
+                      title: 'Koneksi Lambat?',
+                      html: `
+                        Waktu proses hampir habis. Jika halaman ini macet:
+                        <br><br>
+                        <strong>Jangan khawatir!</strong> Data yang Anda ketik sudah tersimpan otomatis.
+                        <br>
+                        Anda aman untuk me-refresh halaman jika perlu.
+                      `,
+                      icon: 'question',
+                      showConfirmButton: true,
+                      confirmButtonText: 'Saya Mengerti, Tunggu Sebentar Lagi',
+                      showCancelButton: true, 
+                      cancelButtonText: 'Refresh Halaman',
+                      cancelButtonColor: '#d63939'
+                  }).then((result) => {
+                      if (result.dismiss === Swal.DismissReason.cancel) {
+                          location.reload();
+                      } else {
+                          Swal.showLoading(); // Resume spinning if they choose to wait
+                      }
+                  });
+              }, 120000); // 2 minutes critical warning
             }
           });
         });

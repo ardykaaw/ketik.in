@@ -339,6 +339,7 @@ class FeatureController extends Controller
     {
         $this->validateRequest($request, [
             'event' => 'required|string|max:5000',
+            'position' => 'required|string|max:255',
             'audience' => 'required|string',
             'tone' => 'required|string',
         ]);
@@ -346,6 +347,7 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateSpeech(
                 $request->event,
+                $request->position,
                 $request->audience,
                 $request->tone
             );
@@ -355,8 +357,8 @@ class FeatureController extends Controller
                 'type' => 'speech',
                 'title' => 'Sambutan: ' . \Str::words($request->event, 5, '...'),
                 'content' => $generatedText,
-                'prompt' => "Acara: " . $request->event . "\n\nAudiens: " . $request->audience,
-                'parameters' => $request->only(['event', 'audience', 'tone']),
+                'prompt' => "Acara: " . $request->event . "\nPosisi: " . $request->position . "\nAudiens: " . $request->audience,
+                'parameters' => $request->only(['event', 'position', 'audience', 'tone']),
             ]);
 
             return redirect()->route('library.show', $content)->with('success', 'Kata sambutan berhasil dibuat!');
