@@ -114,8 +114,15 @@ class AdminController extends Controller
             ->where('role', '!=', 'admin')
             ->latest()
             ->paginate(15);
+
+        // Users who are ACTIVE but email NOT sent (Failed)
+        $failedEmailUsers = User::where('is_active', true)
+            ->whereNull('activation_email_sent_at')
+            ->where('role', '!=', 'admin')
+            ->latest()
+            ->get();
             
-        return view('admin.verifications.index', compact('pendingUsers'));
+        return view('admin.verifications.index', compact('pendingUsers', 'failedEmailUsers'));
     }
 
     public function approveUser(User $user)
@@ -125,12 +132,29 @@ class AdminController extends Controller
         // Send Email Notification
         try {
             \Illuminate\Support\Facades\Mail::to($user)->send(new \App\Mail\AccountActivated($user));
+            // Update tracking timestamp on success
+            $user->update(['activation_email_sent_at' => now()]);
         } catch (\Exception $e) {
-            // Log error but don't stop the flow
             \Illuminate\Support\Facades\Log::error('Failed to send activation email: ' . $e->getMessage());
-            return back()->with('success', "Akun {$user->name} berhasil diaktifkan, namun gagal mengirim email notifikasi.");
+            return back()->with('success', "Akun {$user->name} berhasil diaktifkan, namun GAGAL mengirim email. Silakan coba 'Kirim Ulang'.");
         }
 
         return back()->with('success', "Akun {$user->name} berhasil diverifikasi dan email notifikasi telah dikirim.");
+    }
+
+    public function resendActivationEmail(User $user)
+    {
+        if (!$user->is_active) {
+            return back()->with('error', 'User belum aktif. Silakan verifikasi terlebih dahulu.');
+        }
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($user)->send(new \App\Mail\AccountActivated($user));
+            $user->update(['activation_email_sent_at' => now()]);
+            return back()->with('success', "Email aktivasi berhasil dikirim ulang ke {$user->email}.");
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to resend activation email: ' . $e->getMessage());
+            return back()->with('error', "Gagal mengirim ulang email: " . $e->getMessage());
+        }
     }
 }

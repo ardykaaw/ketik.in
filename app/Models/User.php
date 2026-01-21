@@ -28,6 +28,7 @@ class User extends Authenticatable
         'role',
         'premium_until',
         'plan_name',
+        'activation_email_sent_at',
     ];
 
     protected static function booted()
