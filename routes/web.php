@@ -14,6 +14,15 @@ Route::get('/', function () {
     return redirect()->route('login');
 });
 
+// Testing Route for Email Preview
+Route::get('/email-preview', function () {
+    $user = new \App\Models\User([
+        'name' => 'Budi Santoso',
+        'email' => 'budi@example.com'
+    ]);
+    return new \App\Mail\AccountActivated($user);
+});
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 

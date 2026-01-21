@@ -121,6 +121,16 @@ class AdminController extends Controller
     public function approveUser(User $user)
     {
         $user->update(['is_active' => true]);
-        return back()->with('success', "Akun {$user->name} berhasil diverifikasi dan diaktifkan.");
+
+        // Send Email Notification
+        try {
+            \Illuminate\Support\Facades\Mail::to($user)->send(new \App\Mail\AccountActivated($user));
+        } catch (\Exception $e) {
+            // Log error but don't stop the flow
+            \Illuminate\Support\Facades\Log::error('Failed to send activation email: ' . $e->getMessage());
+            return back()->with('success', "Akun {$user->name} berhasil diaktifkan, namun gagal mengirim email notifikasi.");
+        }
+
+        return back()->with('success', "Akun {$user->name} berhasil diverifikasi dan email notifikasi telah dikirim.");
     }
 }
