@@ -30,6 +30,55 @@
             </div>
         </div>
 
+        <!-- IOS Install Banner (Hidden by default, shown via JS detection) -->
+        <div id="ios-install-card" class="card card-active mb-5 d-none" style="background: linear-gradient(135deg, #1e293b 0%, #334155 100%); border: none; border-radius: 20px;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <span class="bg-white text-dark avatar avatar-lg rounded-circle me-3 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-apple" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7c-3 0 -4 3 -4 5.5c0 3 2 7.5 4 7.5c1.088 -.046 1.679 -.5 3 -.5c1.312 0 1.5 .5 3 .5s4 -3 4 -5c-.028 -.01 -2.472 -.403 -2.5 -3c-.019 -2.17 2.416 -2.954 2.5 -3c-1.023 -1.492 -2.951 -1.963 -3.5 -2c-1.433 -.111 -2.83 1 -3.5 1c-.68 0 -1.9 -1 -3 -1z" /><path d="M12 4a2 2 0 0 0 2 -2a2 2 0 0 0 -2 2" /></svg>
+                            </span>
+                            <div>
+                                <h3 class="card-title text-white fw-bold mb-1">Install di iPhone/iPad</h3>
+                                <div class="text-white-50">Aplikasi ini bisa diinstall di iOS. Klik tombol <strong>Share</strong> di browser lalu pilih <strong>'Add to Home Screen'</strong>.</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button class="btn btn-light btn-pill fw-bold px-4 py-2 shadow-sm" disabled style="opacity: 0.8">
+                            Lihat Menu Share <svg xmlns="http://www.w3.org/2000/svg" class="icon ms-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 12m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M18 6m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M18 18m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" /><path d="M8.7 10.7l6.6 -3.4" /><path d="M8.7 13.3l6.6 3.4" /></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PWA Install Banner (Hidden by default) -->
+        <div id="pwa-dashboard-install-card" class="card card-active mb-5 d-none" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; border-radius: 20px;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <span class="bg-white text-primary avatar avatar-lg rounded-circle me-3 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-mobile-message" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 3m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M11 4h2" /><path d="M12 17v.01" /><path d="M18 14a3 3 0 0 1 -3 3" /><path d="M9 14a3 3 0 0 0 3 3" /></svg>
+                            </span>
+                            <div>
+                                <h3 class="card-title text-white fw-bold mb-1">Install Aplikasi Ketik.in</h3>
+                                <div class="text-white-50">Pasang aplikasi di perangkat Anda untuk akses lebih cepat, ringan, dan bisa digunakan saat offline!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button id="pwa-dashboard-install-btn" class="btn btn-light btn-pill fw-bold px-4 py-2 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                            Install Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Stats Cards -->
         <div class="row row-cards mb-6">
             <div class="col-sm-6 col-lg-3">

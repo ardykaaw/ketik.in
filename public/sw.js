@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ketikin-v1';
+const CACHE_NAME = 'ketikin-v2-unique'; // Updated to avoid conflict
 const ASSETS_TO_CACHE = [
     '/offline',
     '/css/tabler.min.css',
@@ -8,6 +8,7 @@ const ASSETS_TO_CACHE = [
 ];
 
 self.addEventListener('install', (event) => {
+    self.skipWaiting(); // FORCE activate immediately
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then((cache) => {
@@ -58,6 +59,6 @@ self.addEventListener('activate', (event) => {
                     }
                 })
             );
-        })
+        }).then(() => self.clients.claim()) // Take control of all pages immediately
     );
 });

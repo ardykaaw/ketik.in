@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>{{ config('app.name', 'Ketik.in') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}?v=3">
     <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <!-- CSS files -->
@@ -452,6 +452,66 @@
         const forms = document.querySelectorAll('form');
         const STORAGE_PREFIX = 'ketik_draft_';
 
+      let deferredPrompt;
+      const installContainer = document.getElementById('pwa-install-container');      // Sidebar Container
+      const installBtn = document.getElementById('pwa-install-btn');                  // Sidebar Button
+      
+      const dashboardInstallCard = document.getElementById('pwa-dashboard-install-card'); // Dashboard Main Card
+      const dashboardInstallBtn = document.getElementById('pwa-dashboard-install-btn');   // Dashboard Main Button
+      
+      const iosInstallCard = document.getElementById('ios-install-card'); // IOS Card
+
+      // 1. IOS DETECTION LOGIC
+      const isIos = () => {
+        const userAgent = window.navigator.userAgent.toLowerCase();
+        return /iphone|ipad|ipod/.test(userAgent);
+      }
+      // Check if already in standalone mode (PWA installed)
+      const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+      if (isIos() && !isInStandaloneMode()) {
+          // Show IOS Specific Instructions
+          if(iosInstallCard) iosInstallCard.classList.remove('d-none');
+      }
+
+      // 2. ANDROID / CHROME INSTALL LOGIC
+      window.addEventListener('beforeinstallprompt', (e) => {
+          // Prevent Chrome 67 and earlier from automatically showing the prompt
+          e.preventDefault();
+          // Stash the event so it can be triggered later.
+          deferredPrompt = e;
+          
+          // Show Sidebar Button
+          if(installContainer) installContainer.classList.remove('d-none');
+          
+          // Show Dashboard Card (if exists on this page)
+          if(dashboardInstallCard) dashboardInstallCard.classList.remove('d-none');
+          // If Android prompt is available, hide IOS card just in case (e.g. false positive or mixed environment?)
+          if(iosInstallCard) iosInstallCard.classList.add('d-none');
+
+          // Helper function to trigger prompt
+          const triggerInstall = () => {
+              // Hide UI
+              if(installContainer) installContainer.classList.add('d-none');
+              if(dashboardInstallCard) dashboardInstallCard.classList.add('d-none');
+              
+              // Show prompt
+              deferredPrompt.prompt();
+              
+              deferredPrompt.userChoice.then((choiceResult) => {
+                  if (choiceResult.outcome === 'accepted') {
+                      console.log('User accepted the A2HS prompt');
+                  } else {
+                      console.log('User dismissed the A2HS prompt');
+                  }
+                  deferredPrompt = null;
+              });
+          };
+
+          // Attach listeners
+          if(installBtn) installBtn.addEventListener('click', triggerInstall);
+          if(dashboardInstallBtn) dashboardInstallBtn.addEventListener('click', triggerInstall);
+      });
         forms.forEach(form => {
             // Unique ID for this form based on action URL
             const formId = STORAGE_PREFIX + btoa(form.action).slice(0, 16);
