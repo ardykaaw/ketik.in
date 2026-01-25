@@ -233,6 +233,8 @@
                     attachmentsHtml += '</div></div>';
                 }
                 
+                // CONDITIONAL LOGIC: Only add upload button for E-Kinerja types
+                @if(in_array($content->type, ['e-kinerja', 'e-kinerja-atasan']))
                 li.innerHTML = `
                     <div class="d-flex align-items-start justify-content-between group-hover-action">
                         <div class="flex-grow-1 list-content">
@@ -252,6 +254,25 @@
                         </div>
                     </div>
                 `;
+                @else
+                // For other types, just preserve the HTML and handle edits if needed (or minimal actions)
+                // Currently just keeping it simple: no extra buttons unless needed.
+                // But wait, what if they want to edit text? 
+                // Let's keep Edit button but REMOVE Upload button for non-E-Kinerja
+                
+                li.innerHTML = `
+                    <div class="d-flex align-items-start justify-content-between group-hover-action">
+                        <div class="flex-grow-1 list-content">
+                            ${originalHtml}
+                        </div>
+                        <div class="actions ms-2 d-flex gap-1" style="opacity: 0; transition: opacity 0.2s;">
+                            <button onclick="editItem(this)" class="btn btn-sm btn-ghost-primary p-1 border-0" title="Edit">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
+                            </button>
+                        </div>
+                    </div>
+                `;
+                @endif
                 
                 li.addEventListener('mouseenter', () => {
                     li.querySelector('.actions').style.opacity = '1';

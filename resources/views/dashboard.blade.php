@@ -5,6 +5,31 @@
             <p class="text-secondary fs-3">Akumulasi data penggunaan fitur Ketik.in Anda</p>
         </div>
 
+        <!-- PWA Install Banner (Hidden by default) -->
+        <div id="pwa-dashboard-install-card" class="card card-active mb-5 d-none" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); border: none; border-radius: 20px;">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <div class="d-flex align-items-center mb-3 mb-md-0">
+                            <span class="bg-white text-primary avatar avatar-lg rounded-circle me-3 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-mobile-message" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M6 3m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v14a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M11 4h2" /><path d="M12 17v.01" /><path d="M18 14a3 3 0 0 1 -3 3" /><path d="M9 14a3 3 0 0 0 3 3" /></svg>
+                            </span>
+                            <div>
+                                <h3 class="card-title text-white fw-bold mb-1">Install Aplikasi Ketik.in</h3>
+                                <div class="text-white-50">Pasang aplikasi di perangkat Anda untuk akses lebih cepat, ringan, dan bisa digunakan saat offline!</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 text-md-end">
+                        <button id="pwa-dashboard-install-btn" class="btn btn-light btn-pill fw-bold px-4 py-2 shadow-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                            Install Sekarang
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Stats Cards -->
         <div class="row row-cards mb-6">
             <div class="col-sm-6 col-lg-3">

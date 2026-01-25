@@ -395,4 +395,147 @@ class AiService
         
         return $this->generate($prompt);
     }
+
+    // --- New Features (Phase 2) ---
+
+    /**
+     * Generate Official Activity Report (Laporan Kegiatan).
+     */
+    public function generateReport(array $data)
+    {
+        $prompt = "Bertindaklah sebagai ASN/Pegawai Profesional yang ahli dalam administrasi.
+                   Buatkan LAPORAN KEGIATAN RESMI yang lengkap dan rapi.
+
+                   DATA KEGIATAN:
+                   - Nama Kegiatan: {$data['activity_name']}
+                   - Waktu: {$data['date']}
+                   - Tempat: {$data['location']}
+                   - Hasil Utama: {$data['results']}
+                   - Kendala: " . ($data['challenges'] ?? 'Tidak ada') . "
+                   - Saran/Rekomendasi: " . ($data['recommendations'] ?? '-') . "
+
+                   STRUKTUR LAPORAN (WAJIB):
+                   
+                   I. PENDAHULUAN
+                      - Latar Belakang (Buat narasi singkat mengapa kegiatan ini penting).
+                      - Maksud dan Tujuan.
+
+                   II. PELAKSANAAN KEGIATAN
+                      - Waktu dan Tempat (Gunakan data di atas).
+                      - Peserta (Asumsikan peserta yang relevan dengan nama kegiatan).
+                      - Uraian Jalannya Acara (Buat narasi kronologis singkat).
+
+                   III. HASIL KEGIATAN
+                      - Jabarkan 'Hasil Utama' menjadi poin-poin detail dan substantif.
+                      - Gunakan bahasa birokrasi yang formal dan objektif.
+
+                   IV. PERMASALAHAN DAN PEMECAHAN (Jika ada kendala)
+                      - Uraikan kendala dan solusi yang diambil/disarankan.
+
+                   V. PENUTUP DAN SARAN
+                      - Kesimpulan singkat.
+                      - Rekomendasi untuk kegiatan selanjutnya.
+
+                   Gunakan Bahasa Indonesia baku (EYD) dengan nada resmi pemerintahan.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Standard Operating Procedure (SOP).
+     */
+    public function generateSop(array $data)
+    {
+        $prompt = "Bertindaklah sebagai Ahli Tata Laksana dan Organisasi (Ortala).
+                   Buatkan Dokumen STANDAR OPERASIONAL PROSEDUR (SOP) yang detail.
+
+                   PARAMETER:
+                   - Judul SOP: {$data['title']}
+                   - Pelaksana Utama: {$data['role']}
+                   - Tujuan: {$data['objective']}
+                   - Ruang Lingkup: {$data['scope']}
+
+                   FORMAT OUTPUT (Markdown):
+                   
+                   # SOP: {$data['title']}
+                   
+                   **1. Tujuan:**
+                   (Perjelas tujuan di atas dengan kalimat formal).
+
+                   **2. Ruang Lingkup:**
+                   (Jelaskan batasan prosedur ini).
+
+                   **3. Referensi/Dasar Hukum:**
+                   - (Berikan placeholder contoh peraturan yang relevan, misal: Peraturan Menteri terkait).
+
+                   **4. Kualifikasi Pelaksana:**
+                   - (Sebutkan skill/syarat yang dibutuhkan oleh {$data['role']} untuk melakukan ini).
+
+                   **5. Peralatan dan Perlengkapan:**
+                   - (Daftar alat kerja, misal: PC, ATK, Aplikasi Khusus, dll).
+
+                   **6. Uraian Prosedur (Flowchart Naratif):**
+                   Buat langkah-langkah detail, logis, dan berurutan (1, 2, 3...) dari awal sampai akhir.
+                   - Gunakan kalimat perintah aktif (Contoh: 'Terima dokumen...', 'Verifikasi data...', 'Arsipkan...').
+                   - Pastikan ada langkah pengambilan keputusan jika diperlukan (Jika OK lanjut ke..., Jika Tidak kembalikan ke...).
+                   
+                   Gunakan gaya bahasa SOP yang tegas, jelas, dan tidak ambigu.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Official Letter (Surat Dinas).
+     */
+    public function generateLetter(array $data)
+    {
+        $prompt = "Bertindaklah sebagai Sekretaris Instansi Pemerintah yang berpengalaman dalam Tata Naskah Dinas.
+                   Buatkan Draf SURAT DINAS RESMI.
+
+                   DATA SURAT:
+                   - Jenis Surat: {$data['type']}
+                   - Penerima (Yth.): {$data['recipient']}
+                   - Pengirim/Penanda Tangan: {$data['sender']}
+                   - Perihal: {$data['subject']}
+                   - Isi Pokok: {$data['content_summary']}
+
+                   FORMAT (Sesuai Tata Naskah Dinas):
+
+                   [KOP SURAT INSTANSI]
+                   (Placeholder Alamat & Kontak)
+                   _______________________________________________________
+
+                   Nomor   : .../ABCD/.../2024
+                   Sifat   : Biasa/Penting
+                   Lampiran: -
+                   Hal     : {$data['subject']}
+
+                   Yth. {$data['recipient']}
+                   di
+                       Tempat
+
+                   Dengan hormat,
+
+                   **1. Pembuka:**
+                   (Buat kalimat pembuka standar surat dinas yang sopan, merujuk pada dasar surat jika perlu).
+
+                   **2. Isi Surat:**
+                   (Kembangkan 'Isi Pokok' menjadi narasi surat yang lengkap, jelas, dan formal. Jika berupa undangan, sertakan Hari, Tanggal, Pukul, Tempat).
+
+                   **3. Penutup:**
+                   (Kalimat penutup formal, ucapan terima kasih).
+
+                   
+                   {$data['sender']}
+                   
+                   (Tanda Tangan)
+
+                   (Nama Terang)
+                   NIP. ...........................
+
+                   
+                   Gunakan Bahasa Indonesia baku, ejaan yang disempurnakan (EYD), dan format surat dinas yang presisi.";
+
+        return $this->generate($prompt);
+    }
 }

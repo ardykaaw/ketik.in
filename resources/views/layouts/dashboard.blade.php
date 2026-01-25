@@ -6,6 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>{{ config('app.name', 'Ketik.in') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <!-- CSS files -->
     <link href="{{ asset('css/tabler.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/tabler-flags.min.css') }}" rel="stylesheet"/>
@@ -389,6 +392,14 @@
                                 </a>
                             </form>
                         </div>
+                    </div>
+                    
+                    <!-- PWA Install Button (Hidden by default) -->
+                    <div id="pwa-install-container" class="mt-3 d-none">
+                        <button id="pwa-install-btn" class="btn btn-primary w-100 rounded-pill">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                            Install App
+                        </button>
                     </div>
                 </div>
             </div>

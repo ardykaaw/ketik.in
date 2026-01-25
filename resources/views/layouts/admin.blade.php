@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Admin Panel - {{ config('app.name', 'Ketik.in') }}</title>
+    <link rel="manifest" href="{{ asset('manifest.json') }}">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <!-- CSS files -->
     <link href="{{ asset('css/tabler.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/tabler-flags.min.css') }}" rel="stylesheet"/>
@@ -264,6 +267,25 @@
                             Masa Waktu
                         </a>
                     </li>
+                    <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Asisten Administrasi (Beta)</div>
+                    <li class="nav-item">
+                        <a href="{{ route('feature.laporan') }}" class="nav-link {{ request()->routeIs('feature.laporan') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M9 14l2 2l4 -4" /></svg>
+                            Laporan Kegiatan
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('feature.sop') }}" class="nav-link {{ request()->routeIs('feature.sop') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" /><path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" /><path d="M10 12l4 0" /><path d="M10 16l4 0" /></svg>
+                            Pembuat SOP
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ route('feature.surat') }}" class="nav-link {{ request()->routeIs('feature.surat') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 7a2 2 0 0 1 2 -2h14a2 2 0 0 1 2 2v10a2 2 0 0 1 -2 2h-14a2 2 0 0 1 -2 -2v-10z" /><path d="M3 7l9 6l9 -6" /></svg>
+                            Surat Dinas
+                        </a>
+                    </li>
                     <div class="hr-text text-muted small mt-auto mb-2" style="opacity: 0.5;">Akses</div>
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" class="nav-link">
@@ -297,6 +319,14 @@
                             </form>
                         </div>
                     </div>
+
+                    <!-- PWA Install Button (Hidden by default) -->
+                    <div id="pwa-install-container" class="mt-3 d-none">
+                        <button id="pwa-install-btn" class="btn btn-primary w-100 rounded-pill">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
+                            Install Admin App
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -315,5 +345,29 @@
     <script src="{{ asset('js/demo.min.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     @stack('scripts')
+    <script>
+      // --- PWA LOGIC ---
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.register('/sw.js');
+      }
+
+      let deferredPrompt;
+      const installContainer = document.getElementById('pwa-install-container');
+      const installBtn = document.getElementById('pwa-install-btn');
+
+      window.addEventListener('beforeinstallprompt', (e) => {
+          e.preventDefault();
+          deferredPrompt = e;
+          installContainer.classList.remove('d-none');
+
+          installBtn.addEventListener('click', () => {
+              installContainer.classList.add('d-none');
+              deferredPrompt.prompt();
+              deferredPrompt.userChoice.then((choiceResult) => {
+                  deferredPrompt = null;
+              });
+          });
+      });
+    </script>
   </body>
 </html>

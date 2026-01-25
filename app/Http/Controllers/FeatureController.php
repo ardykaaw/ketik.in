@@ -42,6 +42,23 @@ class FeatureController extends Controller
             'description' => 'deskripsi produk',
             'product_name' => 'nama produk',
             'target_audience' => 'target audiens',
+            // Laporan
+            'activity_name' => 'nama kegiatan',
+            'date' => 'tanggal kegiatan',
+            'location' => 'lokasi kegiatan',
+            'results' => 'hasil kegiatan',
+            'challenges' => 'kendala',
+            'recommendations' => 'saran/rekomendasi',
+            // SOP
+            'title' => 'judul SOP',
+            'role' => 'jabatan/penanggung jawab',
+            'objective' => 'tujuan SOP',
+            'scope' => 'ruang lingkup',
+            // Surat
+            'recipient' => 'penerima surat',
+            'subject' => 'perihal surat',
+            'content_summary' => 'isi pokok surat',
+            'sender' => 'pengirim/penanda tangan',
         ];
 
         return $request->validate($rules, $messages, $attributes);
@@ -438,6 +455,110 @@ class FeatureController extends Controller
             ]);
 
             return redirect()->route('library.show', $content)->with('success', 'Copywriting berhasil dibuat!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    // --- New Features (Phase 2) ---
+
+    // 1. Laporan
+    public function laporan()
+    {
+        return view('features.laporan');
+    }
+
+    public function generateLaporan(Request $request)
+    {
+        $this->validateRequest($request, [
+            'activity_name' => 'required|string|max:255',
+            'date' => 'required|string',
+            'location' => 'required|string',
+            'results' => 'required|string',
+            'challenges' => 'nullable|string',
+            'recommendations' => 'nullable|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateReport($request->all());
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'laporan',
+                'title' => 'Laporan: ' . \Str::words($request->activity_name, 5, '...'),
+                'content' => $generatedText,
+                'prompt' => "Laporan: " . $request->activity_name,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Laporan kegiatan berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    // 2. SOP
+    public function sop()
+    {
+        return view('features.sop');
+    }
+
+    public function generateSop(Request $request)
+    {
+        $this->validateRequest($request, [
+            'title' => 'required|string|max:255',
+            'role' => 'required|string',
+            'objective' => 'required|string',
+            'scope' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateSop($request->all());
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'sop',
+                'title' => 'SOP: ' . \Str::words($request->title, 5, '...'),
+                'content' => $generatedText,
+                'prompt' => "SOP: " . $request->title,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'SOP berhasil disusun!');
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+    }
+
+    // 3. Surat
+    public function surat()
+    {
+        return view('features.surat');
+    }
+
+    public function generateSurat(Request $request)
+    {
+        $this->validateRequest($request, [
+            'type' => 'required|string',
+            'recipient' => 'required|string',
+            'subject' => 'required|string',
+            'content_summary' => 'required|string',
+            'sender' => 'required|string',
+        ]);
+
+        try {
+            $generatedText = $this->aiService->generateLetter($request->all());
+
+            $content = Content::create([
+                'user_id' => Auth::id(),
+                'type' => 'surat',
+                'title' => 'Surat: ' . \Str::words($request->subject, 5, '...'),
+                'content' => $generatedText,
+                'prompt' => "Surat: " . $request->subject,
+                'parameters' => $request->all(),
+            ]);
+
+            return redirect()->route('library.show', $content)->with('success', 'Surat dinas berhasil dibuat!');
         } catch (\Exception $e) {
             return back()->withInput()->with('error', $e->getMessage());
         }
