@@ -1,4 +1,4 @@
-<x-admin-layout>
+<x-dashboard-layout>
     <div class="container-xl py-6">
         <div class="row justify-content-center">
             <div class="col-lg-10">
@@ -70,4 +70,4 @@
             </div>
         </div>
     </div>
-</x-admin-layout>
+</x-dashboard-layout>

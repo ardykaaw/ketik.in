@@ -71,6 +71,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/copywriting', [FeatureController::class, 'copywriting'])->name('feature.copywriting');
         Route::post('/copywriting', [FeatureController::class, 'generateCopywriting'])->name('feature.copywriting.generate')->middleware('throttle:ai');
 
+        // New AI Features (Phase 2 - Now available to all Premium users)
+        Route::get('/laporan', [FeatureController::class, 'laporan'])->name('feature.laporan');
+        Route::post('/laporan', [FeatureController::class, 'generateLaporan'])->name('feature.laporan.generate')->middleware('throttle:ai');
+
+        Route::get('/sop', [FeatureController::class, 'sop'])->name('feature.sop');
+        Route::post('/sop', [FeatureController::class, 'generateSop'])->name('feature.sop.generate')->middleware('throttle:ai');
+
+        Route::get('/surat', [FeatureController::class, 'surat'])->name('feature.surat');
+        Route::post('/surat', [FeatureController::class, 'generateSurat'])->name('feature.surat.generate')->middleware('throttle:ai');
+
         Route::post('/library/{content}/refine', [LibraryController::class, 'refine'])->name('library.refine')->middleware('throttle:ai');
     });
 
@@ -112,16 +122,6 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/verifications', [AdminController::class, 'verifications'])->name('admin.verifications');
         Route::post('/admin/verifications/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.verifications.approve');
         Route::post('/admin/verifications/{user}/resend', [AdminController::class, 'resendActivationEmail'])->name('admin.verifications.resend');
-
-        // New AI Features (Phase 2 - Admin Beta)
-        Route::get('/laporan', [FeatureController::class, 'laporan'])->name('feature.laporan');
-        Route::post('/laporan', [FeatureController::class, 'generateLaporan'])->name('feature.laporan.generate')->middleware('throttle:ai');
-
-        Route::get('/sop', [FeatureController::class, 'sop'])->name('feature.sop');
-        Route::post('/sop', [FeatureController::class, 'generateSop'])->name('feature.sop.generate')->middleware('throttle:ai');
-
-        Route::get('/surat', [FeatureController::class, 'surat'])->name('feature.surat');
-        Route::post('/surat', [FeatureController::class, 'generateSurat'])->name('feature.surat.generate')->middleware('throttle:ai');
     });
 });
 
