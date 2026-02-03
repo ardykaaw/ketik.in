@@ -41,6 +41,7 @@
                         <th class="py-3">Email</th>
                         <th class="py-3">Role</th>
                         <th class="py-3">Terdaftar Pada</th>
+                        <th class="py-3">Status Perangkat</th>
                         <th class="text-end py-3 px-4">Aksi</th>
                     </tr>
                 </thead>
@@ -66,9 +67,33 @@
                                 {{ ucfirst($user->role) }}
                             </span>
                         </td>
-                        <td>{{ $user->created_at->format('d M Y') }}</td>
+                        <td>
+                            @if($user->device_token)
+                                <span class="badge bg-success-lt px-3 py-1" style="border-radius: 6px;">
+                                    Terikat
+                                </span>
+                            @else
+                                <span class="badge bg-secondary-lt px-3 py-1" style="border-radius: 6px;">
+                                    Belum Terikat
+                                </span>
+                            @endif
+                        </td>
                         <td class="text-end px-4">
                             <div class="d-flex justify-content-end gap-2">
+                                <!-- Reset Device Button -->
+                                <form action="{{ route('admin.users.reset-device', $user) }}" method="POST" class="reset-device-form" data-user-name="{{ $user->name }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm btn-outline-warning px-3 shadow-none border-2" style="border-radius: 8px;" title="Reset Perangkat">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-device-mobile-off" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                                           <path d="M7.159 3.185c.256 -.119 .54 -.185 .841 -.185h8a1 1 0 0 1 1 1v9m0 4v4a1 1 0 0 1 -1 1h-8a1 1 0 0 1 -1 -1v-4"></path>
+                                           <path d="M11 4h2"></path>
+                                           <path d="M12 17v.01"></path>
+                                           <path d="M3 3l18 18"></path>
+                                        </svg>
+                                    </button>
+                                </form>
+
                                 <button class="btn btn-sm btn-outline-primary px-3 shadow-none border-2" 
                                     style="border-radius: 8px;"
                                     data-bs-toggle="modal" 
@@ -200,6 +225,29 @@
             document.getElementById('edit-email').value = email;
             document.getElementById('edit-role').value = role;
         }
+
+        // SweetAlert for Reset Device
+        document.querySelectorAll('.reset-device-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const userName = this.getAttribute('data-user-name');
+                
+                Swal.fire({
+                    title: 'Reset Perangkat?',
+                    html: `<p>Anda akan me-reset perangkat untuk user <strong>${userName}</strong>.</p><p class="text-muted mb-0">User harus login kembali dan mengikat perangkat baru.</p>`,
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#f59f00',
+                    cancelButtonColor: '#6c757d',
+                    confirmButtonText: 'Ya, Reset',
+                    cancelButtonText: 'Batal'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        this.submit();
+                    }
+                });
+            });
+        });
     </script>
     @endpush
 </x-admin-layout>

@@ -42,6 +42,31 @@ class AuthenticatedSessionController extends Controller
         $user->session_id = session()->getId();
         $user->save();
 
+        // --- STRICT DEVICE BINDING LOGIC (Exempt Admin) ---
+        if (!$user->isAdmin()) {
+            $incomingDeviceToken = $request->cookie('device_token');
+            $storedDeviceToken = $user->device_token;
+
+            // Scenario A: First Time / Tokens Cleared (Reset by Admin) 
+            // -> Allow Login but set flag for modal
+            if (is_null($storedDeviceToken)) {
+                session(['device_needs_binding' => true]);
+                // Continue to login (don't redirect or logout)
+            }
+            // Scenario B: Token Mismatch -> BLOCK ACCESS
+            elseif ($incomingDeviceToken !== $storedDeviceToken) {
+                // Logout immediately
+                Auth::guard('web')->logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+
+                return back()->withErrors(['email' => 'Akses Ditolak. Akun ini terkunci pada perangkat lain. Hubungi Admin untuk melakukan reset perangkat jika Anda ingin pindah device.']);
+            }
+            // Scenario C: Match -> Allow Login (no action needed)
+        }
+
+        // Scenario C: Match -> Allow Login (Proceed)
+
         // Redirect based on role
         if ($user->isAdmin()) {
             return redirect()->intended(route('admin.dashboard', absolute: false));

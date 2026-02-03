@@ -157,4 +157,18 @@ class AdminController extends Controller
             return back()->with('error', "Gagal mengirim ulang email: " . $e->getMessage());
         }
     }
+
+    public function resetDevice(User $user)
+    {
+        // 1. Clear Device Token
+        $user->device_token = null;
+        $user->save();
+
+        // 2. Invalidate Sessions (Optional but recommended to force re-login)
+        // Note: This only invalidates the current session if we use DB session driver. 
+        // For broad lockout, we rely on the implementation in AuthenticatedSessionController 
+        // which checks the token on every login. Since token is null, next login = First Time flow.
+
+        return back()->with('success', "Perangkat untuk user {$user->name} berhasil di-reset. User dapat login kembali untuk mengikat perangkat baru.");
+    }
 }

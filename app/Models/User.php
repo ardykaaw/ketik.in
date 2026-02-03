@@ -29,6 +29,7 @@ class User extends Authenticatable
         'premium_until',
         'plan_name',
         'activation_email_sent_at',
+        'device_token',
     ];
 
     protected static function booted()

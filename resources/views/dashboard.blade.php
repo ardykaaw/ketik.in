@@ -223,6 +223,55 @@
                 tooltip: { fillSeriesColor: false },
             })).render();
         });
+
+        // --- DEVICE BINDING MODAL ---
+        @if(session('device_needs_binding'))
+        Swal.fire({
+            title: 'Ikat Perangkat Ini?',
+            html: '<p class="text-muted mb-0">Untuk keamanan akun, sistem Ketik.in mengharuskan <strong>1 akun hanya untuk 1 perangkat</strong>.</p><p class="text-muted mt-2">Apakah Anda ingin menjadikan perangkat ini sebagai perangkat utama Anda?</p>',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#206bc4',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Ya, Ikat Sekarang',
+            cancelButtonText: 'Nanti',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Send AJAX request to bind device
+                fetch('{{ route('device.binding.confirm') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Berhasil!',
+                            text: data.message,
+                            icon: 'success',
+                            confirmButtonColor: '#206bc4'
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Terjadi kesalahan. Silakan coba lagi.',
+                        icon: 'error',
+                        confirmButtonColor: '#206bc4'
+                    });
+                });
+            }
+        });
+        @endif
     </script>
     @endpush
 </x-dashboard-layout>

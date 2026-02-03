@@ -27,11 +27,16 @@ Route::get('/email-preview', function () {
     return new \App\Mail\AccountActivated($user);
 });
 
+// Device Binding - Dashboard Confirmation
+Route::post('/bind-device-confirm', [App\Http\Controllers\Auth\DeviceBindingController::class, 'confirmFromDashboard'])
+    ->name('device.binding.confirm')
+    ->middleware('auth');
+
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Features & Wizard (Premium Only)
-    Route::middleware(['premium'])->group(function () {
+    // Features & Wizard (Premium + Device Bound)
+    Route::middleware(['premium', 'device_bound'])->group(function () {
         // Wizard
         Route::get('/wizard/step-1', [WizardController::class, 'step1'])->name('wizard.step1');
         Route::post('/wizard/step-1', [WizardController::class, 'storeStep1'])->name('wizard.step1.store');
@@ -122,6 +127,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/verifications', [AdminController::class, 'verifications'])->name('admin.verifications');
         Route::post('/admin/verifications/{user}/approve', [AdminController::class, 'approveUser'])->name('admin.verifications.approve');
         Route::post('/admin/verifications/{user}/resend', [AdminController::class, 'resendActivationEmail'])->name('admin.verifications.resend');
+        
+        // Admin Device Reset
+        Route::post('/admin/users/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.users.reset-device');
     });
 });
 
