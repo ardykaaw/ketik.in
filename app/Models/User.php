@@ -83,4 +83,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Content::class);
     }
+
+    public function completedLessons()
+    {
+        return $this->belongsToMany(Lesson::class, 'lesson_user')
+            ->withPivot('completed_at');
+    }
 }
