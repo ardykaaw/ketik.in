@@ -157,6 +157,13 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/academy/lessons/{lesson}/edit', [AcademyAdminController::class, 'editLesson'])->name('admin.academy.lessons.edit');
         Route::put('/admin/academy/lessons/{lesson}', [AcademyAdminController::class, 'updateLesson'])->name('admin.academy.lessons.update');
         Route::delete('/admin/academy/lessons/{lesson}', [AcademyAdminController::class, 'destroyLesson'])->name('admin.academy.lessons.destroy');
+
+        // Super Admin Monitoring
+        Route::middleware(['superadmin'])->group(function () {
+            Route::get('/admin/super', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('admin.super.dashboard');
+            Route::get('/admin/super/traffic', [App\Http\Controllers\SuperAdminController::class, 'traffic'])->name('admin.super.traffic');
+            Route::get('/admin/super/analytics', [App\Http\Controllers\SuperAdminController::class, 'getAnalyticsData'])->name('admin.super.analytics');
+        });
     });
 });
 

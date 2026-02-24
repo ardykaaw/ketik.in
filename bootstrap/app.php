@@ -13,6 +13,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
+            'superadmin' => \App\Http\Middleware\SuperAdminMiddleware::class,
             'single.session' => \App\Http\Middleware\CheckSingleSession::class,
             'premium' => \App\Http\Middleware\CheckSubscription::class,
             'device_bound' => \App\Http\Middleware\EnsureDeviceIsBound::class,
@@ -20,6 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->appendToGroup('web', [
             \App\Http\Middleware\CheckSingleSession::class,
+            \App\Http\Middleware\TrafficLoggerMiddleware::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

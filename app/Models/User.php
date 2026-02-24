@@ -30,6 +30,7 @@ class User extends Authenticatable
         'plan_name',
         'activation_email_sent_at',
         'device_token',
+        'last_seen_at',
     ];
 
     protected static function booted()
@@ -52,7 +53,12 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === 'admin';
+        return $this->role === 'admin' || $this->role === 'superadmin';
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
     }
 
     /**
@@ -76,6 +82,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'premium_until' => 'datetime',
+            'last_seen_at' => 'datetime',
         ];
     }
 

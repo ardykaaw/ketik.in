@@ -84,6 +84,14 @@ class FeatureController extends Controller
                 $request->target
             );
 
+            // Log AI Usage
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'story',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             // Save to Library
             $content = Content::create([
                 'user_id' => Auth::id(),
@@ -96,6 +104,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Cerita berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'story',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -120,6 +135,13 @@ class FeatureController extends Controller
                 $request->outline
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'ebook',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'ebook',
@@ -131,6 +153,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'E-book berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'ebook',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -153,6 +182,13 @@ class FeatureController extends Controller
                 $request->stance
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'opini',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'opini',
@@ -164,6 +200,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Opini berhasil diterbitkan!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'opini',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -188,6 +231,13 @@ class FeatureController extends Controller
                 $request->duration
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'script',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'script',
@@ -199,6 +249,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Script berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'script',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -221,6 +278,13 @@ class FeatureController extends Controller
                 $request->type
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'essay',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'essay',
@@ -232,6 +296,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Essay berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'essay',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -263,6 +334,13 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateEKinerja($request->all());
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'e-kinerja',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'e-kinerja',
@@ -274,6 +352,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Rincian SKP ASN berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'e-kinerja',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -299,6 +384,13 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateEKinerjaAtasan($request->all());
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'e-kinerja-atasan',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'e-kinerja-atasan',
@@ -310,6 +402,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Ekspektasi Pimpinan berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'e-kinerja-atasan',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -332,6 +431,13 @@ class FeatureController extends Controller
                 $request->style
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'news',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'news',
@@ -343,6 +449,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Berita berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'news',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -369,6 +482,13 @@ class FeatureController extends Controller
                 $request->tone
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'speech',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'speech',
@@ -380,6 +500,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Kata sambutan berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'speech',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -404,6 +531,13 @@ class FeatureController extends Controller
                 $request->style
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'social-media',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'social-media',
@@ -415,6 +549,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Konten Social Media berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'social-media',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -445,6 +586,13 @@ class FeatureController extends Controller
                 $request->tone
             );
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'copywriting',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'copywriting',
@@ -456,6 +604,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Copywriting berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'copywriting',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -482,6 +637,13 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateReport($request->all());
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'laporan',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'laporan',
@@ -493,6 +655,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Laporan kegiatan berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'laporan',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -515,6 +684,13 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateSop($request->all());
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'sop',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'sop',
@@ -526,6 +702,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'SOP berhasil disusun!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'sop',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }
@@ -549,6 +732,13 @@ class FeatureController extends Controller
         try {
             $generatedText = $this->aiService->generateLetter($request->all());
 
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'surat',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => true
+            ]);
+
             $content = Content::create([
                 'user_id' => Auth::id(),
                 'type' => 'surat',
@@ -560,6 +750,13 @@ class FeatureController extends Controller
 
             return redirect()->route('library.show', $content)->with('success', 'Surat dinas berhasil dibuat!');
         } catch (\Exception $e) {
+            \App\Models\AiUsageLog::create([
+                'user_id' => Auth::id(),
+                'feature_type' => 'surat',
+                'model' => config('gemini.model', 'gemini-flash-latest'),
+                'is_success' => false,
+                'error_message' => $e->getMessage()
+            ]);
             return back()->withInput()->with('error', $e->getMessage());
         }
     }

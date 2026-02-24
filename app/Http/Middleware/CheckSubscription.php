@@ -16,7 +16,7 @@ class CheckSubscription
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::check() && !Auth::user()->isPremium()) {
+        if (Auth::check() && !Auth::user()->isAdmin() && !Auth::user()->isPremium()) {
             return redirect()->route('billing.index')->with('error', 'Silahkan perpanjang langganan anda');
         }
 

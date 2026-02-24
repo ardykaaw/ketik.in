@@ -249,6 +249,14 @@
                             Dashboard
                         </a>
                     </li>
+                    @if(Auth::user()->isSuperAdmin())
+                    <li class="nav-item">
+                        <a href="{{ route('admin.super.dashboard') }}" class="nav-link {{ request()->routeIs('admin.super.*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 12h4l3 8l4 -16l3 8h4" /></svg>
+                            Monitoring
+                        </a>
+                    </li>
+                    @endif
                     <li class="nav-item">
                         <a href="{{ route('admin.users') }}" class="nav-link {{ request()->routeIs('admin.users*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 7m-4 0a4 4 0 1 0 8 0a4 4 0 1 0 -8 0" /><path d="M3 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" /><path d="M16 3.13a4 4 0 0 1 0 7.75" /><path d="M21 21v-2a4 4 0 0 0 -3 -3.85" /></svg>
@@ -293,7 +301,7 @@
                             @endif
                             <div class="overflow-hidden d-none d-lg-block">
                                 <div class="text-truncate fw-bold fs-5">{{ Auth::user()->name }}</div>
-                                <div class="small text-muted text-truncate" style="opacity: 0.7;">Administrator</div>
+                                <div class="small text-muted text-truncate" style="opacity: 0.7;">{{ Auth::user()->isSuperAdmin() ? 'Super Admin' : 'Administrator' }}</div>
                             </div>
                         </a>
                         <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-dark border-0 shadow-lg mt-3" style="border-radius: 12px; min-width: 160px; background-color: #1e293b;">
@@ -331,6 +339,7 @@
     <script src="{{ asset('js/tabler.min.js') }}" defer></script>
     <script src="{{ asset('js/demo.min.js') }}" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     @stack('scripts')
     <script>
       // --- PWA LOGIC ---
