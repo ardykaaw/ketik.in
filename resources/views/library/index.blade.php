@@ -57,7 +57,7 @@
             </div>
 
             <div class="mt-5 d-flex justify-content-center">
-                {{ $contents->links() }}
+                {{ $contents->links('vendor.pagination.tabler') }}
             </div>
         @endif
     </div>

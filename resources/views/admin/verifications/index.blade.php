@@ -101,8 +101,9 @@
         </div>
         @if($pendingUsers->hasPages())
         <div class="card-footer d-flex align-items-center bg-transparent border-top p-4">
+            <p class="m-0 text-muted">Menampilkan <span>{{ $pendingUsers->firstItem() }}</span> sampai <span>{{ $pendingUsers->lastItem() }}</span> dari <span>{{ $pendingUsers->total() }}</span> data</p>
             <div class="ms-auto">
-                {{ $pendingUsers->links() }}
+                {{ $pendingUsers->links('vendor.pagination.tabler') }}
             </div>
         </div>
         @endif

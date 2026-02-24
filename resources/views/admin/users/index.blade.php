@@ -125,7 +125,7 @@
         <div class="card-footer d-flex align-items-center bg-transparent border-top p-4">
             <p class="m-0 text-muted">Menampilkan <span>{{ $users->firstItem() }}</span> sampai <span>{{ $users->lastItem() }}</span> dari <span>{{ $users->total() }}</span> data</p>
             <div class="ms-auto">
-                {{ $users->links() }}
+                {{ $users->links('vendor.pagination.tabler') }}
             </div>
         </div>
         @endif
