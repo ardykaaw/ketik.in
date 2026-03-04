@@ -10,20 +10,29 @@ use Illuminate\Support\Facades\Auth;
 class AcademyController extends Controller
 {
     /**
-     * Show all published courses.
+     * Show modules directly (single-page view).
      */
     public function index()
     {
-        $courses = Course::published()
-            ->withCount(['modules', 'lessons'])
+        $course = Course::published()
+            ->with(['modules.lessons'])
             ->orderBy('sort_order')
-            ->get()
-            ->map(function ($course) {
-                $course->progress = $course->getProgressForUser(Auth::user());
-                return $course;
-            });
+            ->first();
 
-        return view('academy.index', compact('courses'));
+        if (!$course) {
+            return view('academy.index', ['course' => null]);
+        }
+
+        $progress = $course->getProgressForUser(Auth::user());
+        
+        $allLessonIds = $course->modules->flatMap(fn($m) => $m->lessons->pluck('id'))->toArray();
+        $completedLessonIds = Auth::user()
+            ->completedLessons()
+            ->whereIn('lesson_id', $allLessonIds)
+            ->pluck('lesson_id')
+            ->toArray();
+
+        return view('academy.index', compact('course', 'progress', 'completedLessonIds'));
     }
 
     /**
@@ -31,7 +40,6 @@ class AcademyController extends Controller
      */
     public function show(Course $course)
     {
-        // Allow admin to see draft courses too
         if (!Auth::user()->isAdmin() && $course->status !== 'published') {
             abort(404);
         }
@@ -39,7 +47,6 @@ class AcademyController extends Controller
         $course->load(['modules.lessons']);
         $progress = $course->getProgressForUser(Auth::user());
 
-        // Get completed lesson IDs using collection (avoids ambiguous column from hasManyThrough)
         $allLessonIds = $course->modules->flatMap(fn($m) => $m->lessons->pluck('id'))->toArray();
         $completedLessonIds = Auth::user()
             ->completedLessons()
@@ -62,7 +69,6 @@ class AcademyController extends Controller
         $course->load(['modules.lessons']);
         $isCompleted = $lesson->isCompletedBy(Auth::user());
 
-        // Get completed lesson IDs using collection (avoids ambiguous column)
         $allLessonIds = $course->modules->flatMap(fn($m) => $m->lessons->pluck('id'))->toArray();
         $completedLessonIds = Auth::user()
             ->completedLessons()
@@ -72,7 +78,6 @@ class AcademyController extends Controller
 
         $progress = $course->getProgressForUser(Auth::user());
 
-        // Find next/prev lessons (use already-loaded modules)
         $allLessons = $course->modules
             ->sortBy('sort_order')
             ->flatMap(fn($m) => $m->lessons->sortBy('sort_order'))
@@ -111,6 +116,35 @@ class AcademyController extends Controller
             'success' => true,
             'completed' => $completed,
             'progress' => $progress,
+        ]);
+    }
+
+    /**
+     * Get lesson data for modal (AJAX).
+     */
+    public function getLessonData(Lesson $lesson)
+    {
+        if (!Auth::user()->isAdmin() && $lesson->module->course->status !== 'published') {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $module = $lesson->module;
+
+        return response()->json([
+            'title' => $lesson->title,
+            'content' => $lesson->content,
+            'has_video' => $lesson->has_video,
+            'video_type' => $lesson->video_type,
+            'video_url' => $lesson->video_file_url,
+            'embed_url' => $lesson->embed_url,
+            'has_file' => $lesson->has_file,
+            'file_url' => $lesson->file_url,
+            'file_type' => $lesson->file_type,
+            'file_extension' => $lesson->file_extension,
+            'is_completed' => $lesson->isCompletedBy(Auth::user()),
+            'course_slug' => $module->course->slug,
+            'module_title' => $module->title,
+            'module_thumbnail' => $module->thumbnail ? asset('storage/' . $module->thumbnail) : null,
         ]);
     }
 }

@@ -92,6 +92,7 @@ Route::middleware(['auth'])->group(function () {
 
         // Academy (Customer)
         Route::get('/academy', [AcademyController::class, 'index'])->name('academy.index');
+        Route::get('/academy/lessons/{lesson}/data', [AcademyController::class, 'getLessonData'])->name('academy.lesson.data');
         Route::get('/academy/{course:slug}', [AcademyController::class, 'show'])->name('academy.show');
         Route::get('/academy/{course:slug}/{lesson}', [AcademyController::class, 'lesson'])->name('academy.lesson');
         Route::post('/academy/lessons/{lesson}/toggle-progress', [AcademyController::class, 'toggleProgress'])->name('academy.toggle-progress');
@@ -139,19 +140,13 @@ Route::middleware(['auth'])->group(function () {
         // Admin Device Reset
         Route::post('/admin/users/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.users.reset-device');
 
-        // Admin Academy CRUD
-        Route::get('/admin/academy', [AcademyAdminController::class, 'courses'])->name('admin.academy.courses');
-        Route::get('/admin/academy/courses/create', [AcademyAdminController::class, 'createCourse'])->name('admin.academy.courses.create');
-        Route::post('/admin/academy/courses', [AcademyAdminController::class, 'storeCourse'])->name('admin.academy.courses.store');
-        Route::get('/admin/academy/courses/{course}/edit', [AcademyAdminController::class, 'editCourse'])->name('admin.academy.courses.edit');
-        Route::put('/admin/academy/courses/{course}', [AcademyAdminController::class, 'updateCourse'])->name('admin.academy.courses.update');
-        Route::delete('/admin/academy/courses/{course}', [AcademyAdminController::class, 'destroyCourse'])->name('admin.academy.courses.destroy');
-
-        Route::get('/admin/academy/courses/{course}/modules', [AcademyAdminController::class, 'modules'])->name('admin.academy.modules');
-        Route::post('/admin/academy/courses/{course}/modules', [AcademyAdminController::class, 'storeModule'])->name('admin.academy.modules.store');
+        // Academy Management (Simplified)
+        Route::get('/admin/academy', [AcademyAdminController::class, 'index'])->name('admin.academy.index');
+        Route::put('/admin/academy/course/{course}', [AcademyAdminController::class, 'updateCourse'])->name('admin.academy.course.update');
+        Route::post('/admin/academy/course/{course}/modules', [AcademyAdminController::class, 'storeModule'])->name('admin.academy.modules.store');
         Route::put('/admin/academy/modules/{module}', [AcademyAdminController::class, 'updateModule'])->name('admin.academy.modules.update');
         Route::delete('/admin/academy/modules/{module}', [AcademyAdminController::class, 'destroyModule'])->name('admin.academy.modules.destroy');
-
+        
         Route::get('/admin/academy/modules/{module}/lessons/create', [AcademyAdminController::class, 'createLesson'])->name('admin.academy.lessons.create');
         Route::post('/admin/academy/modules/{module}/lessons', [AcademyAdminController::class, 'storeLesson'])->name('admin.academy.lessons.store');
         Route::get('/admin/academy/lessons/{lesson}/edit', [AcademyAdminController::class, 'editLesson'])->name('admin.academy.lessons.edit');

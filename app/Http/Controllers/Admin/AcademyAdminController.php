@@ -13,45 +13,24 @@ use Illuminate\Support\Facades\Storage;
 class AcademyAdminController extends Controller
 {
     // ==========================================
-    //  COURSES
+    //  MAIN INDEX
     // ==========================================
 
-    public function courses()
+    public function index()
     {
-        $courses = Course::withCount(['modules', 'lessons'])->orderBy('sort_order')->get();
-        return view('admin.academy.courses.index', compact('courses'));
-    }
+        $course = Course::orderBy('sort_order')->first();
 
-    public function createCourse()
-    {
-        return view('admin.academy.courses.form');
-    }
-
-    public function storeCourse(Request $request)
-    {
-        $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'cover_image' => 'nullable|image|max:2048',
-            'status' => 'required|in:draft,published',
-        ]);
-
-        $data = $request->only('title', 'description', 'status');
-        $data['slug'] = Course::generateUniqueSlug($request->title);
-        $data['sort_order'] = (Course::max('sort_order') ?? 0) + 1;
-
-        if ($request->hasFile('cover_image')) {
-            $data['cover_image'] = $request->file('cover_image')->store('courses', 'public');
+        if (!$course) {
+            $course = Course::create([
+                'title' => 'Main Academy',
+                'slug' => 'main-academy',
+                'status' => 'draft',
+                'sort_order' => 1
+            ]);
         }
 
-        Course::create($data);
-
-        return redirect()->route('admin.academy.courses')->with('success', 'Kursus berhasil dibuat!');
-    }
-
-    public function editCourse(Course $course)
-    {
-        return view('admin.academy.courses.form', compact('course'));
+        $modules = $course->modules()->withCount('lessons')->orderBy('sort_order')->get();
+        return view('admin.academy.index', compact('course', 'modules'));
     }
 
     public function updateCourse(Request $request, Course $course)
@@ -59,80 +38,75 @@ class AcademyAdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'cover_image' => 'nullable|image|max:2048',
             'status' => 'required|in:draft,published',
         ]);
 
-        $data = $request->only('title', 'description', 'status');
+        $course->update($request->only('title', 'description', 'status'));
 
-        // Update slug if title changed
-        if ($course->title !== $request->title) {
-            $data['slug'] = Course::generateUniqueSlug($request->title, $course->id);
-        }
-
-        if ($request->hasFile('cover_image')) {
-            // Delete old cover if exists
-            if ($course->cover_image) {
-                Storage::disk('public')->delete($course->cover_image);
-            }
-            $data['cover_image'] = $request->file('cover_image')->store('courses', 'public');
-        }
-
-        $course->update($data);
-
-        return redirect()->route('admin.academy.courses')->with('success', 'Kursus berhasil diperbarui!');
-    }
-
-    public function destroyCourse(Course $course)
-    {
-        // Delete cover image
-        if ($course->cover_image) {
-            Storage::disk('public')->delete($course->cover_image);
-        }
-        $course->delete();
-        return redirect()->route('admin.academy.courses')->with('success', 'Kursus berhasil dihapus!');
+        return redirect()->route('admin.academy.index')->with('success', 'Pengaturan Academy diperbarui!');
     }
 
     // ==========================================
     //  MODULES
     // ==========================================
 
-    public function modules(Course $course)
-    {
-        $modules = $course->modules()->withCount('lessons')->get();
-        return view('admin.academy.modules.index', compact('course', 'modules'));
-    }
-
     public function storeModule(Request $request, Course $course)
     {
-        $request->validate(['title' => 'required|string|max:255']);
-
-        $course->modules()->create([
-            'title' => $request->title,
-            'sort_order' => ($course->modules()->max('sort_order') ?? 0) + 1,
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'thumbnail' => 'nullable|image|max:2048',
         ]);
 
-        return redirect()->route('admin.academy.modules', $course)->with('success', 'Modul berhasil ditambahkan!');
+        $data = [
+            'title' => $request->title,
+            'sort_order' => ($course->modules()->max('sort_order') ?? 0) + 1,
+        ];
+
+        if ($request->hasFile('thumbnail')) {
+            $data['thumbnail'] = $request->file('thumbnail')->store('modules/thumbnails', 'public');
+        }
+
+        $course->modules()->create($data);
+
+        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil ditambahkan!');
     }
 
     public function updateModule(Request $request, Module $module)
     {
-        $request->validate(['title' => 'required|string|max:255']);
-        $module->update(['title' => $request->title]);
-        return redirect()->route('admin.academy.modules', $module->course)->with('success', 'Modul berhasil diperbarui!');
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'thumbnail' => 'nullable|image|max:2048',
+        ]);
+
+        $data = ['title' => $request->title];
+
+        if ($request->hasFile('thumbnail')) {
+            if ($module->thumbnail) {
+                Storage::disk('public')->delete($module->thumbnail);
+            }
+            $data['thumbnail'] = $request->file('thumbnail')->store('modules/thumbnails', 'public');
+        }
+
+        if ($request->input('remove_thumbnail') === '1' && $module->thumbnail) {
+            Storage::disk('public')->delete($module->thumbnail);
+            $data['thumbnail'] = null;
+        }
+
+        $module->update($data);
+        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil diperbarui!');
     }
 
     public function destroyModule(Module $module)
     {
-        $course = $module->course;
-        // Delete video files from lessons in this module
+        if ($module->thumbnail) {
+            Storage::disk('public')->delete($module->thumbnail);
+        }
         foreach ($module->lessons as $lesson) {
-            if ($lesson->video_path) {
-                Storage::disk('public')->delete($lesson->video_path);
-            }
+            if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
+            if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
         }
         $module->delete();
-        return redirect()->route('admin.academy.modules', $course)->with('success', 'Modul berhasil dihapus!');
+        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil dihapus!');
     }
 
     // ==========================================
@@ -150,7 +124,8 @@ class AcademyAdminController extends Controller
             'title' => 'required|string|max:255',
             'content' => 'nullable|string',
             'video_url' => 'nullable|url|max:500',
-            'video_file' => 'nullable|mimes:mp4,webm,ogg,mov|max:102400', // 100MB max
+            'video_file' => 'nullable|mimes:mp4,webm,ogg,mov|max:102400',
+            'document_file' => 'nullable|mimes:pdf,doc,docx|max:20480',
         ]);
 
         $data = [
@@ -162,13 +137,18 @@ class AcademyAdminController extends Controller
 
         if ($request->hasFile('video_file')) {
             $data['video_path'] = $request->file('video_file')->store('lessons/videos', 'public');
-            // If uploading file, clear any URL
             $data['video_url'] = null;
+        }
+
+        if ($request->hasFile('document_file')) {
+            $file = $request->file('document_file');
+            $data['file_path'] = $file->store('lessons/documents', 'public');
+            $data['file_type'] = $file->getClientOriginalExtension();
         }
 
         $module->lessons()->create($data);
 
-        return redirect()->route('admin.academy.modules', $module->course)->with('success', 'Materi berhasil ditambahkan!');
+        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil ditambahkan!');
     }
 
     public function editLesson(Lesson $lesson)
@@ -184,41 +164,46 @@ class AcademyAdminController extends Controller
             'content' => 'nullable|string',
             'video_url' => 'nullable|url|max:500',
             'video_file' => 'nullable|mimes:mp4,webm,ogg,mov|max:102400',
+            'document_file' => 'nullable|mimes:pdf,doc,docx|max:20480',
         ]);
 
         $data = $request->only('title', 'content', 'video_url');
 
         if ($request->hasFile('video_file')) {
-            // Delete old video file
-            if ($lesson->video_path) {
-                Storage::disk('public')->delete($lesson->video_path);
-            }
+            if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
             $data['video_path'] = $request->file('video_file')->store('lessons/videos', 'public');
-            $data['video_url'] = null; // Clear URL when uploading file
+            $data['video_url'] = null;
         }
 
-        // If user wants to remove video
+        if ($request->hasFile('document_file')) {
+            if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
+            $file = $request->file('document_file');
+            $data['file_path'] = $file->store('lessons/documents', 'public');
+            $data['file_type'] = $file->getClientOriginalExtension();
+        }
+
         if ($request->input('remove_video') === '1') {
-            if ($lesson->video_path) {
-                Storage::disk('public')->delete($lesson->video_path);
-            }
+            if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
             $data['video_path'] = null;
             $data['video_url'] = null;
         }
 
+        if ($request->input('remove_document') === '1') {
+            if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
+            $data['file_path'] = null;
+            $data['file_type'] = null;
+        }
+
         $lesson->update($data);
 
-        return redirect()->route('admin.academy.modules', $lesson->module->course)->with('success', 'Materi berhasil diperbarui!');
+        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil diperbarui!');
     }
 
     public function destroyLesson(Lesson $lesson)
     {
-        $course = $lesson->module->course;
-        // Delete video file if exists
-        if ($lesson->video_path) {
-            Storage::disk('public')->delete($lesson->video_path);
-        }
+        if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
+        if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
         $lesson->delete();
-        return redirect()->route('admin.academy.modules', $course)->with('success', 'Materi berhasil dihapus!');
+        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil dihapus!');
     }
 }

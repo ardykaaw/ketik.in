@@ -6,7 +6,33 @@ use Illuminate\Database\Eloquent\Model;
 
 class Lesson extends Model
 {
-    protected $fillable = ['module_id', 'title', 'content', 'video_url', 'video_path', 'sort_order'];
+    protected $fillable = ['module_id', 'title', 'content', 'video_url', 'video_path', 'file_path', 'file_type', 'sort_order'];
+
+    /**
+     * Check if lesson has attached file (PDF/Word).
+     */
+    public function getHasFileAttribute()
+    {
+        return !empty($this->file_path);
+    }
+
+    /**
+     * Get the file download/view URL.
+     */
+    public function getFileUrlAttribute()
+    {
+        if (empty($this->file_path)) return null;
+        return asset('storage/' . $this->file_path);
+    }
+
+    /**
+     * Get file extension (pdf, docx, doc).
+     */
+    public function getFileExtensionAttribute()
+    {
+        if (empty($this->file_path)) return null;
+        return strtolower(pathinfo($this->file_path, PATHINFO_EXTENSION));
+    }
 
     public function module()
     {
