@@ -78,19 +78,26 @@ class AiService
                 return $text; // Success! Return immediately.
 
             } catch (\Exception $e) {
+                $errorMessage = $e->getMessage();
                 // Log the error for this specific key but don't fail yet
-                \Log::warning("Gemini Key Rotation Error: " . $e->getMessage());
-                $errors[] = $e->getMessage();
+                \Log::warning("Gemini Key Rotation Error: " . $errorMessage);
+                $errors[] = $errorMessage;
+
+                // Jika error adalah High Demand atau Quota Exceeded (429), kita tunggu sebentar
+                if (str_contains(strtolower($errorMessage), 'high demand') || str_contains(strtolower($errorMessage), 'quota exceeded') || str_contains(strtolower($errorMessage), '429')) {
+                    sleep(2); // Tunggu 2 detik sebelum mencoba key berikutnya untuk menghindari spam
+                    continue;
+                }
 
                 // If it's a user-facing error (our custom messages), don't retry with other keys
-                if (str_contains($e->getMessage(), 'diblokir') || 
-                    str_contains($e->getMessage(), 'berhak cipta') ||
-                    str_contains($e->getMessage(), 'terpotong') ||
-                    str_contains($e->getMessage(), 'respons kosong')) {
+                if (str_contains($errorMessage, 'diblokir') || 
+                    str_contains($errorMessage, 'berhak cipta') ||
+                    str_contains($errorMessage, 'terpotong') ||
+                    str_contains($errorMessage, 'respons kosong')) {
                     throw $e; // Re-throw immediately
                 }
                 
-                continue; // Try next key for quota/network errors
+                continue; // Try next key for network errors
             }
         }
 
