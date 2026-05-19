@@ -13,24 +13,84 @@ use Illuminate\Support\Facades\Storage;
 class AcademyAdminController extends Controller
 {
     // ==========================================
-    //  MAIN INDEX
+    //  COURSES LIST
     // ==========================================
 
     public function index()
     {
-        $course = Course::orderBy('sort_order')->first();
+        $courses = Course::withCount(['modules', 'lessons'])
+            ->orderBy('sort_order')
+            ->get();
 
-        if (!$course) {
-            $course = Course::create([
-                'title' => 'Main Academy',
-                'slug' => 'main-academy',
-                'status' => 'draft',
-                'sort_order' => 1
+        return view('admin.academy.index', compact('courses'));
+    }
+
+    public function storeCourse(Request $request)
+    {
+        \Log::info('storeCourse called', $request->only('title', 'description'));
+
+        try {
+            $validated = $request->validate([
+                'title' => 'required|string|max:255',
+                'description' => 'nullable|string',
+                'cover_image' => 'nullable|image|max:10240',
             ]);
-        }
+            \Log::info('storeCourse validation passed', $validated);
 
+            $data = [
+                'title' => $request->title,
+                'description' => $request->description,
+                'status' => 'draft',
+                'sort_order' => (Course::max('sort_order') ?? 0) + 1,
+            ];
+
+            if ($request->hasFile('cover_image')) {
+                $data['cover_image'] = $request->file('cover_image')->store('courses/covers', 'public');
+                \Log::info('storeCourse cover uploaded', ['path' => $data['cover_image']]);
+            }
+
+            $course = Course::create($data);
+            \Log::info('storeCourse created', ['course_id' => $course->id]);
+
+            return redirect()->route('admin.academy.index')->with('success', 'E-Course berhasil ditambahkan!');
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::warning('storeCourse validation failed', ['errors' => $e->errors()]);
+            return redirect()->route('admin.academy.index')
+                ->withErrors($e->validator)
+                ->withInput()
+                ->with('error', 'Gagal validasi: ' . collect($e->errors())->flatten()->first());
+        } catch (\Exception $e) {
+            \Log::error('storeCourse exception: ' . $e->getMessage(), ['trace' => $e->getTraceAsString()]);
+            return redirect()->route('admin.academy.index')
+                ->with('error', 'Gagal menyimpan: ' . $e->getMessage());
+        }
+    }
+
+    public function destroyCourse(Course $course)
+    {
+        if ($course->cover_image) {
+            Storage::disk('public')->delete($course->cover_image);
+        }
+        foreach ($course->modules as $module) {
+            if ($module->thumbnail) Storage::disk('public')->delete($module->thumbnail);
+            foreach ($module->lessons as $lesson) {
+                if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
+                if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
+            }
+        }
+        $course->delete();
+
+        return redirect()->route('admin.academy.index')->with('success', 'E-Course berhasil dihapus!');
+    }
+
+    // ==========================================
+    //  COURSE DETAIL (Modules Management)
+    // ==========================================
+
+    public function show(Course $course)
+    {
         $modules = $course->modules()->withCount('lessons')->orderBy('sort_order')->get();
-        return view('admin.academy.index', compact('course', 'modules'));
+        return view('admin.academy.show', compact('course', 'modules'));
     }
 
     public function updateCourse(Request $request, Course $course)
@@ -43,7 +103,7 @@ class AcademyAdminController extends Controller
 
         $course->update($request->only('title', 'description', 'status'));
 
-        return redirect()->route('admin.academy.index')->with('success', 'Pengaturan Academy diperbarui!');
+        return redirect()->route('admin.academy.show', $course)->with('success', 'Pengaturan Academy diperbarui!');
     }
 
     // ==========================================
@@ -68,7 +128,7 @@ class AcademyAdminController extends Controller
 
         $course->modules()->create($data);
 
-        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil ditambahkan!');
+        return redirect()->route('admin.academy.show', $course)->with('success', 'Modul berhasil ditambahkan!');
     }
 
     public function updateModule(Request $request, Module $module)
@@ -93,7 +153,7 @@ class AcademyAdminController extends Controller
         }
 
         $module->update($data);
-        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil diperbarui!');
+        return redirect()->route('admin.academy.show', $module->course)->with('success', 'Modul berhasil diperbarui!');
     }
 
     public function destroyModule(Module $module)
@@ -105,8 +165,9 @@ class AcademyAdminController extends Controller
             if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
             if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
         }
+        $courseId = $module->course_id;
         $module->delete();
-        return redirect()->route('admin.academy.index')->with('success', 'Modul berhasil dihapus!');
+        return redirect()->route('admin.academy.show', $courseId)->with('success', 'Modul berhasil dihapus!');
     }
 
     // ==========================================
@@ -148,7 +209,7 @@ class AcademyAdminController extends Controller
 
         $module->lessons()->create($data);
 
-        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil ditambahkan!');
+        return redirect()->route('admin.academy.show', $module->course)->with('success', 'Materi berhasil ditambahkan!');
     }
 
     public function editLesson(Lesson $lesson)
@@ -196,14 +257,15 @@ class AcademyAdminController extends Controller
 
         $lesson->update($data);
 
-        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil diperbarui!');
+        return redirect()->route('admin.academy.show', $lesson->module->course)->with('success', 'Materi berhasil diperbarui!');
     }
 
     public function destroyLesson(Lesson $lesson)
     {
         if ($lesson->video_path) Storage::disk('public')->delete($lesson->video_path);
         if ($lesson->file_path) Storage::disk('public')->delete($lesson->file_path);
+        $courseId = $lesson->module->course_id;
         $lesson->delete();
-        return redirect()->route('admin.academy.index')->with('success', 'Materi berhasil dihapus!');
+        return redirect()->route('admin.academy.show', $courseId)->with('success', 'Materi berhasil dihapus!');
     }
 }

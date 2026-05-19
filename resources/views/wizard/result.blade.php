@@ -66,7 +66,7 @@
             margin-top: 2rem;
             margin-bottom: 1rem;
             font-weight: 700;
-            color: #1e293b;
+            color: #064e3b;
         }
         .prose p {
             margin-bottom: 1.25rem;
@@ -79,7 +79,7 @@
             margin-bottom: 0.5rem;
         }
         .prose blockquote {
-            border-left: 4px solid #3b82f6;
+            border-left: 4px solid #10b981;
             padding-left: 1rem;
             margin: 1.5rem 0;
             font-style: italic;

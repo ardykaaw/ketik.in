@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <div class="card card-md border-0 shadow-lg position-relative mx-auto" style="border-radius: 28px; background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(255,255,255,0.6); box-shadow: 0 25px 50px -12px rgba(35, 79, 112, 0.15); max-width: 450px;">
-        <div class="card-status-top bg-primary" style="height: 4px; border-radius: 24px 24px 0 0;"></div>
+    <div class="card card-md border-0 shadow-lg position-relative mx-auto" style="border-radius: 28px; background: rgba(255, 255, 255, 0.78); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid rgba(16,185,129,0.15) !important; box-shadow: 0 25px 50px -12px rgba(16,185,129,0.12); max-width: 450px;">
+        <div class="card-status-top" style="height: 4px; border-radius: 24px 24px 0 0; background: linear-gradient(90deg, #10b981, #059669);"></div>
         <div class="card-body p-4">
             <h2 class="h1 text-center mb-2 fw-bold text-dark" style="font-size: 1.75rem;">Mulai Sekarang</h2>
             <p class="text-center text-secondary mb-4 small">Daftar sekarang dan nikmati asisten menulis berbasis AI.</p>
@@ -72,12 +72,12 @@
                 <div class="mb-4">
                     <label class="form-check custom-checkbox">
                         <input type="checkbox" class="form-check-input" required />
-                        <span class="form-check-label text-secondary small">Saya setuju dengan <a href="#" class="text-primary fw-bold">Syarat & Ketentuan</a>.</span>
+                        <span class="form-check-label text-secondary small">Saya setuju dengan <a href="#" style="color:#059669;" class="fw-bold">Syarat & Ketentuan</a>.</span>
                     </label>
                 </div>
 
                 <div class="form-footer mt-4">
-                    <button type="submit" class="btn btn-primary w-100 fw-bold py-3 shadow-sm hover-lift" style="border-radius: 12px; font-size: 1rem;">
+                    <button type="submit" class="btn w-100 fw-bold py-3 hover-lift" style="border-radius: 12px; font-size: 1rem; background: linear-gradient(135deg,#10b981,#059669); color: white; border: none; box-shadow: 0 4px 15px rgba(16,185,129,0.3);">
                         Daftar Akun Baru
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user-plus ms-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 7a4 4 0 1 0 8 0a4 4 0 0 0 -8 0" /><path d="M16 19h6" /><path d="M19 16v6" /><path d="M6 21v-2a4 4 0 0 1 4 -4h4" /></svg>
                     </button>
@@ -86,7 +86,7 @@
         </div>
     </div>
     <div class="text-center text-secondary mt-4">
-        Sudah memiliki akun? <a href="{{ route('login') }}" class="text-primary fw-bold ms-1">Masuk Saja</a>
+        Sudah memiliki akun? <a href="{{ route('login') }}" style="color:#059669;" class="fw-bold ms-1">Masuk Saja</a>
     </div>
 
     @push('scripts')
@@ -98,8 +98,8 @@
     </script>
     <style>
         .form-control:focus {
-            border-color: #3b82f6 !important;
-            box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.1) !important;
+            border-color: #10b981 !important;
+            box-shadow: 0 0 0 0.25rem rgba(16, 185, 129, 0.12) !important;
         }
     </style>
     @endpush

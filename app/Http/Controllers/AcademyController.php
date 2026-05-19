@@ -10,29 +10,22 @@ use Illuminate\Support\Facades\Auth;
 class AcademyController extends Controller
 {
     /**
-     * Show modules directly (single-page view).
+     * Show all published courses.
      */
     public function index()
     {
-        $course = Course::published()
-            ->with(['modules.lessons'])
+        $courses = Course::published()
+            ->withCount(['modules', 'lessons'])
             ->orderBy('sort_order')
-            ->first();
+            ->get();
 
-        if (!$course) {
-            return view('academy.index', ['course' => null]);
+        $user = Auth::user();
+        $courseProgress = [];
+        foreach ($courses as $course) {
+            $courseProgress[$course->id] = $course->getProgressForUser($user);
         }
 
-        $progress = $course->getProgressForUser(Auth::user());
-        
-        $allLessonIds = $course->modules->flatMap(fn($m) => $m->lessons->pluck('id'))->toArray();
-        $completedLessonIds = Auth::user()
-            ->completedLessons()
-            ->whereIn('lesson_id', $allLessonIds)
-            ->pluck('lesson_id')
-            ->toArray();
-
-        return view('academy.index', compact('course', 'progress', 'completedLessonIds'));
+        return view('academy.index', compact('courses', 'courseProgress'));
     }
 
     /**

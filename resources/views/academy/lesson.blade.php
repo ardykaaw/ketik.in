@@ -158,7 +158,7 @@
         .lesson-content p { margin-bottom: 1rem; }
         .lesson-content ul, .lesson-content ol { padding-left: 1.5rem; margin-bottom: 1rem; }
         .lesson-content img { max-width: 100%; border-radius: 12px; margin: 1rem 0; }
-        .lesson-content blockquote { border-left: 4px solid #3b82f6; padding: 1rem 1.5rem; background: #f8fafc; border-radius: 0 12px 12px 0; margin: 1rem 0; }
+        .lesson-content blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; background: #f0fdf9; border-radius: 0 12px 12px 0; margin: 1rem 0; }
         .lesson-content code { background: #f1f5f9; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
         .lesson-content pre { background: #1e293b; color: #e2e8f0; padding: 1.25rem; border-radius: 12px; overflow-x: auto; margin: 1rem 0; }
         .lesson-content pre code { background: none; padding: 0; color: inherit; }

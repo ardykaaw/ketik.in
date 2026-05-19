@@ -8,7 +8,7 @@
                 </div>
 
                 <!-- Current Plan -->
-                <div class="card border-0 shadow-lg text-white mb-5" style="border-radius: 24px; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); overflow: hidden;">
+                <div class="card border-0 shadow-lg text-white mb-5" style="border-radius: 24px; background: linear-gradient(135deg, #022c22 0%, #065f46 100%); overflow: hidden;">
                     <div class="card-body p-4 p-md-5 position-relative">
                         <div class="position-absolute top-0 end-0 p-5 mt-n4 me-n4 opacity-10 d-none d-sm-block">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="200" height="200" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>

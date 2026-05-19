@@ -8,7 +8,7 @@
     <link href="{{ asset('css/tabler.min.css') }}" rel="stylesheet"/>
     <style>
       body {
-        background-color: #0f172a;
+        background-color: #022c22;
         color: white;
         height: 100vh;
         display: flex;

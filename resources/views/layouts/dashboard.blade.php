@@ -7,7 +7,7 @@
     <title>{{ config('app.name', 'Ketik.in') }}</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}?v=3">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#022c22">
     <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <!-- CSS files -->
     <link href="{{ asset('css/tabler.min.css') }}" rel="stylesheet"/>
@@ -24,7 +24,7 @@
       }
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
-        background-color: #f1f5f9; /* Slate-100 */
+        background-color: #f0fdf9;
       }
       
       /* --- Desktop Floating Sidebar Styles --- */
@@ -49,14 +49,14 @@
           }
 
           .sidebar-content {
-              background-color: #0f172a; /* Slate-900 */
+              background-color: #022c22;
               color: white;
               border-radius: 16px;
               height: 100%;
               display: flex;
               flex-direction: column;
               padding: 1.25rem;
-              box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+              box-shadow: 4px 0 24px rgba(0,0,0,.12), 0 0 0 1px rgba(16,185,129,.06);
               overflow-y: auto;
           }
 
@@ -67,12 +67,12 @@
               background: transparent;
           }
           .sidebar-content::-webkit-scrollbar-thumb {
-              background: rgba(255, 255, 255, 0.1);
+              background: rgba(16, 185, 129, 0.18);
               border-radius: 4px;
           }
           
           .sidebar-logo {
-              border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+              border-bottom: 1px solid rgba(16, 185, 129, 0.12);
           }
 
           .page-wrapper {
@@ -103,15 +103,14 @@
 
           /* The inner content gets the background, valid only when expanded */
           .sidebar-content {
-              background-color: #0f172a; 
+              background-color: #022c22;
               color: white;
               padding: 0.5rem 1rem;
               width: 100%;
               border-radius: 0;
               box-shadow: none;
-              /* Ensure proper spacing when opened */
-              margin-top: 0; 
-              border-top: 1px solid rgba(255,255,255,0.1); 
+              margin-top: 0;
+              border-top: 1px solid rgba(16,185,129,.12);
           }
           
           .page-wrapper {
@@ -137,7 +136,7 @@
       .logo-icon {
           width: 36px;
           height: 36px;
-          background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
           border-radius: 10px;
           display: flex;
@@ -145,7 +144,7 @@
           justify-content: center;
           font-weight: 800;
           font-size: 1.2rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(16,185,129,.35);
       }
       
       .logo-text {
@@ -177,14 +176,14 @@
       }
 
       .nav-link:hover {
-          background-color: rgba(255, 255, 255, 0.05);
-          color: #f8fafc !important; 
+          background-color: rgba(16, 185, 129, 0.07);
+          color: #d1fae5 !important;
       }
 
       .nav-link.active {
-          background-color: #3b82f6;
+          background: linear-gradient(135deg, #10b981, #059669) !important;
           color: white !important;
-          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.30);
       }
 
       .nav-icon {
@@ -207,8 +206,8 @@
       }
 
       .admin-card {
-          background: rgba(255, 255, 255, 0.03);
-          border: 1px solid rgba(255, 255, 255, 0.05);
+          background: rgba(16, 185, 129, 0.04);
+          border: 1px solid rgba(16, 185, 129, 0.1);
           border-radius: 12px;
           padding: 12px;
           margin-bottom: 12px;
@@ -216,7 +215,7 @@
       }
       
       .admin-card:hover {
-          background: rgba(255, 255, 255, 0.06);
+          background: rgba(16, 185, 129, 0.08);
       }
       
       /* Mobile Toggle Visibility Fixes REMOVED to allow smooth animation */
@@ -226,7 +225,7 @@
   <body >
     <div class="page">
       <!-- Mobile Header -->
-      <header class="navbar navbar-expand-lg navbar-dark d-print-none d-lg-none border-bottom" style="background-color: #0f172a;">
+      <header class="navbar navbar-expand-lg navbar-dark d-print-none d-lg-none border-bottom" style="background-color: #022c22; border-color: rgba(16,185,129,.15) !important;">
         <div class="container-xl">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -392,7 +391,7 @@
 
                 <!-- Footer -->
                 <div class="sidebar-footer">
-                    <div class="d-flex align-items-center justify-content-between mb-3 px-2">
+                    <div class="d-flex align-items-center justify-content-between mb-3 px-2" style="border-top:1px solid rgba(16,185,129,.12);padding-top:1rem;">
                          <div class="text-white small fw-bold" style="opacity: 0.7;">Mode Tampilan</div>
                          <x-theme-toggle />
                     </div>
@@ -410,7 +409,7 @@
                                 <div class="small text-muted text-truncate" style="opacity: 0.7;">{{ Auth::user()->plan_name ?? 'Free Plan' }}</div>
                             </div>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-dark border-0 shadow-lg mt-3" style="border-radius: 12px; min-width: 160px; background-color: #1e293b;">
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-dark border-0 shadow-lg mt-3" style="border-radius: 12px; min-width: 160px; background-color: #033320; border: 1px solid rgba(16,185,129,.15);">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <a href="{{ route('logout') }}" class="dropdown-item py-2 px-3 fw-medium text-danger d-flex align-items-center" onclick="event.preventDefault(); this.closest('form').submit();">
@@ -423,7 +422,7 @@
                     
                     <!-- PWA Install Button (Hidden by default) -->
                     <div id="pwa-install-container" class="mt-3 d-none">
-                        <button id="pwa-install-btn" class="btn btn-primary w-100 rounded-pill">
+                        <button id="pwa-install-btn" class="btn w-100 rounded-pill fw-semibold" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
                             Install App
                         </button>
@@ -454,7 +453,7 @@
                     icon: 'success',
                     title: 'Berhasil!',
                     text: "{{ session('success') }}",
-                    confirmButtonColor: '#3b82f6',
+                    confirmButtonColor: '#10b981',
                     timer: 3000,
                     timerProgressBar: true
                 });
@@ -465,7 +464,7 @@
                     icon: 'error',
                     title: 'Akses Dibatasi',
                     text: "{{ session('error') }}",
-                    confirmButtonColor: '#d63939',
+                    confirmButtonColor: '#10b981',
                 });
             @endif
         });
@@ -653,7 +652,7 @@
                 title: 'Sedang Berpikir...',
                 text: 'AI sedang menyusun tulisan terbaik untuk Anda. Mohon tunggu sebentar.',
                 icon: 'info',
-                background: isDarkMode ? '#1e293b' : '#ffffff',
+                background: isDarkMode ? '#022c22' : '#ffffff',
                 color: isDarkMode ? '#ffffff' : '#000000',
                 showConfirmButton: false,
                 allowOutsideClick: false,

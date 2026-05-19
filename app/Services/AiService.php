@@ -23,6 +23,9 @@ class AiService
      */
     public function generate(string $prompt): string
     {
+        set_time_limit(0);
+        ini_set('max_execution_time', 0);
+
         $model = config('gemini.model', 'gemini-flash-latest');
         $errors = [];
 
@@ -487,6 +490,260 @@ class AiService
                    - Pastikan ada langkah pengambilan keputusan jika diperlukan (Jika OK lanjut ke..., Jika Tidak kembalikan ke...).
                    
                    Gunakan gaya bahasa SOP yang tegas, jelas, dan tidak ambigu.";
+
+        return $this->generate($prompt);
+    }
+
+    // ===== MODE GURU =====
+
+    /**
+     * Generate soal ujian/latihan.
+     */
+    public function generateSoal(array $data): string
+    {
+        $prompt = "Kamu adalah guru berpengalaman yang ahli membuat soal berkualitas.
+Buatkan soal {$data['jenis']} sebanyak {$data['jumlah']} soal untuk:
+
+- Mata Pelajaran : {$data['mapel']}
+- Kelas/Tingkat  : {$data['kelas']}
+- Topik/Materi   : {$data['topik']}
+- Tingkat Kesulitan: {$data['kesulitan']}
+
+ATURAN PENULISAN RUMUS DAN SIMBOL (WAJIB DIIKUTI):
+- DILARANG KERAS menggunakan notasi LaTeX apapun. Jangan pernah pakai: $ ... $, $$ ... $$, \\frac{}{}, \\sqrt{}, \\sum, \\int, \\bar{x}, \\text{}, atau backslash apapun.
+- Tulis rumus dan simbol dalam teks biasa yang bisa dibaca manusia:
+  - Pecahan: tulis \"a/b\" bukan \"\\frac{a}{b}\"
+  - Pangkat: tulis \"x²\" atau \"x^2\" bukan \"x^{2}\"
+  - Akar: tulis \"√3\" atau \"akar(3)\" bukan \"\\sqrt{3}\"
+  - Rata-rata: tulis \"x̄\" atau \"rata-rata x\" bukan \"\\bar{x}\"
+  - Sigma: tulis \"Σ\" bukan \"\\sum\"
+  - Integral: tulis \"∫\" bukan \"\\int\"
+  - Derajat: tulis \"90°\" bukan \"90^\\circ\"
+  - Perkalian: tulis \"×\" bukan \"\\times\" atau \"\\cdot\"
+  - Subskrip: tulis \"S₁\", \"S₂\", \"aₙ\" atau \"S1\", \"S2\", \"an\" bukan \"S_{1}\", \"S_{n}\"
+  - Superskrip: tulis \"a²\", \"x³\" bukan \"a^{2}\", \"x^{3}\"
+  - Pi: tulis \"π\" langsung
+  - Tak hingga: tulis \"∞\" langsung
+
+KETENTUAN OUTPUT:
+" . ($data['jenis'] === 'Pilihan Ganda' ? "- Setiap soal wajib memiliki 5 opsi jawaban (A, B, C, D, E).
+- Di akhir seluruh soal, tampilkan KUNCI JAWABAN dalam format tabel: | No | Jawaban |" : "") . "
+" . ($data['jenis'] === 'Essay' ? "- Setiap soal diikuti panduan kunci jawaban singkat di bawahnya (cetak miring)." : "") . "
+" . ($data['jenis'] === 'Campuran' ? "- Buat " . intdiv((int)$data['jumlah'], 2) . " soal Pilihan Ganda (dengan 5 opsi + kunci) dan " . ((int)$data['jumlah'] - intdiv((int)$data['jumlah'], 2)) . " soal Essay (dengan panduan kunci)." : "") . "
+- Nomor soal berurutan dari 1.
+- Gunakan bahasa Indonesia yang baku dan sesuai tingkat kelas.
+- Soal harus relevan dengan topik dan mengukur pemahaman yang bervariasi (C1 - C4 Bloom).";
+
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Modul Ajar Kurikulum Merdeka (RPP Plus).
+     */
+    public function generateModulAjar(array $data): string
+    {
+        $prompt = "Kamu adalah pengembang kurikulum profesional yang ahli dalam Kurikulum Merdeka.
+Buatkan MODUL AJAR lengkap sesuai format Kurikulum Merdeka (Kemendikbudristek) berdasarkan data berikut:
+
+ATURAN PENULISAN RUMUS DAN SIMBOL (WAJIB DIIKUTI):
+- DILARANG KERAS menggunakan notasi LaTeX apapun. Jangan gunakan: dollar sign, \\frac, \\sqrt, \\sum, \\int, \\bar, atau backslash apapun.
+- Tulis semua rumus dalam teks biasa: pecahan → a/b, pangkat → x² atau x^2, akar → √3, derajat → 90°, pi → π, perkalian → ×, rata-rata → x̄.
+
+IDENTITAS MODUL:
+- Mata Pelajaran : {$data['mapel']}
+- Jenjang/Kelas  : {$data['kelas']}
+- Alokasi Waktu  : {$data['waktu']} menit ({$data['pertemuan']} pertemuan)
+- Topik/Materi   : {$data['topik']}
+- Model Pembelajaran: {$data['model']}
+
+FORMAT OUTPUT WAJIB (Markdown):
+
+## MODUL AJAR — {$data['mapel']}
+
+### A. INFORMASI UMUM
+| Komponen | Keterangan |
+|---|---|
+| Nama Penyusun | [Nama Guru] |
+| Instansi | [Nama Sekolah] |
+| Mata Pelajaran | {$data['mapel']} |
+| Kelas/Semester | {$data['kelas']} |
+| Alokasi Waktu | {$data['waktu']} menit |
+| Topik | {$data['topik']} |
+
+### B. CAPAIAN PEMBELAJARAN
+(Tuliskan CP yang relevan untuk {$data['mapel']} kelas {$data['kelas']} sesuai Kurikulum Merdeka)
+
+### C. TUJUAN PEMBELAJARAN
+(Rumuskan 3-5 tujuan pembelajaran yang terukur menggunakan kata kerja operasional HOTS)
+
+### D. PROFIL PELAJAR PANCASILA
+(Sebutkan 2-3 dimensi Profil Pelajar Pancasila yang dikembangkan, beserta sub-elemennya)
+
+### E. SARANA & PRASARANA
+(Daftar perangkat, media, dan sumber belajar yang dibutuhkan)
+
+### F. KEGIATAN PEMBELAJARAN
+
+#### Pertemuan 1 ({$data['waktu']} menit)
+**1. Pendahuluan (10 menit)**
+(Apersepsi, motivasi, penyampaian tujuan)
+
+**2. Kegiatan Inti (... menit)**
+(Uraikan langkah-langkah model {$data['model']} secara detail dan operasional)
+
+**3. Penutup (10 menit)**
+(Refleksi, kesimpulan, tindak lanjut)
+
+### G. ASESMEN
+**1. Asesmen Diagnostik:** (Pertanyaan awal untuk mengukur pengetahuan awal siswa)
+**2. Asesmen Formatif:** (Selama proses pembelajaran)
+**3. Asesmen Sumatif:** (Kisi-kisi singkat evaluasi akhir topik ini)
+
+### H. REMEDIAL & PENGAYAAN
+(Rencana kegiatan untuk siswa yang belum mencapai tujuan & yang sudah melampaui)
+
+Gunakan bahasa Indonesia yang profesional dan sesuai kaidah pengembangan perangkat ajar.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate RPP (Rencana Pelaksanaan Pembelajaran).
+     */
+    public function generateRPP(array $data): string
+    {
+        $prompt = "Kamu adalah guru profesional berpengalaman. Buatkan RPP (Rencana Pelaksanaan Pembelajaran) yang lengkap dan siap pakai.
+
+ATURAN PENULISAN RUMUS DAN SIMBOL (WAJIB DIIKUTI):
+- DILARANG KERAS menggunakan notasi LaTeX apapun. Jangan gunakan: dollar sign, \\frac, \\sqrt, \\sum, \\int, \\bar, atau backslash apapun.
+- Tulis semua rumus dalam teks biasa: pecahan → a/b, pangkat → x² atau x^2, akar → √3, derajat → 90°, pi → π, perkalian → ×, rata-rata → x̄.
+
+DATA RPP:
+- Mata Pelajaran    : {$data['mapel']}
+- Kelas/Semester    : {$data['kelas']}
+- Topik/Materi      : {$data['topik']}
+- Alokasi Waktu     : {$data['waktu']} menit ({$data['pertemuan']} pertemuan × {$data['jp']} JP)
+- Kurikulum         : {$data['kurikulum']}
+- Metode Pembelajaran: {$data['metode']}
+- Kompetensi Dasar  : {$data['kd']}
+
+FORMAT OUTPUT WAJIB (Markdown):
+
+# RENCANA PELAKSANAAN PEMBELAJARAN (RPP)
+
+**Mata Pelajaran:** {$data['mapel']}  
+**Kelas/Semester:** {$data['kelas']}  
+**Topik:** {$data['topik']}  
+**Alokasi Waktu:** {$data['waktu']} menit  
+**Kurikulum:** {$data['kurikulum']}  
+
+---
+
+## I. KOMPETENSI INTI (KI)
+(Tuliskan KI 1-4 yang sesuai jenjang)
+
+## II. KOMPETENSI DASAR & INDIKATOR
+| KD | Indikator Pencapaian Kompetensi |
+|---|---|
+| {$data['kd']} | (Jabarkan minimal 3 IPK dari KD ini) |
+
+## III. TUJUAN PEMBELAJARAN
+(Rumuskan tujuan dengan format: Melalui kegiatan..., peserta didik mampu... dengan... secara...)
+
+## IV. MATERI PEMBELAJARAN
+- **Materi Faktual:** ...
+- **Materi Konseptual:** ...
+- **Materi Prosedural:** ...
+
+## V. METODE PEMBELAJARAN
+- Pendekatan : Saintifik / TPACK
+- Model      : {$data['metode']}
+- Metode     : Diskusi, Tanya Jawab, Penugasan
+
+## VI. MEDIA, ALAT, & SUMBER BELAJAR
+(Daftar media dan sumber yang relevan)
+
+## VII. LANGKAH-LANGKAH PEMBELAJARAN
+
+### Pertemuan 1
+| Kegiatan | Deskripsi | Alokasi Waktu |
+|---|---|---|
+| Pendahuluan | (Apersepsi, motivasi, presensi) | 10 menit |
+| Inti | (Uraikan langkah {$data['metode']} secara detail — 5M jika Saintifik) | ... menit |
+| Penutup | (Kesimpulan, refleksi, PR/tindak lanjut) | 10 menit |
+
+## VIII. PENILAIAN
+| Aspek | Teknik | Instrumen |
+|---|---|---|
+| Sikap | Observasi | Lembar observasi |
+| Pengetahuan | Tes tertulis | Soal PG/Essay |
+| Keterampilan | Unjuk kerja | Rubrik penilaian |
+
+---
+Mengetahui,  
+Kepala Sekolah        [Kota], [Tanggal]  
+                      Guru Mata Pelajaran  
+
+[Nama Kepala Sekolah] [Nama Guru]  
+NIP. ...              NIP. ...  
+
+Gunakan Bahasa Indonesia baku. Output harus langsung bisa digunakan guru tanpa banyak editing.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
+     * Generate Rekap Nilai dengan analisis AI.
+     */
+    public function generateRekapNilai(array $data): string
+    {
+        $prompt = "Kamu adalah wali kelas / guru yang berpengalaman dalam analisis penilaian siswa.
+Buatkan REKAP DAN ANALISIS NILAI berdasarkan data berikut:
+
+ATURAN PENULISAN RUMUS DAN SIMBOL (WAJIB DIIKUTI):
+- DILARANG KERAS menggunakan notasi LaTeX apapun. Jangan gunakan: dollar sign, \\frac, \\sqrt, \\sum, \\int, \\bar, atau backslash apapun.
+- Tulis semua angka dan simbol dalam teks biasa: pecahan → a/b, pangkat → x², akar → √, rata-rata → x̄ atau tulis rata-rata, derajat → 90°, perkalian → ×.
+
+IDENTITAS:
+- Mata Pelajaran : {$data['mapel']}
+- Kelas          : {$data['kelas']}
+- Periode        : {$data['periode']}
+- KKM/KKTP       : {$data['kkm']}
+
+DATA NILAI SISWA:
+{$data['nilai_raw']}
+
+FORMAT OUTPUT WAJIB (Markdown):
+
+## REKAP NILAI — {$data['mapel']} Kelas {$data['kelas']}
+**Periode:** {$data['periode']} | **KKM/KKTP:** {$data['kkm']}
+
+### A. TABEL REKAP NILAI
+(Buat tabel lengkap dari data yang diberikan dengan kolom: No | Nama Siswa | Nilai | Keterangan (Tuntas/Belum Tuntas))
+
+### B. STATISTIK KELAS
+| Keterangan | Nilai |
+|---|---|
+| Nilai Tertinggi | ... |
+| Nilai Terendah | ... |
+| Rata-rata Kelas | ... |
+| Jumlah Tuntas | ... siswa (...%) |
+| Jumlah Belum Tuntas | ... siswa (...%) |
+
+### C. ANALISIS & NARASI
+(Buat 2-3 paragraf narasi analisis kondisi kelas: bagaimana distribusi nilai, pola yang terlihat, dan apa yang mungkin perlu diperhatikan guru)
+
+### D. REKOMENDASI TINDAK LANJUT
+**Untuk Siswa Belum Tuntas:**
+- (Daftar nama dan rekomendasi remedial/pendekatan personal)
+
+**Untuk Siswa Tuntas:**
+- (Rekomendasi pengayaan)
+
+**Untuk Pembelajaran Selanjutnya:**
+- (Saran perbaikan strategi mengajar berdasarkan data ini)
+
+Gunakan Bahasa Indonesia yang profesional namun mudah dipahami guru.";
 
         return $this->generate($prompt);
     }

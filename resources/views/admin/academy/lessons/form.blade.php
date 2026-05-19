@@ -153,7 +153,7 @@
         .note-editor .note-editing-area .note-editable h1, .note-editor .note-editing-area .note-editable h2, .note-editor .note-editing-area .note-editable h3 { font-weight: 700; margin-top: 1rem; margin-bottom: 0.5rem; }
         .note-editor .note-editing-area .note-editable table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
         .note-editor .note-editing-area .note-editable table td, .note-editor .note-editing-area .note-editable table th { border: 1px solid #dee2e6; padding: 8px 12px; }
-        .note-editor .note-editing-area .note-editable blockquote { border-left: 4px solid #3b82f6; padding: 1rem 1.5rem; background: #f0f9ff; border-radius: 0 8px 8px 0; margin: 1rem 0; }
+        .note-editor .note-editing-area .note-editable blockquote { border-left: 4px solid #10b981; padding: 1rem 1.5rem; background: #f0fdf9; border-radius: 0 8px 8px 0; margin: 1rem 0; }
         .note-btn { border-radius: 6px !important; }
         .note-status-output { display: none !important; }
     </style>

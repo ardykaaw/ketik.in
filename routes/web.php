@@ -8,6 +8,7 @@ use App\Http\Controllers\LibraryController;
 use App\Http\Controllers\BillingController;
 use App\Http\Controllers\AcademyController;
 use App\Http\Controllers\Admin\AcademyAdminController;
+use App\Http\Controllers\Admin\InfographicController;
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\DashboardController;
@@ -36,6 +37,7 @@ Route::post('/bind-device-confirm', [App\Http\Controllers\Auth\DeviceBindingCont
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
 
     // Features & Wizard (Premium + Device Bound)
     Route::middleware(['premium', 'device_bound'])->group(function () {
@@ -120,6 +122,22 @@ Route::middleware(['auth'])->group(function () {
     // Admin Group
     Route::middleware(['admin'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
+
+        // Mode Guru (Admin Only)
+        Route::prefix('guru')->name('guru.')->group(function () {
+            Route::get('/', [App\Http\Controllers\TeacherController::class, 'index'])->name('index');
+            Route::get('/soal', [App\Http\Controllers\TeacherController::class, 'soal'])->name('soal');
+            Route::post('/soal/generate', [App\Http\Controllers\TeacherController::class, 'generateSoal'])->name('soal.generate');
+            Route::get('/modul', [App\Http\Controllers\TeacherController::class, 'modul'])->name('modul');
+            Route::post('/modul/generate', [App\Http\Controllers\TeacherController::class, 'generateModul'])->name('modul.generate');
+            Route::get('/rpp', [App\Http\Controllers\TeacherController::class, 'rpp'])->name('rpp');
+            Route::post('/rpp/generate', [App\Http\Controllers\TeacherController::class, 'generateRpp'])->name('rpp.generate');
+            Route::get('/rekap', [App\Http\Controllers\TeacherController::class, 'rekap'])->name('rekap');
+            Route::post('/rekap/generate', [App\Http\Controllers\TeacherController::class, 'generateRekap'])->name('rekap.generate');
+            Route::get('/pustaka', [App\Http\Controllers\TeacherController::class, 'pustaka'])->name('pustaka');
+            Route::get('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaShow'])->name('pustaka.show');
+            Route::delete('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaDestroy'])->name('pustaka.destroy');
+        });
         
         // Admin Users
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
@@ -140,9 +158,17 @@ Route::middleware(['auth'])->group(function () {
         // Admin Device Reset
         Route::post('/admin/users/{user}/reset-device', [AdminController::class, 'resetDevice'])->name('admin.users.reset-device');
 
-        // Academy Management (Simplified)
+        // Infographic Generator
+        Route::get('/admin/infographic', [InfographicController::class, 'index'])->name('admin.infographic.index');
+        Route::post('/admin/infographic/generate', [InfographicController::class, 'generate'])->name('admin.infographic.generate');
+        Route::delete('/admin/infographic', [InfographicController::class, 'destroy'])->name('admin.infographic.destroy');
+
+        // Academy Management (Multi-Course)
         Route::get('/admin/academy', [AcademyAdminController::class, 'index'])->name('admin.academy.index');
+        Route::post('/admin/academy/courses', [AcademyAdminController::class, 'storeCourse'])->name('admin.academy.course.store');
+        Route::get('/admin/academy/course/{course}', [AcademyAdminController::class, 'show'])->name('admin.academy.show');
         Route::put('/admin/academy/course/{course}', [AcademyAdminController::class, 'updateCourse'])->name('admin.academy.course.update');
+        Route::delete('/admin/academy/course/{course}', [AcademyAdminController::class, 'destroyCourse'])->name('admin.academy.course.destroy');
         Route::post('/admin/academy/course/{course}/modules', [AcademyAdminController::class, 'storeModule'])->name('admin.academy.modules.store');
         Route::put('/admin/academy/modules/{module}', [AcademyAdminController::class, 'updateModule'])->name('admin.academy.modules.update');
         Route::delete('/admin/academy/modules/{module}', [AcademyAdminController::class, 'destroyModule'])->name('admin.academy.modules.destroy');

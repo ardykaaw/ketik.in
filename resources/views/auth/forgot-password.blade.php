@@ -1,6 +1,6 @@
 <x-guest-layout>
-    <div class="card card-md border-0 shadow-lg position-relative" style="border-radius: 24px; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px);">
-        <div class="card-status-top bg-primary" style="height: 4px; border-radius: 24px 24px 0 0;"></div>
+    <div class="card card-md border-0 shadow-lg position-relative" style="border-radius: 24px; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(16,185,129,0.15) !important; box-shadow: 0 25px 50px -12px rgba(16,185,129,0.12);">
+        <div class="card-status-top" style="height: 4px; border-radius: 24px 24px 0 0; background: linear-gradient(90deg, #10b981, #059669);"></div>
         <div class="card-body p-5 text-center">
             <div class="mb-4">
                 <div class="avatar avatar-xl rounded-circle bg-green-lt shadow-sm">
@@ -32,6 +32,6 @@
         </div>
     </div>
     <div class="text-center text-secondary mt-4">
-        Sudah ingat? <a href="{{ route('login') }}" class="text-primary fw-bold ms-1">Kembali Login</a>
+        Sudah ingat? <a href="{{ route('login') }}" style="color:#059669;" class="fw-bold ms-1">Kembali Login</a>
     </div>
 </x-guest-layout>

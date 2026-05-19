@@ -3,210 +3,125 @@
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <h1 class="fw-bold mb-1">🎓 Academy Manager</h1>
-                <p class="text-muted mb-0">Kelola kurikulum, modul, dan materi pembelajaran</p>
+                <p class="text-muted mb-0">Kelola e-course, modul, dan materi pembelajaran</p>
             </div>
-            <span class="badge {{ $course->status === 'published' ? 'bg-success' : 'bg-warning' }} px-3 py-2 fs-5" style="border-radius: 10px;">
-                {{ $course->status === 'published' ? '● Live' : '● Draft' }}
-            </span>
+            <button class="btn btn-primary d-flex align-items-center gap-2 px-4" style="border-radius: 12px;" data-bs-toggle="modal" data-bs-target="#modal-add-course">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah E-Course
+            </button>
         </div>
 
-        <div class="row g-4">
-            {{-- Left Column: Settings --}}
-            <div class="col-lg-4">
-                <div class="card shadow-sm border-0" style="border-radius: 20px; position: sticky; top: 20px;">
-                    <div class="card-body p-4">
-                        <h3 class="fw-bold mb-4 d-flex align-items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-                            Pengaturan
-                        </h3>
-                        <form action="{{ route('admin.academy.course.update', $course) }}" method="POST">
-                            @csrf @method('PUT')
-                            <div class="mb-3">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Judul Academy</label>
-                                <input type="text" name="title" class="form-control border-2" value="{{ $course->title }}" required style="border-radius: 12px;">
-                            </div>
-                            <div class="mb-3">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Deskripsi</label>
-                                <textarea name="description" class="form-control border-2" rows="3" style="border-radius: 12px;">{{ $course->description }}</textarea>
-                            </div>
-                            <div class="mb-4">
-                                <label class="form-label fw-bold small text-uppercase text-muted">Status</label>
-                                <select name="status" class="form-select border-2" style="border-radius: 12px;">
-                                    <option value="draft" {{ $course->status === 'draft' ? 'selected' : '' }}>Draft</option>
-                                    <option value="published" {{ $course->status === 'published' ? 'selected' : '' }}>Published</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-primary w-100 py-2" style="border-radius: 12px;">Simpan Perubahan</button>
-                        </form>
+        @if(session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert" style="border-radius: 14px;">
+            {{ session('success') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
+        @if(session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="border-radius: 14px;">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        @endif
 
-                        <hr class="my-4">
-                        
-                        <div class="row g-3">
-                            <div class="col-6">
-                                <div class="card border-0 bg-primary-lt text-center p-3" style="border-radius: 14px;">
-                                    <div class="fw-bold fs-1 text-primary">{{ $modules->count() }}</div>
-                                    <div class="small text-muted fw-bold">Modul</div>
-                                </div>
+        {{-- Courses Grid --}}
+        <div class="row g-4">
+            @forelse($courses as $course)
+            <div class="col-md-6 col-lg-4">
+                <div class="card shadow-sm border-0 h-100" style="border-radius: 20px; overflow: hidden; transition: transform 0.2s;">
+                    {{-- Cover --}}
+                    <div style="height: 160px; position: relative; overflow: hidden;">
+                        @if($course->cover_image)
+                            <img src="{{ asset('storage/' . $course->cover_image) }}" alt="{{ $course->title }}" style="width: 100%; height: 100%; object-fit: cover;">
+                        @else
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%); display: flex; align-items: center; justify-content: center;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                             </div>
-                            <div class="col-6">
-                                <div class="card border-0 bg-success-lt text-center p-3" style="border-radius: 14px;">
-                                    <div class="fw-bold fs-1 text-success">{{ $modules->sum('lessons_count') }}</div>
-                                    <div class="small text-muted fw-bold">Materi</div>
-                                </div>
+                        @endif
+                        <span class="badge {{ $course->status === 'published' ? 'bg-success' : 'bg-warning' }} px-2 py-1" style="position: absolute; top: 12px; right: 12px; border-radius: 8px; font-size: 0.7rem;">
+                            {{ $course->status === 'published' ? 'Live' : 'Draft' }}
+                        </span>
+                    </div>
+                    <div class="card-body p-4">
+                        <h3 class="fw-bold mb-1" style="font-size: 1.1rem;">{{ $course->title }}</h3>
+                        <p class="text-muted small mb-3" style="line-height: 1.5;">{{ Str::limit($course->description, 80) ?: 'Belum ada deskripsi' }}</p>
+                        <div class="d-flex gap-3 mb-3">
+                            <div class="d-flex align-items-center gap-1 text-muted small">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                                <span>{{ $course->modules_count }} modul</span>
                             </div>
+                            <div class="d-flex align-items-center gap-1 text-muted small">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                                <span>{{ $course->lessons_count }} materi</span>
+                            </div>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('admin.academy.show', $course) }}" class="btn btn-primary btn-sm flex-fill" style="border-radius: 10px;">Kelola</a>
+                            <form action="{{ route('admin.academy.course.destroy', $course) }}" method="POST" class="delete-form" data-name="E-Course {{ $course->title }}">
+                                @csrf @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-outline-danger" style="border-radius: 10px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                </button>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
-
-            {{-- Right Column: Modules --}}
-            <div class="col-lg-8">
-                {{-- Add Module --}}
-                <div class="card shadow-sm border-0 mb-4" style="border-radius: 20px;">
-                    <div class="card-body p-4">
-                        <h3 class="fw-bold mb-3">+ Tambah Modul Baru</h3>
-                        <form action="{{ route('admin.academy.modules.store', $course) }}" method="POST" enctype="multipart/form-data">
-                            @csrf
-                            <div class="row g-3">
-                                <div class="col-12">
-                                    <input type="text" name="title" class="form-control border-2" placeholder="Judul modul..." required style="border-radius: 12px;">
-                                </div>
-                                <div class="col-12">
-                                    <label class="form-label small text-muted fw-bold">Thumbnail Modul (opsional)</label>
-                                    <input type="file" name="thumbnail" class="form-control border-2" accept="image/*" style="border-radius: 12px;">
-                                </div>
-                                <div class="col-12">
-                                    <button type="submit" class="btn btn-dark px-5" style="border-radius: 12px;">Tambah Modul</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                @forelse($modules as $index => $module)
-                <div class="card shadow-sm border-0 mb-4" style="border-radius: 20px; overflow: hidden;" id="module-{{ $module->id }}">
-                    {{-- Module Header with Thumbnail --}}
-                    <div class="card-header bg-white py-3 px-4 border-0">
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="d-flex align-items-center gap-3">
-                                @if($module->thumbnail)
-                                    <img src="{{ asset('storage/' . $module->thumbnail) }}" alt="{{ $module->title }}" class="rounded-3 shadow-sm" style="width: 56px; height: 56px; object-fit: cover;">
-                                @else
-                                    <div class="rounded-3 d-flex align-items-center justify-content-center fw-bold text-white" style="width: 56px; height: 56px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); font-size: 1.4rem;">
-                                        {{ $index + 1 }}
-                                    </div>
-                                @endif
-                                <div>
-                                    <h3 class="card-title fw-bold mb-0">{{ $module->title }}</h3>
-                                    <span class="text-muted small">{{ $module->lessons_count }} materi</span>
-                                </div>
-                            </div>
-                            <div class="d-flex gap-2">
-                                <a href="{{ route('admin.academy.lessons.create', $module) }}" class="btn btn-sm btn-primary px-3" style="border-radius: 8px;">+ Materi</a>
-                                <button class="btn btn-sm btn-ghost-secondary p-1" onclick="editModule({{ $module->id }}, '{{ addslashes($module->title) }}', '{{ $module->thumbnail ? asset('storage/' . $module->thumbnail) : '' }}')">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                </button>
-                                <form action="{{ route('admin.academy.modules.destroy', $module) }}" method="POST" class="delete-form" data-name="Modul {{ $module->title }}">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-ghost-danger p-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="card-body p-0">
-                        <div class="list-group list-group-flush">
-                            @forelse($module->lessons as $lesson)
-                            <div class="list-group-item d-flex justify-content-between align-items-center py-3 px-4 border-0">
-                                <div class="d-flex align-items-center gap-3">
-                                    @if($lesson->has_file)
-                                        <div class="avatar avatar-xs rounded-circle {{ $lesson->file_extension === 'pdf' ? 'bg-red-lt text-red' : 'bg-blue-lt text-blue' }}">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                                        </div>
-                                    @elseif($lesson->has_video)
-                                        <div class="avatar avatar-xs rounded-circle bg-purple-lt text-purple">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l15 8l-15 8z" /></svg>
-                                        </div>
-                                    @else
-                                        <div class="avatar avatar-xs rounded-circle bg-secondary-lt text-secondary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                                        </div>
-                                    @endif
-                                    <div>
-                                        <span class="fw-medium d-block">{{ $lesson->title }}</span>
-                                        <div class="d-flex gap-1 mt-1">
-                                            @if($lesson->has_video)
-                                                <span class="badge bg-purple-lt text-purple" style="font-size: 0.65rem;">Video</span>
-                                            @endif
-                                            @if($lesson->has_file)
-                                                <span class="badge {{ $lesson->file_extension === 'pdf' ? 'bg-red-lt text-red' : 'bg-blue-lt text-blue' }}" style="font-size: 0.65rem;">{{ strtoupper($lesson->file_extension) }}</span>
-                                            @endif
-                                            @if($lesson->content)
-                                                <span class="badge bg-secondary-lt text-secondary" style="font-size: 0.65rem;">Teks</span>
-                                            @endif
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="d-flex gap-1">
-                                    <a href="{{ route('admin.academy.lessons.edit', $lesson) }}" class="btn btn-sm btn-ghost-primary p-1">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-                                    </a>
-                                    <form action="{{ route('admin.academy.lessons.destroy', $lesson) }}" method="POST" class="delete-form" data-name="Materi {{ $lesson->title }}">
-                                        @csrf @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-ghost-danger p-1">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-                                        </button>
-                                    </form>
-                                </div>
-                            </div>
-                            @empty
-                            <div class="p-4 text-center text-muted small fst-italic">Belum ada materi. Klik "+ Materi" untuk menambahkan.</div>
-                            @endforelse
-                        </div>
-                    </div>
-                </div>
-                @empty
+            @empty
+            <div class="col-12">
                 <div class="card border-0 shadow-sm" style="border-radius: 20px;">
                     <div class="card-body text-center py-5">
                         <div class="mb-3 text-muted" style="opacity: 0.3;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                         </div>
-                        <h3 class="fw-bold text-muted">Belum ada modul</h3>
-                        <p class="text-muted">Gunakan form di atas untuk membuat modul pertama.</p>
+                        <h3 class="fw-bold text-muted">Belum ada e-course</h3>
+                        <p class="text-muted">Klik tombol "Tambah E-Course" untuk membuat yang pertama.</p>
                     </div>
                 </div>
-                @endforelse
             </div>
+            @endforelse
         </div>
     </div>
 
-    {{-- Edit Module Modal --}}
-    <div class="modal modal-blur fade" id="modal-edit-module" tabindex="-1">
+    {{-- Add Course Modal --}}
+    <div class="modal modal-blur fade" id="modal-add-course" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content shadow-lg border-0" style="border-radius: 24px;">
-                <form id="edit-module-form" method="POST" enctype="multipart/form-data">
-                    @csrf @method('PUT')
+                <form action="{{ route('admin.academy.course.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
                     <div class="modal-body p-4">
-                        <h3 class="fw-bold mb-4">Edit Modul</h3>
+                        <h3 class="fw-bold mb-4">Tambah E-Course Baru</h3>
+
+                        @if($errors->any())
+                        <div class="alert alert-danger mb-3" style="border-radius: 12px;">
+                            <strong>Terjadi kesalahan:</strong>
+                            <ul class="mb-0 mt-1 ps-3 small">
+                                @foreach($errors->all() as $err)
+                                <li>{{ $err }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        @endif
+
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Nama Modul</label>
-                            <input type="text" name="title" id="edit-module-title" class="form-control border-2" style="border-radius: 12px;" required>
+                            <label class="form-label fw-bold small">Judul E-Course</label>
+                            <input type="text" name="title" class="form-control border-2 @error('title') is-invalid @enderror" value="{{ old('title') }}" placeholder="Contoh: Copywriting Mastery" style="border-radius: 12px;" required>
+                            @error('title')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Ganti Thumbnail</label>
-                            <input type="file" name="thumbnail" class="form-control border-2" accept="image/*" style="border-radius: 12px;">
-                            <div id="edit-module-thumb-preview" class="mt-2 d-none">
-                                <img id="edit-module-thumb-img" src="" class="rounded-3 shadow-sm" style="width: 80px; height: 80px; object-fit: cover;">
-                                <label class="ms-2 d-inline-flex align-items-center gap-1 cursor-pointer small text-danger">
-                                    <input type="checkbox" name="remove_thumbnail" value="1" class="form-check-input"> Hapus thumbnail
-                                </label>
-                            </div>
+                            <label class="form-label fw-bold small">Deskripsi (opsional)</label>
+                            <textarea name="description" class="form-control border-2 @error('description') is-invalid @enderror" rows="3" placeholder="Deskripsi singkat e-course..." style="border-radius: 12px;">{{ old('description') }}</textarea>
+                            @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold small">Cover Image (opsional, max 10MB)</label>
+                            <input type="file" name="cover_image" class="form-control border-2 @error('cover_image') is-invalid @enderror" accept="image/*" style="border-radius: 12px;">
+                            @error('cover_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                     </div>
                     <div class="modal-footer border-0 p-4 pt-0">
                         <button type="button" class="btn btn-link text-muted" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 12px;">Simpan</button>
+                        <button type="submit" class="btn btn-primary px-4" style="border-radius: 12px;">Tambah E-Course</button>
                     </div>
                 </form>
             </div>
@@ -215,26 +130,17 @@
 
     @push('scripts')
     <script>
-        function editModule(id, title, thumbUrl) {
-            document.getElementById('edit-module-form').action = `/admin/academy/modules/${id}`;
-            document.getElementById('edit-module-title').value = title;
-            const preview = document.getElementById('edit-module-thumb-preview');
-            const img = document.getElementById('edit-module-thumb-img');
-            if (thumbUrl) {
-                img.src = thumbUrl;
-                preview.classList.remove('d-none');
-            } else {
-                preview.classList.add('d-none');
-            }
-            new bootstrap.Modal(document.getElementById('modal-edit-module')).show();
-        }
+        // Re-open modal if validation failed
+        @if($errors->has('title') || $errors->has('description') || $errors->has('cover_image'))
+            new bootstrap.Modal(document.getElementById('modal-add-course')).show();
+        @endif
 
         document.querySelectorAll('.delete-form').forEach(form => {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 Swal.fire({
                     title: 'Hapus?',
-                    text: `Konfirmasi penghapusan: ${this.dataset.name}`,
+                    text: `Konfirmasi penghapusan: ${this.dataset.name}. Semua modul dan materi di dalamnya juga akan dihapus!`,
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#d63939',

@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Infografis AI — Gemini + HTML Renderer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', sans-serif; }
+        .sel-card { transition: all 0.15s; cursor: pointer; }
+        .sel-card.selected { border-color: #6366f1 !important; background: #eef2ff !important; }
+        .sel-card:not(.selected) { border-color: #e5e7eb; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
+        #result-section { display: none; }
+        #error-section  { display: none; }
+        #loading-section{ display: none; }
+
+        #result-image {
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.18);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen py-10 px-4">
+<div class="max-w-5xl mx-auto">
+
+    <!-- Header -->
+    <div class="text-center mb-10">
+        <div class="inline-flex items-center gap-2 bg-indigo-100 text-indigo-700 text-sm font-semibold px-4 py-2 rounded-full mb-4">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.347.347a3.75 3.75 0 0 1-5.303 0l-.347-.347z"/></svg>
+            Powered by Gemini 2.5 Flash Image
+        </div>
+        <h1 class="text-4xl font-extrabold text-gray-900 mb-2">Generator Infografis AI</h1>
+        <p class="text-gray-500 text-lg">AI generate gambar infografis langsung — teks terbaca, desain profesional</p>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Form -->
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 space-y-6">
+
+                <!-- Topik -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Topik Infografis <span class="text-red-500">*</span></label>
+                    <input type="text" id="topik" placeholder="Contoh: Tips Kaya di Usia Muda, 5 Manfaat Olahraga Pagi..." class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"/>
+                </div>
+
+                <!-- Jenis -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Jenis Infografis</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-2" id="jenis-group">
+                        <div class="sel-card jenis-card selected border-2 rounded-xl p-3 text-center" data-value="tips" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">💡</div><div class="text-xs font-semibold text-gray-700">Tips & Trik</div></div>
+                        <div class="sel-card jenis-card border-2 rounded-xl p-3 text-center" data-value="statistik" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">📊</div><div class="text-xs font-semibold text-gray-700">Statistik & Data</div></div>
+                        <div class="sel-card jenis-card border-2 rounded-xl p-3 text-center" data-value="proses" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">🔄</div><div class="text-xs font-semibold text-gray-700">Proses / Langkah</div></div>
+                        <div class="sel-card jenis-card border-2 rounded-xl p-3 text-center" data-value="perbandingan" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">⚖️</div><div class="text-xs font-semibold text-gray-700">Perbandingan</div></div>
+                        <div class="sel-card jenis-card border-2 rounded-xl p-3 text-center" data-value="timeline" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">📅</div><div class="text-xs font-semibold text-gray-700">Timeline</div></div>
+                        <div class="sel-card jenis-card border-2 rounded-xl p-3 text-center" data-value="fakta" onclick="selectCard(this,'jenis-group','jenis-card')"><div class="text-2xl mb-1">🔍</div><div class="text-xs font-semibold text-gray-700">Fakta Menarik</div></div>
+                    </div>
+                </div>
+
+                <!-- Poin -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Poin-poin Konten <span class="text-red-500">*</span></label>
+                    <textarea id="poin" rows="4" placeholder="Tulis poin atau ide konten, satu per baris:&#10;Mulai investasi sejak dini&#10;Hindari hutang konsumtif&#10;Bangun passive income&#10;Hemat dan hidup sederhana" class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 transition resize-none"></textarea>
+                    <p class="text-xs text-gray-400 mt-1">Gemini akan mengembangkan setiap poin menjadi konten infografis yang lengkap.</p>
+                </div>
+
+                <!-- Warna -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Tema Warna</label>
+                    <div class="flex flex-wrap gap-2" id="warna-group">
+                        <button class="color-btn selected border-2 border-indigo-400 bg-indigo-50 text-indigo-700 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="blue" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-indigo-500 inline-block"></span> Modern Blue</button>
+                        <button class="color-btn border-2 border-gray-200 bg-white text-gray-600 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="orange" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Warm Orange</button>
+                        <button class="color-btn border-2 border-gray-200 bg-white text-gray-600 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="green" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-green-500 inline-block"></span> Nature Green</button>
+                        <button class="color-btn border-2 border-gray-200 bg-white text-gray-600 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="dark" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-gray-800 inline-block"></span> Dark Mode</button>
+                        <button class="color-btn border-2 border-gray-200 bg-white text-gray-600 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="purple" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span> Vibrant Purple</button>
+                        <button class="color-btn border-2 border-gray-200 bg-white text-gray-600 flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium" data-value="red" onclick="selectColor(this)"><span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span> Bold Red</button>
+                    </div>
+                </div>
+
+                <!-- Gaya -->
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Gaya Desain</label>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2" id="gaya-group">
+                        <div class="sel-card gaya-card selected border-2 rounded-xl p-3 text-center" data-value="modern" onclick="selectCard(this,'gaya-group','gaya-card')"><div class="text-xl mb-1">✨</div><div class="text-xs font-semibold text-gray-700">Modern Flat</div></div>
+                        <div class="sel-card gaya-card border-2 rounded-xl p-3 text-center" data-value="bold" onclick="selectCard(this,'gaya-group','gaya-card')"><div class="text-xl mb-1">🎨</div><div class="text-xs font-semibold text-gray-700">Bold & Colorful</div></div>
+                        <div class="sel-card gaya-card border-2 rounded-xl p-3 text-center" data-value="minimal" onclick="selectCard(this,'gaya-group','gaya-card')"><div class="text-xl mb-1">⬜</div><div class="text-xs font-semibold text-gray-700">Minimalist</div></div>
+                        <div class="sel-card gaya-card border-2 rounded-xl p-3 text-center" data-value="corporate" onclick="selectCard(this,'gaya-group','gaya-card')"><div class="text-xl mb-1">💼</div><div class="text-xs font-semibold text-gray-700">Corporate</div></div>
+                    </div>
+                </div>
+
+                <!-- Buttons -->
+                <button id="btn-generate" onclick="generateInfografis()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl text-base transition shadow-lg disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                    Buat Infografis Sekarang
+                </button>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="space-y-4">
+            <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-5">
+                <h3 class="font-bold text-indigo-800 mb-3 text-sm">💡 Tips Hasil Terbaik</h3>
+                <ul class="space-y-2 text-xs text-indigo-700">
+                    <li class="flex gap-2"><span>✓</span><span>Topik yang <strong>spesifik</strong> menghasilkan konten lebih baik</span></li>
+                    <li class="flex gap-2"><span>✓</span><span>Tulis <strong>3–6 poin</strong> untuk layout paling rapi</span></li>
+                    <li class="flex gap-2"><span>✓</span><span>Poin bisa berupa kata kunci singkat — Gemini akan kembangkan</span></li>
+                    <li class="flex gap-2"><span>✓</span><span>Klik <strong>Generate Ulang</strong> untuk variasi konten berbeda</span></li>
+                </ul>
+            </div>
+            <div class="bg-green-50 border border-green-100 rounded-2xl p-5">
+                <h3 class="font-bold text-green-800 mb-2 text-sm">✅ Pendekatan Baru</h3>
+                <p class="text-xs text-green-700">Sekarang menggunakan <strong>Gemini AI</strong> untuk generate konten, lalu dirender sebagai infografis HTML/CSS. Teks 100% terbaca, desain profesional, bisa didownload.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading -->
+    <div id="loading-section" class="mt-8 text-center py-16">
+        <svg class="spinner w-12 h-12 text-indigo-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+        </svg>
+        <p class="text-gray-600 font-semibold text-lg">Gemini sedang menulis konten...</p>
+        <p class="text-gray-400 text-sm mt-1" id="loading-timer">Estimasi 3–8 detik (jika rate limit, otomatis retry dalam 15–30 detik)</p>
+    </div>
+
+    <!-- Error -->
+    <div id="error-section" class="mt-8">
+        <div class="bg-red-50 border border-red-200 rounded-2xl p-6 text-center">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="font-bold text-red-700 mb-2">Gagal Generate</h3>
+            <p id="error-msg" class="text-red-600 text-sm mb-4"></p>
+            <button onclick="resetUI()" class="bg-red-600 text-white px-6 py-2 rounded-xl text-sm font-semibold hover:bg-red-700">Coba Lagi</button>
+        </div>
+    </div>
+
+    <!-- Result -->
+    <div id="result-section" class="mt-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h2 class="text-xl font-bold text-gray-900">Hasil Infografis</h2>
+                    <p class="text-sm text-gray-400 mt-0.5">Konten oleh Gemini AI · Desain HTML/CSS</p>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="regenerate()" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                        Generate Ulang
+                    </button>
+                    <button onclick="downloadPNG()" id="btn-download" class="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-semibold transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                        Download PNG
+                    </button>
+                </div>
+            </div>
+            <!-- Image result -->
+            <div class="text-center">
+                <img id="result-image" alt="Infografis" />
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    let lastParams = null;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+
+    function selectCard(el, groupId, cls) {
+        document.querySelectorAll(`#${groupId} .${cls}`).forEach(c => c.classList.remove('selected'));
+        el.classList.add('selected');
+    }
+
+    function selectColor(el) {
+        document.querySelectorAll('#warna-group .color-btn').forEach(c => {
+            c.classList.remove('selected', 'border-indigo-400', 'bg-indigo-50', 'text-indigo-700');
+            c.classList.add('border-gray-200', 'bg-white', 'text-gray-600');
+        });
+        el.classList.add('selected', 'border-indigo-400', 'bg-indigo-50', 'text-indigo-700');
+        el.classList.remove('border-gray-200', 'bg-white', 'text-gray-600');
+    }
+
+    function getVal(groupId, cls) {
+        return document.querySelector(`#${groupId} .${cls}.selected`)?.getAttribute('data-value');
+    }
+
+    async function generateInfografis() {
+        const topik = document.getElementById('topik').value.trim();
+        const poin  = document.getElementById('poin').value.trim();
+        if (!topik) { alert('Isi Topik terlebih dahulu!'); document.getElementById('topik').focus(); return; }
+        if (!poin)  { alert('Isi minimal satu Poin Konten!'); document.getElementById('poin').focus(); return; }
+
+        lastParams = {
+            topik,
+            poin,
+            jenis: getVal('jenis-group', 'jenis-card') || 'tips',
+            warna: document.querySelector('#warna-group .color-btn.selected')?.getAttribute('data-value') || 'blue',
+            gaya:  getVal('gaya-group', 'gaya-card') || 'modern',
+        };
+        await doGenerate(lastParams);
+    }
+
+    async function regenerate() {
+        if (!lastParams) return;
+        await doGenerate(lastParams);
+    }
+
+    let lastBlobUrl = null;
+
+    async function doGenerate(params) {
+        showLoading();
+        try {
+            const res = await fetch('/generate-infographic', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(params)
+            });
+
+            const ct = res.headers.get('content-type') || '';
+            if (ct.includes('application/json')) {
+                const data = await res.json();
+                throw new Error(data.error || `HTTP ${res.status}`);
+            }
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+
+            const blob = await res.blob();
+            if (lastBlobUrl) URL.revokeObjectURL(lastBlobUrl);
+            lastBlobUrl = URL.createObjectURL(blob);
+
+            document.getElementById('result-image').src = lastBlobUrl;
+            showResult();
+        } catch (e) {
+            showError(e.message);
+        }
+    }
+
+    function downloadPNG() {
+        if (!lastBlobUrl) return;
+        const link = document.createElement('a');
+        link.download = 'infografis.png';
+        link.href = lastBlobUrl;
+        link.click();
+    }
+
+    // ── UI helpers ───────────────────────────────────────────────
+    function showLoading() {
+        document.getElementById('loading-section').style.display = 'block';
+        document.getElementById('result-section').style.display  = 'none';
+        document.getElementById('error-section').style.display   = 'none';
+        document.getElementById('btn-generate').disabled = true;
+        secondsElapsed = 0;
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            secondsElapsed++;
+            document.getElementById('loading-timer').textContent = `${secondsElapsed} detik berlalu...`;
+        }, 1000);
+        window.scrollTo({ top: document.getElementById('loading-section').offsetTop - 80, behavior: 'smooth' });
+    }
+
+    function showResult() {
+        clearInterval(timerInterval);
+        document.getElementById('loading-section').style.display = 'none';
+        document.getElementById('result-section').style.display  = 'block';
+        document.getElementById('btn-generate').disabled = false;
+        window.scrollTo({ top: document.getElementById('result-section').offsetTop - 80, behavior: 'smooth' });
+    }
+
+    function showError(msg) {
+        clearInterval(timerInterval);
+        document.getElementById('loading-section').style.display = 'none';
+        document.getElementById('error-section').style.display   = 'block';
+        document.getElementById('btn-generate').disabled = false;
+        document.getElementById('error-msg').textContent = msg;
+    }
+
+    function resetUI() {
+        document.getElementById('error-section').style.display  = 'none';
+        document.getElementById('result-section').style.display = 'none';
+    }
+</script>
+</body>
+</html>

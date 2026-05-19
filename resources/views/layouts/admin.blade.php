@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
     <title>Admin Panel - {{ config('app.name', 'Ketik.in') }}</title>
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#022c22">
     <link rel="apple-touch-icon" href="{{ asset('img/icon-192.png') }}">
     <!-- CSS files -->
     <link href="{{ asset('css/tabler.min.css') }}" rel="stylesheet"/>
@@ -23,9 +23,9 @@
       }
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
-        background-color: #f1f5f9; /* Slate-100 */
+        background-color: #f0fdf9;
       }
-      
+
       /* --- Desktop Floating Sidebar Styles (Synced with User Sidebar) --- */
       @media (min-width: 992px) {
           .navbar-vertical {
@@ -48,14 +48,14 @@
           }
 
           .sidebar-content {
-              background-color: #0f172a; /* Slate-900 */
+              background: linear-gradient(180deg, #022c22 0%, #064e3b 100%);
               color: white;
               border-radius: 16px;
               height: 100%;
               display: flex;
               flex-direction: column;
               padding: 1.25rem;
-              box-shadow: 4px 0 24px rgba(0, 0, 0, 0.05);
+              box-shadow: 4px 0 28px rgba(16,185,129,.12);
               overflow-y: auto;
           }
 
@@ -66,12 +66,12 @@
               background: transparent;
           }
           .sidebar-content::-webkit-scrollbar-thumb {
-              background: rgba(255, 255, 255, 0.1);
+              background: rgba(16, 185, 129, 0.2);
               border-radius: 4px;
           }
           
           .sidebar-logo {
-              border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+              border-bottom: 1px solid rgba(16, 185, 129, 0.15);
           }
 
           .page-wrapper {
@@ -101,14 +101,14 @@
           }
 
           .sidebar-content {
-              background-color: #0f172a; 
+              background: linear-gradient(180deg, #022c22 0%, #064e3b 100%);
               color: white;
               padding: 0.5rem 1rem;
               width: 100%;
               border-radius: 0;
               box-shadow: none;
-              margin-top: 0; 
-              border-top: 1px solid rgba(255,255,255,0.1); 
+              margin-top: 0;
+              border-top: 1px solid rgba(16,185,129,.15);
           }
           
           .page-wrapper {
@@ -133,7 +133,7 @@
       .logo-icon {
           width: 36px;
           height: 36px;
-          background: linear-gradient(135deg, #fbbf24 0%, #d97706 100%);
+          background: linear-gradient(135deg, #10b981 0%, #059669 100%);
           color: white;
           border-radius: 10px;
           display: flex;
@@ -141,7 +141,7 @@
           justify-content: center;
           font-weight: 800;
           font-size: 1.2rem;
-          box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 12px rgba(16,185,129,.35);
       }
 
       .logo-text {
@@ -173,14 +173,14 @@
       }
 
       .nav-link:hover {
-          background-color: rgba(255, 255, 255, 0.05);
-          color: #f8fafc !important; 
+          background-color: rgba(16, 185, 129, 0.08) !important;
+          color: #d1fae5 !important;
       }
 
       .nav-link.active {
-          background-color: #f59e0b; /* Amber-500 for Admin */
+          background: linear-gradient(135deg, #10b981, #059669) !important;
           color: white !important;
-          box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+          box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
       }
 
       .nav-icon {
@@ -206,7 +206,7 @@
   <body>
     <div class="page">
       <!-- Mobile Header -->
-      <header class="navbar navbar-expand-lg navbar-dark d-print-none d-lg-none border-bottom" style="background-color: #0f172a;">
+      <header class="navbar navbar-expand-lg navbar-dark d-print-none d-lg-none border-bottom" style="background-color: #022c22; border-color: rgba(16,185,129,.15) !important;">
         <div class="container-xl">
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar-menu" aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -281,7 +281,21 @@
                             Academy
                         </a>
                     </li>
-                    <div class="hr-text text-muted small mt-auto mb-2" style="opacity: 0.5;">Akses</div>
+                    <li class="nav-item">
+                        <a href="{{ route('admin.infographic.index') }}" class="nav-link {{ request()->routeIs('admin.infographic.*') ? 'active' : '' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 3v18h18" /><path d="M7 16l4 -4l4 4l6 -6" /></svg>
+                            Infografis
+                        </a>
+                    </li>
+                    <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Mode Khusus</div>
+                    <li class="nav-item">
+                        <a href="{{ route('guru.index') }}" class="nav-link {{ request()->routeIs('guru.*') ? 'active' : '' }}" style="{{ !request()->routeIs('guru.*') ? 'background:linear-gradient(135deg,rgba(16,185,129,0.12),rgba(5,150,105,0.08));color:#a7f3d0 !important;border:1px solid rgba(16,185,129,0.2);' : 'background:linear-gradient(135deg,#10b981,#059669);color:#fff !important;box-shadow:0 4px 14px rgba(16,185,129,0.30);' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            <span class="fw-semibold">Mode Guru</span>
+                            <span class="ms-auto badge" style="font-size:0.6rem;background:rgba(16,185,129,0.2);color:#6ee7b7;border-radius:6px;padding:2px 7px;">GURU</span>
+                        </a>
+                    </li>
+                    <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Akses</div>
                     <li class="nav-item">
                         <a href="{{ route('dashboard') }}" class="nav-link">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l-4 4l4 4" /><path d="M5 15h11a4 4 0 0 0 4 -4v-7" /></svg>
@@ -295,16 +309,16 @@
                     <div class="dropdown">
                         <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle py-1" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 1rem;">
                             @if(Auth::user()->avatar)
-                                <span class="avatar avatar-sm rounded-circle me-2 border border-2 border-warning" style="background-image: url({{ asset('storage/' . Auth::user()->avatar) }}); background-size: cover;"></span>
+                                <span class="avatar avatar-sm rounded-circle me-2" style="background-image: url({{ asset('storage/' . Auth::user()->avatar) }}); background-size: cover; border: 2px solid #10b981;"></span>
                             @else
-                                <span class="avatar avatar-sm rounded-circle me-2 border border-2 border-warning" style="background-image: url(https://preview.tabler.io/static/avatars/000m.jpg)"></span>
+                                <span class="avatar avatar-sm rounded-circle me-2" style="background-image: url(https://preview.tabler.io/static/avatars/000m.jpg); border: 2px solid #10b981;"></span>
                             @endif
                             <div class="overflow-hidden d-none d-lg-block">
                                 <div class="text-truncate fw-bold fs-5">{{ Auth::user()->name }}</div>
                                 <div class="small text-muted text-truncate" style="opacity: 0.7;">{{ Auth::user()->isSuperAdmin() ? 'Super Admin' : 'Administrator' }}</div>
                             </div>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-dark border-0 shadow-lg mt-3" style="border-radius: 12px; min-width: 160px; background-color: #1e293b;">
+                        <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow dropdown-menu-dark border-0 shadow-lg mt-3" style="border-radius: 12px; min-width: 160px; background-color: #033320; border: 1px solid rgba(16,185,129,.15);">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <a href="{{ route('logout') }}" class="dropdown-item py-2 px-3 fw-medium text-danger d-flex align-items-center" onclick="event.preventDefault(); this.closest('form').submit();">
@@ -317,7 +331,7 @@
 
                     <!-- PWA Install Button (Hidden by default) -->
                     <div id="pwa-install-container" class="mt-3 d-none">
-                        <button id="pwa-install-btn" class="btn btn-primary w-100 rounded-pill">
+                        <button id="pwa-install-btn" class="btn w-100 rounded-pill fw-semibold" style="background:linear-gradient(135deg,#10b981,#059669);color:#fff;border:none;">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><path d="M7 11l5 5l5 -5" /><path d="M12 4l0 12" /></svg>
                             Install Admin App
                         </button>

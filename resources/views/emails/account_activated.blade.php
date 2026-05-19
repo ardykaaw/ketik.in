@@ -38,7 +38,7 @@
             text-align: center;
         }
         h1 {
-            color: #0f172a; /* Slate 900 */
+            color: #064e3b;
             font-size: 24px;
             font-weight: 700;
             margin: 0 0 16px;
@@ -52,7 +52,7 @@
         }
         .btn {
             display: inline-block;
-            background-color: #2563eb; /* Blue 600 */
+            background-color: #059669;
             color: #ffffff !important;
             text-decoration: none;
             padding: 14px 32px;
@@ -99,7 +99,7 @@
             <div class="divider"></div>
             <p style="font-size: 14px; margin: 0; color: #64748b;">
                 Jika tombol di atas tidak berfungsi, salin dan tempel tautan berikut di browser Anda:<br>
-                <a href="{{ route('login') }}" style="color: #3b82f6; word-break: break-all;">{{ route('login') }}</a>
+                <a href="{{ route('login') }}" style="color: #10b981; word-break: break-all;">{{ route('login') }}</a>
             </p>
         </div>
         <div class="footer">

@@ -13,6 +13,7 @@
     <link href="{{ asset('css/demo.min.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/theme.css') }}" rel="stylesheet"/>
     <link href="{{ asset('css/ketik-override.css') }}" rel="stylesheet"/>
+    @stack('styles')
     <style>
       @import url('https://rsms.me/inter/inter.css');
       :root {
@@ -26,14 +27,14 @@
   <body class="d-flex flex-column bg-white">
     <div class="page d-flex flex-column position-relative gradient-bg" style="min-height: 100vh;">
       <!-- Floating Shapes -->
-      <div class="position-absolute" style="top: -150px; right: -150px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: float 10s ease-in-out infinite;"></div>
-      <div class="position-absolute" style="bottom: -200px; left: -200px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(117, 173, 219, 0.15) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: float 14s ease-in-out infinite reverse;"></div>
+      <div class="position-absolute" style="top: -150px; right: -150px; width: 600px; height: 600px; background: radial-gradient(circle, rgba(16,185,129,0.12) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: float 10s ease-in-out infinite;"></div>
+      <div class="position-absolute" style="bottom: -200px; left: -200px; width: 700px; height: 700px; background: radial-gradient(circle, rgba(5,150,105,0.1) 0%, transparent 70%); border-radius: 50%; z-index: 0; animation: float 14s ease-in-out infinite reverse;"></div>
       
       <div class="container container-tight my-auto py-4 position-relative" style="z-index: 1;">
         <div class="text-center mb-2 animate-fade-in-down">
           <a href="/" class="d-flex align-items-center justify-content-center text-decoration-none">
             <!-- Logo using Brand Primary Color for contrast on light bg -->
-            <x-animated-logo height="64px" color="#234f70" />
+            <x-animated-logo height="64px" color="#059669" />
           </a>
         </div>
         <div class="animate-fade-in-up">
@@ -48,7 +49,7 @@
     <style>
       /* Dynamic Gradient Background */
       .gradient-bg {
-        background: linear-gradient(-45deg, #EDF3F8, #e0f2fe, #dbeafe, #f1f5f9);
+        background: linear-gradient(-45deg, #ecfdf5, #d1fae5, #f0fdf4, #a7f3d0);
         background-size: 400% 400%;
         animation: gradientBG 15s ease infinite;
       }
@@ -81,12 +82,12 @@
       
       /* Dark mode adjustment for auth card */
       [data-theme="dark"] .gradient-bg {
-         background: linear-gradient(-45deg, #070d12, #0f172a, #1e293b, #070d12);
+         background: linear-gradient(-45deg, #011a12, #022c22, #064e3b, #011a12);
          background-size: 400% 400%;
       }
       [data-theme="dark"] .card {
-         background: rgba(12, 18, 24, 0.6) !important;
-         border: 1px solid rgba(255,255,255,0.08) !important;
+         background: rgba(2, 22, 14, 0.7) !important;
+         border: 1px solid rgba(16,185,129,0.12) !important;
          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5) !important;
       }
     </style>

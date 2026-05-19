@@ -69,7 +69,7 @@
             padding: 0.6rem 1rem !important;
         }
         .btn-primary, button[type="submit"]:not(.btn-danger) {
-            background-color: #3b82f6 !important;
+            background: linear-gradient(135deg, #10b981, #059669) !important;
             border: none !important;
             padding: 0.6rem 1.5rem !important;
             border-radius: 8px !important;

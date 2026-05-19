@@ -35,7 +35,7 @@
             font-family: 'Inter', sans-serif; 
             font-weight: 400; 
             font-size: calc({{ $height }} * 0.45); 
-            color: {{ $color ?? 'var(--ketik-accent, #297dc2)' }};
+            color: {{ $color ?? 'var(--ketik-accent, #059669)' }};
             margin-left: 2px;
         ">|</span>
     </div>

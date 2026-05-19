@@ -113,7 +113,7 @@
         left: 1px;
         width: 22px;
         height: 22px;
-        background: linear-gradient(135deg, #3D91D6 0%, #245C8A 100%);
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
         border-radius: 50%;
         transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         display: flex;
@@ -126,7 +126,7 @@
 
     [data-theme="dark"] .theme-toggle-slider {
         transform: translateX(28px);
-        background: linear-gradient(135deg, #8FBADC 0%, #3D91D6 100%);
+        background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
         color: #070D12;
     }
 
