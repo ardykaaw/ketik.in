@@ -163,7 +163,7 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
         <!-- Left: Brand -->
         <div class="brand-panel">
             <div class="brand-icon">
-                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none" stroke="white" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
             </div>
             <div class="brand-logo">
                 <span class="logo-k">K</span>
@@ -172,31 +172,40 @@ html,body{height:100%;font-family:var(--font);background:var(--bg);color:var(--t
             </div>
             <div class="brand-badge">
                 <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                Asisten Mengajar AI
+                Platform AI Terlengkap
             </div>
-            <div class="brand-tagline">Mengajar Lebih Mudah.<br><span class="highlight">Lebih Efisien.</span></div>
-            <p class="brand-desc">Platform AI untuk guru — buat soal, modul ajar, RPP, dan rekap nilai secara otomatis. Hemat waktu, fokus mendidik.</p>
+            <div class="brand-tagline">Buat Konten Lebih Cepat.<br><span class="highlight">Lebih Profesional.</span></div>
+            <p class="brand-desc">Platform AI serba bisa — tulis esai, e-book, story, laporan, surat dinas, SOP, copywriting, dan banyak lagi. Semua dalam satu tempat.</p>
             <div class="feature-pills">
                 <div class="pill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/></svg>
-                    Buat Soal
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                    Story Telling
                 </div>
                 <div class="pill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/></svg>
-                    Modul Ajar
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    E-book
                 </div>
                 <div class="pill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16"/></svg>
-                    Buat RPP
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    Essay & Laporan
                 </div>
                 <div class="pill">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
-                    Rekap Nilai
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M16 3l-4 4-4-4"/></svg>
+                    Copywriting
+                </div>
+                <div class="pill">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z"/><path d="M3 7l9 6 9-6"/></svg>
+                    Surat & SOP
+                </div>
+                <div class="pill">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4"/></svg>
+                    AI Wizard
                 </div>
             </div>
             <div class="stats-row">
                 <div class="stat-item"><div class="stat-num">15+</div><div class="stat-label">Fitur AI</div></div>
-                <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Dokumen Dibuat</div></div>
+                <div class="stat-item"><div class="stat-num">5+</div><div class="stat-label">Kategori</div></div>
+                <div class="stat-item"><div class="stat-num">10K+</div><div class="stat-label">Konten Dibuat</div></div>
                 <div class="stat-item"><div class="stat-num">99%</div><div class="stat-label">Kepuasan</div></div>
             </div>
             <div class="float-badge fb1"><span class="dot"></span> AI sedang aktif</div>
