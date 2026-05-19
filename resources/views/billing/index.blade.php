@@ -29,7 +29,7 @@
                             </div>
                             <div class="col-12 col-md-auto text-md-end border-top border-white-1 pt-3 pt-md-0 border-md-0">
                                 <div class="mb-0">
-                                    <div class="h2 fw-bold mb-0 text-light">Rp 99.000</div>
+                                    <div class="h2 fw-bold mb-0 text-light">Rp 150.000</div>
                                     <div class="small opacity-50 mb-2">Per 30 Hari (E-Wallet)</div>
                                 </div>
                                 <div class="bg-white-1 opacity-75 small p-2 rounded border border-white-1 px-3 d-inline-block">
@@ -122,7 +122,7 @@
                                         <td>{{ $user->created_at->format('d M Y') }}</td>
                                         <td>Ketik.in Premium - 30 Hari</td>
                                         <td>E-Wallet</td>
-                                        <td class="fw-bold">Rp 99.000</td>
+                                        <td class="fw-bold">Rp 150.000</td>
                                         <td><span class="badge bg-green-lt fw-bold">Berhasil</span></td>
                                     </tr>
                                     @endif
