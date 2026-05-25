@@ -73,19 +73,24 @@ class TeacherController extends Controller
     {
         $request->validate([
             'mapel'      => 'required|string|max:100',
+            'fase'       => 'required|string|max:20',
             'kelas'      => 'required|string|max:50',
+            'semester'   => 'required|in:Ganjil,Genap',
             'topik'      => 'required|string|max:255',
             'waktu'      => 'required|integer|min:30|max:480',
             'pertemuan'  => 'required|integer|min:1|max:20',
-            'model'      => 'required|string|max:100',
+            'tahun_ajar' => 'nullable|string|max:20',
         ]);
 
-        $result = $this->ai->generateModulAjar($request->only('mapel', 'kelas', 'topik', 'waktu', 'pertemuan', 'model'));
+        $data = $request->only('mapel', 'fase', 'kelas', 'semester', 'topik', 'waktu', 'pertemuan');
+        $data['tahun_ajar'] = $request->tahun_ajar ?: date('Y') . '/' . (date('Y') + 1);
+
+        $result = $this->ai->generateModulAjar($data);
 
         $content = Content::create([
             'user_id' => Auth::id(),
             'type'    => 'guru-modul',
-            'title'   => "Modul Ajar — {$request->mapel} {$request->kelas}: {$request->topik}",
+            'title'   => "Modul Ajar — {$request->mapel} {$request->fase} {$request->kelas}: {$request->topik}",
             'content' => $result,
         ]);
 

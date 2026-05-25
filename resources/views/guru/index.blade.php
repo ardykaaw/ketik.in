@@ -5,7 +5,7 @@
     $typeLabels = [
         'guru-soal'  => ['label' => 'Buat Soal',   'color' => '#f59e0b'],
         'guru-modul' => ['label' => 'Modul Ajar',  'color' => '#34d399'],
-        'guru-rpp'   => ['label' => 'RPP',         'color' => '#8b5cf6'],
+        'guru-rpp'   => ['label' => 'Modul Ajar',  'color' => '#059669'],
         'guru-rekap' => ['label' => 'Rekap Nilai', 'color' => '#10b981'],
     ];
 @endphp
@@ -107,7 +107,7 @@
                     @php
                         $heroStats = [
                             ['val' => $stats['soal'],  'label' => 'Soal Dibuat'],
-                            ['val' => $stats['rpp'],   'label' => 'RPP Dibuat'],
+                            ['val' => $stats['rpp'],   'label' => 'RPP (Lama)'],
                             ['val' => $stats['modul'], 'label' => 'Modul Ajar'],
                         ];
                     @endphp
@@ -128,7 +128,7 @@
             $statItems = [
                 ['key'=>'soal',  'label'=>'Total Soal',       'icon'=>'M9 11l3 3L22 4 M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11', 'color'=>'#f59e0b', 'bg'=>'#fef3c7'],
                 ['key'=>'modul', 'label'=>'Modul Ajar',       'icon'=>'M4 19.5A2.5 2.5 0 0 1 6.5 17H20 M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z', 'color'=>'#059669', 'bg'=>'#d1fae5'],
-                ['key'=>'rpp',   'label'=>'RPP Dibuat',       'icon'=>'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2l0 6 6 0 M16 13H8 M16 17H8', 'color'=>'#8b5cf6', 'bg'=>'#ede9fe'],
+                ['key'=>'rpp',   'label'=>'RPP (Lama)',       'icon'=>'M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z M14 2l0 6 6 0 M16 13H8 M16 17H8', 'color'=>'#6b7280', 'bg'=>'#f3f4f6'],
                 ['key'=>'rekap', 'label'=>'Rekap Nilai',      'icon'=>'M3 3h18v18H3z M3 9h18 M3 15h18 M9 3v18', 'color'=>'#10b981', 'bg'=>'#d1fae5'],
             ];
         @endphp
@@ -199,7 +199,7 @@
                                     <div class="text-secondary" style="font-size:0.78rem;">{{ $stats['modul'] }} dokumen dibuat</div>
                                 </div>
                             </div>
-                            <p class="text-secondary mb-0" style="font-size:0.83rem;line-height:1.5;">Modul ajar Kurikulum Merdeka dengan Profil Pelajar Pancasila & asesmen.</p>
+                            <p class="text-secondary mb-0" style="font-size:0.83rem;line-height:1.5;">Format Deep Learning lengkap: Identitas, CP, Lintas Disiplin, Tujuan, Kegiatan, Asesmen & LKPD.</p>
                         </div>
                         <div class="card-cta" style="color:#059669;">
                             <span>Buat Modul</span>
@@ -208,23 +208,23 @@
                     </a>
                 </div>
 
-                {{-- RPP --}}
+                {{-- Modul Ajar Deep Learning Info --}}
                 <div class="col-sm-6">
-                    <a href="{{ route('guru.rpp') }}" class="feature-action-card">
+                    <a href="{{ route('guru.modul') }}" class="feature-action-card" style="border:1.5px solid #a7f3d0;">
                         <div class="card-top">
                             <div class="d-flex align-items-center gap-3 mb-3">
-                                <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#8b5cf6,#7c3aed);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                                <div style="width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#059669,#047857);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
                                 </div>
                                 <div>
-                                    <div class="fw-bold" style="font-size:0.98rem;">Buat RPP</div>
-                                    <div class="text-secondary" style="font-size:0.78rem;">{{ $stats['rpp'] }} dokumen dibuat</div>
+                                    <div class="fw-bold" style="font-size:0.98rem;">Modul Ajar Deep Learning</div>
+                                    <div style="font-size:0.72rem;color:#059669;font-weight:600;">✨ Format Terbaru Kurikulum Merdeka</div>
                                 </div>
                             </div>
-                            <p class="text-secondary mb-0" style="font-size:0.83rem;line-height:1.5;">RPP lengkap K-13 & Merdeka dengan KI, KD, IPK, langkah pembelajaran, dan penilaian.</p>
+                            <p class="text-secondary mb-0" style="font-size:0.83rem;line-height:1.5;">Dengan LKPD terintegrasi, asesmen 3 tahap, diferensiasi produk, dan kegiatan Meaningful · Joyful · Mindful Learning.</p>
                         </div>
-                        <div class="card-cta" style="color:#7c3aed;">
-                            <span>Buat RPP</span>
+                        <div class="card-cta" style="color:#059669;">
+                            <span>Buat Modul Ajar</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
                         </div>
                     </a>

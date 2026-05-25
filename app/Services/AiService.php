@@ -538,71 +538,205 @@ KETENTUAN OUTPUT:
     }
 
     /**
-     * Generate Modul Ajar Kurikulum Merdeka (RPP Plus).
+     * Generate Modul Ajar Deep Learning — Kurikulum Merdeka.
      */
     public function generateModulAjar(array $data): string
     {
-        $prompt = "Kamu adalah pengembang kurikulum profesional yang ahli dalam Kurikulum Merdeka.
-Buatkan MODUL AJAR lengkap sesuai format Kurikulum Merdeka (Kemendikbudristek) berdasarkan data berikut:
+        $prompt = "Kamu adalah pengembang kurikulum profesional berpengalaman yang ahli dalam Kurikulum Merdeka dan pendekatan Deep Learning.
+Buatkan MODUL AJAR DEEP LEARNING yang lengkap, profesional, dan siap pakai berdasarkan data berikut:
 
 ATURAN PENULISAN RUMUS DAN SIMBOL (WAJIB DIIKUTI):
 - DILARANG KERAS menggunakan notasi LaTeX apapun. Jangan gunakan: dollar sign, \\frac, \\sqrt, \\sum, \\int, \\bar, atau backslash apapun.
 - Tulis semua rumus dalam teks biasa: pecahan → a/b, pangkat → x² atau x^2, akar → √3, derajat → 90°, pi → π, perkalian → ×, rata-rata → x̄.
 
-IDENTITAS MODUL:
-- Mata Pelajaran : {$data['mapel']}
-- Jenjang/Kelas  : {$data['kelas']}
-- Alokasi Waktu  : {$data['waktu']} menit ({$data['pertemuan']} pertemuan)
-- Topik/Materi   : {$data['topik']}
-- Model Pembelajaran: {$data['model']}
+DATA MODUL:
+- Mata Pelajaran    : {$data['mapel']}
+- Fase              : {$data['fase']}
+- Kelas / Semester  : {$data['kelas']} / {$data['semester']}
+- Topik / Materi    : {$data['topik']}
+- Alokasi Waktu     : {$data['waktu']} menit per pertemuan
+- Jumlah Pertemuan  : {$data['pertemuan']} pertemuan
+- Tahun Pelajaran   : {$data['tahun_ajar']}
+
+INSTRUKSI UTAMA — PENDEKATAN DEEP LEARNING:
+Setiap pertemuan wajib menggunakan tiga fase kegiatan:
+1. MEMAHAMI (Meaningful Learning) — guru membangun pemahaman konseptual bermakna, sertakan pertanyaan pemantik
+2. MENGAPLIKASI (Joyful Learning) — siswa mengaplikasikan dengan aktivitas berdiferensiasi produk:
+   - Produk Visual (poster, infografis, peta konsep)
+   - Produk Audio (rekaman, presentasi lisan, diskusi)
+   - Produk Naratif (esai, jurnal, laporan tertulis)
+3. MEREFLEKSI (Mindful Learning) — siswa & guru merefleksi proses dan hasil belajar bersama
 
 FORMAT OUTPUT WAJIB (Markdown):
 
-## MODUL AJAR — {$data['mapel']}
+# MODUL AJAR DEEP LEARNING
+## {$data['mapel']} — {$data['topik']}
 
-### A. INFORMASI UMUM
+---
+
+## A. IDENTITAS MODUL
+
 | Komponen | Keterangan |
 |---|---|
-| Nama Penyusun | [Nama Guru] |
-| Instansi | [Nama Sekolah] |
+| Nama Sekolah | ................................................... |
+| Nama Penyusun | ................................................... |
 | Mata Pelajaran | {$data['mapel']} |
-| Kelas/Semester | {$data['kelas']} |
-| Alokasi Waktu | {$data['waktu']} menit |
-| Topik | {$data['topik']} |
+| Fase / Kelas / Semester | {$data['fase']} / {$data['kelas']} / {$data['semester']} |
+| Alokasi Waktu | {$data['waktu']} menit × {$data['pertemuan']} pertemuan |
+| Tahun Pelajaran | {$data['tahun_ajar']} |
 
-### B. CAPAIAN PEMBELAJARAN
-(Tuliskan CP yang relevan untuk {$data['mapel']} kelas {$data['kelas']} sesuai Kurikulum Merdeka)
+---
 
-### C. TUJUAN PEMBELAJARAN
-(Rumuskan 3-5 tujuan pembelajaran yang terukur menggunakan kata kerja operasional HOTS)
+## B. IDENTIFIKASI KESIAPAN PESERTA DIDIK
 
-### D. PROFIL PELAJAR PANCASILA
-(Sebutkan 2-3 dimensi Profil Pelajar Pancasila yang dikembangkan, beserta sub-elemennya)
+(Uraikan pengetahuan dan keterampilan awal yang sudah dimiliki peserta didik sebelum mempelajari topik ini. Sertakan variasi kesiapan: siswa yang sudah mahir, siswa rata-rata, dan siswa yang membutuhkan pendampingan ekstra.)
 
-### E. SARANA & PRASARANA
-(Daftar perangkat, media, dan sumber belajar yang dibutuhkan)
+---
 
-### F. KEGIATAN PEMBELAJARAN
+## C. KARAKTERISTIK MATERI PELAJARAN
 
-#### Pertemuan 1 ({$data['waktu']} menit)
-**1. Pendahuluan (10 menit)**
-(Apersepsi, motivasi, penyampaian tujuan)
+(Uraikan jenis pengetahuan: konseptual, prosedural, dan/atau afektif. Jelaskan tingkat kesulitan, relevansi langsung dengan kehidupan nyata peserta didik, struktur materi, serta integrasi nilai-nilai karakter yang akan ditanamkan.)
 
-**2. Kegiatan Inti (... menit)**
-(Uraikan langkah-langkah model {$data['model']} secara detail dan operasional)
+---
 
-**3. Penutup (10 menit)**
-(Refleksi, kesimpulan, tindak lanjut)
+## D. DIMENSI LULUSAN PEMBELAJARAN
 
-### G. ASESMEN
-**1. Asesmen Diagnostik:** (Pertanyaan awal untuk mengukur pengetahuan awal siswa)
-**2. Asesmen Formatif:** (Selama proses pembelajaran)
-**3. Asesmen Sumatif:** (Kisi-kisi singkat evaluasi akhir topik ini)
+(Uraikan 4–5 dimensi profil lulusan yang dikembangkan, misalnya: Keimanan & Ketakwaan, Penalaran Kritis, Kemandirian, Kolaborasi, Komunikasi, Kreativitas, Kewargaan. Untuk setiap dimensi, tuliskan deskripsi konkret bagaimana dimensi itu dikembangkan dalam pembelajaran ini.)
 
-### H. REMEDIAL & PENGAYAAN
-(Rencana kegiatan untuk siswa yang belum mencapai tujuan & yang sudah melampaui)
+---
 
-Gunakan bahasa Indonesia yang profesional dan sesuai kaidah pengembangan perangkat ajar.";
+## DESAIN PEMBELAJARAN
+
+### A. Capaian Pembelajaran (CP)
+
+(Tuliskan Capaian Pembelajaran resmi untuk {$data['mapel']} {$data['fase']} sesuai Kurikulum Merdeka, sertakan nomor Permendikbudristek yang relevan.)
+
+### B. Lintas Disiplin Ilmu
+
+(Sebutkan 3–4 mata pelajaran lain yang berkaitan dengan topik ini, beserta aspek keterkaitan yang konkret dan bermakna bagi peserta didik.)
+
+### C. Tujuan Pembelajaran
+
+(Rumuskan tujuan pembelajaran per pertemuan, masing-masing 3 TP terukur menggunakan kata kerja operasional HOTS. Format: **Pertemuan N: [Subtopik]** diikuti daftar TP bernomor.)
+
+### D. Topik Pembelajaran Kontekstual
+
+(Sajikan 4–5 topik atau pertanyaan kontekstual yang mengaitkan materi dengan kehidupan nyata peserta didik. Buat menarik dan relevan bagi usia mereka.)
+
+### E. Kerangka Pembelajaran
+
+**Praktik Pedagogik:**
+- **Eksplorasi Lapangan:** (Kegiatan pengamatan langsung/lapangan yang relevan dengan topik)
+- **Wawancara:** (Kegiatan wawancara narasumber yang sesuai)
+- **Presentasi:** (Kegiatan berbagi hasil pembelajaran kepada teman/kelas)
+- **Diskusi Kelompok:** (Topik diskusi yang mendorong berpikir kritis dan kolaboratif)
+
+**Mitra Pembelajaran:**
+- *Lingkungan Sekolah:* (Pihak di sekolah yang bisa dilibatkan)
+- *Lingkungan Luar Sekolah:* (Pihak di luar sekolah yang bisa dilibatkan)
+
+---
+
+## KEGIATAN PEMBELAJARAN
+
+### Pertemuan 1: [Subtopik Pertemuan 1]
+
+#### 🔵 Memahami (Meaningful Learning)
+(Uraikan langkah membangun pemahaman bermakna: apersepsi kontekstual, penyampaian relevansi materi, penjelasan konsep utama, tanya jawab eksplorasi, dan pertanyaan pemantik yang memancing rasa ingin tahu. Rinci dan operasional.)
+
+#### 🟢 Mengaplikasi (Joyful Learning)
+
+**Aktivitas Berdiferensiasi Produk:**
+- 🖼️ **Produk Visual:** (Deskripsikan kegiatan konkret untuk siswa yang belajar visual)
+- 🎙️ **Produk Audio:** (Deskripsikan kegiatan konkret untuk siswa yang belajar auditori)
+- ✍️ **Produk Naratif:** (Deskripsikan kegiatan konkret untuk siswa yang belajar dengan menulis/kinestetik)
+
+#### 🔴 Merefleksi (Mindful Learning)
+(Pertanyaan refleksi guru kepada siswa, refleksi mandiri siswa, umpan balik formatif, dan tindak lanjut ke pertemuan berikutnya.)
+
+[Ulangi struktur yang sama untuk setiap pertemuan berikutnya dengan subtopik dan konten yang berbeda]
+
+---
+
+## KEGIATAN PENUTUP (Berlaku untuk Semua Pertemuan)
+
+**Umpan Balik Konstruktif (Meaningful Learning & Mindful Learning):**
+(Cara guru memberikan umpan balik positif dan membangun terhadap partisipasi dan hasil belajar siswa)
+
+**Menyimpulkan Pembelajaran (Meaningful Learning):**
+(Cara guru dan siswa bersama-sama menyimpulkan inti dan hikmah pembelajaran)
+
+**Perencanaan Pembelajaran Selanjutnya (Joyful Learning & Mindful Learning):**
+(Cara guru menginformasikan topik berikutnya dan mengaitkannya dengan materi yang baru dipelajari)
+
+---
+
+## G. ASESMEN PEMBELAJARAN
+
+### Asesmen Awal Pembelajaran
+**Tujuan:** Mengidentifikasi pengetahuan awal dan kesiapan belajar peserta didik.
+**Bentuk Asesmen:**
+- *Kuesioner Singkat:* (Tuliskan 4–5 pertanyaan diagnostik konkret dan spesifik untuk topik ini)
+- *Tes Diagnostik:* (Deskripsi tes kemampuan awal yang relevan)
+
+### Asesmen Proses Pembelajaran
+**Tujuan:** Memantau pemahaman dan perkembangan peserta didik selama proses belajar.
+**Bentuk Asesmen:**
+- *Tugas Harian / Portofolio:* (Tuliskan 3–4 tugas konkret yang dapat dinilai selama proses)
+- *Diskusi Kelompok:* (Kriteria penilaian partisipasi, argumen, dan kerja sama)
+- *Observasi:* (Aspek-aspek yang diobservasi guru selama kegiatan berlangsung)
+
+### Asesmen Akhir Pembelajaran
+**Tujuan:** Mengukur pencapaian kompetensi peserta didik secara menyeluruh.
+**Bentuk Asesmen:**
+- *Jurnal Reflektif:* (Panduan penulisan jurnal reflektif siswa tentang topik ini)
+- *Tes Tertulis:* (Tuliskan 3–4 soal esai/analisis HOTS yang konkret dan spesifik)
+- **Proyek:** [Nama Proyek yang Relevan dan Kreatif]
+  - *Deskripsi:* (Deskripsikan proyek kelompok yang menantang dan bermakna)
+  - *Kriteria Penilaian:* (Sebutkan 4–5 aspek penilaian yang jelas)
+
+---
+
+## H. LAMPIRAN
+
+### LKPD — Lembar Kerja Peserta Didik
+
+#### LKPD Pertemuan 1: [Judul yang Menarik]
+
+**Kompetensi yang Dilatih:** (Tujuan pembelajaran yang dilatih dalam LKPD ini)
+**Petunjuk Pengerjaan:** (Instruksi yang jelas, ramah, dan memotivasi siswa)
+
+**Kegiatan:**
+1. (Aktivitas eksplorasi/pengamatan dengan instruksi detail)
+2. (Aktivitas analisis/diskusi dengan pertanyaan pengarah)
+3. (Aktivitas refleksi/kesimpulan mandiri)
+
+**Pertanyaan Pemandu:**
+1. (Pertanyaan yang menuntun siswa berpikir kritis)
+2. (Pertanyaan analitik tentang materi)
+3. (Pertanyaan reflektif tentang penerapan dalam kehidupan nyata)
+
+[Ulangi LKPD untuk setiap pertemuan berikutnya]
+
+---
+
+### Bahan Bacaan Guru
+(Ringkasan materi dari sudut pandang pedagogi: konsep kunci yang harus dikuasai guru, potensi miskonsepsi siswa yang perlu diwaspadai, dan tips mengajar yang efektif untuk topik ini)
+
+### Bahan Bacaan Peserta Didik
+(Ringkasan materi yang ramah dan menarik bagi siswa: pengantar kontekstual yang mengaitkan dengan kehidupan mereka, poin-poin utama yang mudah dipahami, dan contoh nyata yang relevan)
+
+### Glosarium
+(Daftar 6–8 istilah kunci beserta definisi yang jelas, sederhana, dan mudah dipahami siswa)
+
+### Daftar Pustaka
+(3–5 referensi akademik/resmi yang relevan, format APA sederhana)
+
+---
+
+Gunakan bahasa Indonesia yang profesional, hangat, dan sesuai kaidah pengembangan perangkat ajar Kurikulum Merdeka.
+Pastikan SETIAP bagian diisi secara substantif dan spesifik untuk topik **{$data['topik']}** — jangan gunakan placeholder kosong atau kalimat generik.
+Output harus langsung bisa digunakan guru tanpa perlu banyak revisi.";
 
         return $this->generate($prompt);
     }
