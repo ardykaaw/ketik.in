@@ -119,26 +119,26 @@ Route::middleware(['auth'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Mode Guru (Semua User yang Login)
+    Route::prefix('guru')->name('guru.')->group(function () {
+        Route::get('/', [App\Http\Controllers\TeacherController::class, 'index'])->name('index');
+        Route::get('/soal', [App\Http\Controllers\TeacherController::class, 'soal'])->name('soal');
+        Route::post('/soal/generate', [App\Http\Controllers\TeacherController::class, 'generateSoal'])->name('soal.generate');
+        Route::get('/modul', [App\Http\Controllers\TeacherController::class, 'modul'])->name('modul');
+        Route::post('/modul/generate', [App\Http\Controllers\TeacherController::class, 'generateModul'])->name('modul.generate');
+        Route::get('/rpp', [App\Http\Controllers\TeacherController::class, 'rpp'])->name('rpp');
+        Route::post('/rpp/generate', [App\Http\Controllers\TeacherController::class, 'generateRpp'])->name('rpp.generate');
+        Route::get('/rekap', [App\Http\Controllers\TeacherController::class, 'rekap'])->name('rekap');
+        Route::post('/rekap/generate', [App\Http\Controllers\TeacherController::class, 'generateRekap'])->name('rekap.generate');
+        Route::get('/pustaka', [App\Http\Controllers\TeacherController::class, 'pustaka'])->name('pustaka');
+        Route::get('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaShow'])->name('pustaka.show');
+        Route::delete('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaDestroy'])->name('pustaka.destroy');
+    });
+
     // Admin Group
     Route::middleware(['admin'])->group(function () {
         Route::get('/admin', [AdminController::class, 'index'])->name('admin.dashboard');
 
-        // Mode Guru (Admin Only)
-        Route::prefix('guru')->name('guru.')->group(function () {
-            Route::get('/', [App\Http\Controllers\TeacherController::class, 'index'])->name('index');
-            Route::get('/soal', [App\Http\Controllers\TeacherController::class, 'soal'])->name('soal');
-            Route::post('/soal/generate', [App\Http\Controllers\TeacherController::class, 'generateSoal'])->name('soal.generate');
-            Route::get('/modul', [App\Http\Controllers\TeacherController::class, 'modul'])->name('modul');
-            Route::post('/modul/generate', [App\Http\Controllers\TeacherController::class, 'generateModul'])->name('modul.generate');
-            Route::get('/rpp', [App\Http\Controllers\TeacherController::class, 'rpp'])->name('rpp');
-            Route::post('/rpp/generate', [App\Http\Controllers\TeacherController::class, 'generateRpp'])->name('rpp.generate');
-            Route::get('/rekap', [App\Http\Controllers\TeacherController::class, 'rekap'])->name('rekap');
-            Route::post('/rekap/generate', [App\Http\Controllers\TeacherController::class, 'generateRekap'])->name('rekap.generate');
-            Route::get('/pustaka', [App\Http\Controllers\TeacherController::class, 'pustaka'])->name('pustaka');
-            Route::get('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaShow'])->name('pustaka.show');
-            Route::delete('/pustaka/{id}', [App\Http\Controllers\TeacherController::class, 'pustakaDestroy'])->name('pustaka.destroy');
-        });
-        
         // Admin Users
         Route::get('/admin/users', [AdminController::class, 'users'])->name('admin.users');
         Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');

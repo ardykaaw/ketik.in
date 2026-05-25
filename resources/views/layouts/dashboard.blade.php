@@ -366,6 +366,16 @@
                         </a>
                     </li>
 
+                    <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Mode Khusus</div>
+
+                    <li class="nav-item">
+                        <a href="{{ route('guru.index') }}" class="nav-link {{ request()->routeIs('guru.*') ? 'active' : '' }}" style="{{ !request()->routeIs('guru.*') ? 'background:linear-gradient(135deg,rgba(16,185,129,0.10),rgba(5,150,105,0.06));color:#a7f3d0 !important;border:1px solid rgba(16,185,129,0.18);' : 'background:linear-gradient(135deg,#10b981,#059669);color:#fff !important;box-shadow:0 4px 14px rgba(16,185,129,0.30);' }}">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+                            <span class="fw-semibold">Mode Guru</span>
+                            <span class="ms-auto badge" style="font-size:0.6rem;background:rgba(16,185,129,0.2);color:#6ee7b7;border-radius:6px;padding:2px 7px;">BARU</span>
+                        </a>
+                    </li>
+
                     <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Lainnya</div>
 
                     <li class="nav-item">
