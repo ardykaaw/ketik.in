@@ -73,7 +73,7 @@
                     Selamat datang kembali. Mulai buat konten AI berkualitas hari ini — cepat, mudah, dan profesional.
                 </p>
                 <div class="d-flex gap-2 flex-wrap">
-                    <a href="{{ route('wizard.step1') }}" class="btn fw-semibold px-4" style="background:#10b981;color:white;border-radius:10px;border:none;box-shadow:0 4px 14px rgba(16,185,129,.35);">
+                    <a href="{{ route('feature.story-telling') }}" class="btn fw-semibold px-4" style="background:#10b981;color:white;border-radius:10px;border:none;box-shadow:0 4px 14px rgba(16,185,129,.35);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
                         Buat Konten
                     </a>
@@ -184,7 +184,6 @@
         <div class="col-lg-8">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="fw-bold mb-0">✨ Fitur AI Unggulan</h5>
-                <a href="{{ route('wizard.step1') }}" class="text-secondary small fw-semibold text-decoration-none" style="color:#059669 !important;">Lihat semua →</a>
             </div>
             <div class="row g-3">
                 @php
@@ -295,11 +294,11 @@
                         <span style="background:rgba(16,185,129,.2);color:#6ee7b7;border:1px solid rgba(16,185,129,.3);border-radius:99px;font-size:0.7rem;font-weight:700;padding:3px 10px;">💡 Tips Hari Ini</span>
                         <h4 class="fw-bold text-white mt-3 mb-2">Maksimalkan Produktivitas Anda</h4>
                         <p style="color:rgba(167,243,208,.8);font-size:0.9rem;line-height:1.7;">
-                            Gunakan fitur <strong class="text-white">Wizard</strong> untuk membuat konten step-by-step dengan panduan AI. Cocok untuk pemula maupun profesional yang butuh hasil cepat dan terstruktur.
+                            Coba <strong class="text-white">Mode Guru</strong> untuk membuat Modul Ajar Deep Learning, soal, dan rekap nilai lengkap dengan AI — dirancang khusus untuk guru Kurikulum Merdeka.
                         </p>
                     </div>
                     <div class="d-flex gap-2 mt-3 flex-wrap">
-                        <a href="{{ route('wizard.step1') }}" class="btn btn-sm fw-semibold" style="background:#10b981;color:white;border-radius:8px;border:none;">Coba Wizard →</a>
+                        <a href="{{ route('guru.index') }}" class="btn btn-sm fw-semibold" style="background:#10b981;color:white;border-radius:8px;border:none;">Coba Mode Guru →</a>
                         <a href="{{ route('academy.index') }}" class="btn btn-sm fw-semibold" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);border-radius:8px;">Belajar di Academy</a>
                     </div>
                 </div>
