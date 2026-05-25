@@ -305,13 +305,13 @@
             justify-content: center;
             font-size: 1.8rem;
             font-weight: 800;
-            color: white;
+            color: white !important;
             margin-bottom: 10px;
             backdrop-filter: blur(10px);
             border: 2px solid rgba(255,255,255,0.3);
         }
         .module-fallback-title {
-            color: white;
+            color: white !important;
             font-weight: 700;
             font-size: 1.15rem;
             line-height: 1.3;
@@ -331,7 +331,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
             text-align: left;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255,255,255,0.85) !important;
             font-size: 0.9rem;
         }
         .module-lesson-item:hover { background: rgba(255,255,255,0.12); color: white; }

@@ -169,13 +169,13 @@
             padding: 20px;
         }
         .course-card-title {
-            color: white;
+            color: white !important;
             font-weight: 800;
             font-size: 1.15rem;
             margin-bottom: 6px;
         }
         .course-card-desc {
-            color: rgba(255,255,255,0.6);
+            color: rgba(255,255,255,0.6) !important;
             font-size: 0.85rem;
             line-height: 1.5;
             margin-bottom: 12px;
