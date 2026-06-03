@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Services\AiService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -27,6 +27,10 @@ class InfographicController extends Controller
         return view('admin.infographic.index', compact('infographics'));
     }
 
+    /**
+     * Generate infographic content using Gemini AI.
+     * Returns structured JSON data for frontend HTML/CSS rendering.
+     */
     public function generate(Request $request)
     {
         try {
@@ -38,85 +42,26 @@ class InfographicController extends Controller
                 'gaya' => 'required|string|in:modern,bold,minimal,corporate',
             ]);
 
-            $lebar = 800;
-        $tinggi = 1200;
-        $canvas = imagecreatetruecolor($lebar, $tinggi);
+            $aiService = app(AiService::class);
+            $prompt = $this->buildPrompt($request);
+            $raw = $aiService->generate($prompt);
 
-        // 1. Generate background dari AI (Pollinations.ai gratis)
-        $bgPrompt = 'Minimalist abstract geometric infographic background, flat vector style, ' . $request->warna . ' color palette, copy space, clean, no text, no words, ultra detailed, soft gradient';
-        $bgUrl = 'https://image.pollinations.ai/prompt/' . urlencode($bgPrompt) . '?width=800&height=1200&seed=' . rand(1, 9999) . '&nologo=true';
+            $json = $this->extractJson($raw);
 
-        $bgLoaded = false;
-        try {
-            $resp = Http::timeout(60)->get($bgUrl);
-            if ($resp->successful()) {
-                $bg = @imagecreatefromstring($resp->body());
-                if ($bg) {
-                    imagecopyresampled($canvas, $bg, 0, 0, 0, 0, $lebar, $tinggi, imagesx($bg), imagesy($bg));
-                    imagedestroy($bg);
-                    $bgLoaded = true;
-                }
+            if (!$json) {
+                \Log::error('Failed to parse AI response for infographic', ['raw' => substr($raw, 0, 500)]);
+                return response()->json(['error' => 'AI gagal membuat konten terstruktur. Silakan coba lagi.'], 500);
             }
-        } catch (\Exception $e) {
-            \Log::warning('BG load failed: ' . $e->getMessage());
-        }
 
-        if (!$bgLoaded) {
-            $this->drawFallbackBackground($canvas, $lebar, $tinggi, $request->warna);
-        }
+            return response()->json([
+                'success' => true,
+                'data' => $json,
+                'warna' => $request->warna,
+                'gaya' => $request->gaya,
+                'jenis' => $request->jenis,
+                'layout' => $json['layout'] ?? 'portrait_classic',
+            ]);
 
-        // 2. Overlay semi-transparan agar teks lebih terbaca
-        $this->drawOverlay($canvas, $lebar, $tinggi);
-
-        // 3. Parse poin-poin
-        $poinList = array_values(array_filter(array_map('trim', explode("\n", $request->poin ?? ''))));
-        if (empty($poinList)) {
-            $poinList = ['Poin utama 1', 'Poin utama 2', 'Poin utama 3'];
-        }
-
-        $pal = $this->colorPalette($request->warna);
-        $fonts = $this->fontPaths();
-
-        // Judul besar
-        $judul = strtoupper($request->topik);
-        $this->ttfCenter($canvas, $judul, $lebar / 2, 130, 34, $pal['dark'], $fonts['bold']);
-
-        // Sub-judul / jenis
-        $sub = $this->jenisLabel($request->jenis);
-        $this->ttfCenter($canvas, $sub, $lebar / 2, 178, 18, $pal['dark'], $fonts['regular']);
-
-        // Garis pembatas
-        $this->drawLine($canvas, $lebar / 2 - 80, 215, $lebar / 2 + 80, 215, $pal['primary'], 4);
-
-        // Angka statistik (poin pertama dianggap statistik)
-        $stat = $this->extractStat($poinList[0]);
-        $this->drawCircleAlpha($canvas, $lebar / 2, 380, 105, $pal['primary'], 18);
-        $this->ttfCenter($canvas, $stat, $lebar / 2, 405, 84, $pal['primary'], $fonts['black']);
-
-        // Label statistik
-        $this->ttfWrapCenter($canvas, $poinList[0], $lebar / 2, 530, 540, 24, $pal['dark'], $fonts['bold']);
-
-        // Poin-poin sebagai card
-        $y = 640;
-        foreach (array_slice($poinList, 1) as $poin) {
-            $this->drawRoundedRect($canvas, 90, $y, 620, 90, 14, array_merge($pal['light'], [40]));
-            $this->ttfWrap($canvas, $poin, 120, $y + 32, 560, 20, $pal['dark'], $fonts['regular']);
-            $y += 115;
-        }
-
-        // Simpan
-        $filename = 'infographics/' . Str::slug($request->topik) . '-' . time() . '.png';
-        $fullPath = storage_path('app/public/' . $filename);
-        if (!is_dir(dirname($fullPath))) mkdir(dirname($fullPath), 0755, true);
-        imagepng($canvas, $fullPath, 6);
-        imagedestroy($canvas);
-
-        return response()->json([
-            'success' => true,
-            'url' => asset('storage/' . $filename),
-            'path' => $filename,
-            'size' => round(filesize($fullPath) / 1024),
-        ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
             return response()->json(['error' => collect($e->errors())->flatten()->first()], 422);
         } catch (\Exception $e) {
@@ -125,155 +70,180 @@ class InfographicController extends Controller
         }
     }
 
+    /**
+     * Store captured infographic image from frontend (base64 PNG via html2canvas).
+     */
+    public function storeImage(Request $request)
+    {
+        try {
+            $request->validate([
+                'image' => 'required|string',
+                'topik' => 'required|string|max:255',
+            ]);
+
+            $imageData = $request->image;
+            if (str_contains($imageData, ',')) {
+                $imageData = explode(',', $imageData)[1];
+            }
+
+            $decoded = base64_decode($imageData);
+            if (!$decoded) {
+                return response()->json(['error' => 'Data gambar tidak valid.'], 400);
+            }
+
+            $filename = 'infographics/' . Str::slug($request->topik) . '-' . time() . '.png';
+            Storage::disk('public')->put($filename, $decoded);
+
+            return response()->json([
+                'success' => true,
+                'url' => asset('storage/' . $filename),
+                'path' => $filename,
+                'size' => round(strlen($decoded) / 1024),
+            ]);
+
+        } catch (\Exception $e) {
+            \Log::error('Infographic store error: ' . $e->getMessage());
+            return response()->json(['error' => 'Gagal menyimpan: ' . $e->getMessage()], 500);
+        }
+    }
+
     // ================================
     //  HELPERS
     // ================================
 
-    private function fontPaths()
+    private function buildPrompt(Request $request): string
     {
-        $candidates = [
-            '/System/Library/Fonts/Supplemental/Arial Bold.ttf',
-            '/System/Library/Fonts/Supplemental/Arial.ttf',
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf',
-            '/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf',
-        ];
-        $bold = collect($candidates)->first(fn($p) => file_exists($p)) ?: null;
-        $regular = str_replace('Bold', '', $bold);
-        if ($regular && !file_exists($regular)) {
-            $regular = collect($candidates)->reject(fn($p) => str_contains($p, 'Bold'))->first(fn($p) => file_exists($p)) ?: null;
-        }
-        return ['bold' => $bold, 'regular' => $regular ?: $bold, 'black' => $bold];
-    }
+        $userPoin = $request->poin
+            ? "\n\nUser telah menyediakan poin-poin berikut sebagai panduan konten:\n" . $request->poin
+            : '';
 
-    private function colorPalette($warna)
-    {
-        $p = [
-            'blue'   => ['primary' => [59,130,246], 'dark' => [15,23,42], 'light' => [239,246,255]],
-            'green'  => ['primary' => [34,197,94],  'dark' => [20,83,45],  'light' => [240,253,244]],
-            'orange' => ['primary' => [249,115,22], 'dark' => [124,45,18], 'light' => [255,247,237]],
-            'purple' => ['primary' => [139,92,246], 'dark' => [76,29,149],  'light' => [245,243,255]],
-            'red'    => ['primary' => [239,68,68],  'dark' => [127,29,29],  'light' => [254,242,242]],
-            'dark'   => ['primary' => [148,163,184], 'dark' => [248,250,252], 'light' => [30,41,59]],
-        ];
-        return $p[$warna] ?? $p['blue'];
-    }
-
-    private function jenisLabel($jenis)
-    {
-        return match($jenis) {
-            'tips' => 'Tips & Trik', 'statistik' => 'Statistik & Data',
-            'proses' => 'Langkah-langkah', 'perbandingan' => 'Perbandingan',
-            'timeline' => 'Timeline', 'fakta' => 'Fakta Menarik',
-            default => 'Infografis',
+        $jenisGuide = match ($request->jenis) {
+            'tips'        => 'Buat 5-6 tips praktis. Setiap tips punya judul singkat (2-4 kata) dan penjelasan 1 kalimat.',
+            'statistik'   => 'Buat 3-4 data statistik menarik (dengan angka/persentase realistis) dan 2-3 insight.',
+            'proses'      => 'Buat 4-6 langkah proses berurutan. Setiap langkah punya judul dan penjelasan singkat.',
+            'perbandingan' => 'Buat perbandingan 2 hal dengan masing-masing 3-4 poin perbedaan.',
+            'timeline'    => 'Buat 4-6 milestone/event kronologis dengan tahun/waktu dan deskripsi singkat.',
+            'fakta'       => 'Buat 4-6 fakta menarik yang mengejutkan. Sertakan angka/data jika memungkinkan.',
+            default       => 'Buat 4-6 poin utama dengan penjelasan singkat.',
         };
-    }
 
-    private function extractStat($text)
-    {
-        if (preg_match('/(\d{1,3}%)/', $text, $m)) return $m[1];
-        if (preg_match('/(\d+[.,]?\d*)\s*(juta|miliar|rb|ratus|ribu)/i', $text, $m)) return $m[1];
-        if (preg_match('/(\d{1,3})/', $text, $m)) return $m[1];
-        return '01';
-    }
+        $gayaGuide = match ($request->gaya) {
+            'modern'    => 'Gunakan gaya desain modern yang dinamis dengan elemen-elemen visual yang variatif.',
+            'bold'      => 'Gunakan gaya desain bold/tebal yang eye-catching dengan penekanan kuat.',
+            'minimal'   => 'Gunakan gaya desain minimalis yang bersih dan elegan.',
+            'corporate' => 'Gunakan gaya desain korporat yang profesional dan formal.',
+            default     => 'Gunakan gaya desain modern.',
+        };
 
-    private function drawFallbackBackground($img, $w, $h, $warna)
-    {
-        $grad = $this->colorPalette($warna);
-        for ($y = 0; $y < $h; $y++) {
-            $r = $grad['light'][0] + ($grad['primary'][0] - $grad['light'][0]) * ($y / $h);
-            $g = $grad['light'][1] + ($grad['primary'][1] - $grad['light'][1]) * ($y / $h);
-            $b = $grad['light'][2] + ($grad['primary'][2] - $grad['light'][2]) * ($y / $h);
-            imageline($img, 0, $y, $w, $y, imagecolorallocate($img, (int)$r, (int)$g, (int)$b));
+        $layoutRule = '';
+        if ($request->layout && $request->layout !== 'auto') {
+            $layoutRule = "PENTING — FORCE LAYOUT:\nUser SECARA SPESIFIK meminta menggunakan layout: \"{$request->layout}\".\nKamu HARUS dan WAJIB mengembalikan properti \"layout\": \"{$request->layout}\" dalam JSON.";
+        } else {
+            $layoutRule = <<<LAYOUT
+PENTING — PILIH LAYOUT:
+Kamu HARUS memilih SATU layout yang PALING COCOK untuk topik dan jenis konten ini. Pilihan layout:
+
+1. "portrait_classic" — Format vertikal standar (800px lebar). Cocok untuk tips umum, fakta, dan konten ringkas.
+2. "landscape_grid" — Format mendatar (1200px lebar). Cocok untuk perbandingan, statistik banyak, atau data yang perlu ruang horizontal.
+3. "portrait_timeline" — Format vertikal dengan alur langkah (800px lebar). Cocok untuk proses, timeline, tutorial, atau kronologis.
+4. "landscape_split" — Format mendatar dua kolom (1200px lebar). Bagian kiri untuk judul hero besar, bagian kanan untuk konten poin. Cocok untuk presentasi, ringkasan eksekutif, atau konten bersifat narasi.
+5. "landscape_chart" — Format mendatar (1200px lebar) dengan grafik batang. SANGAT COCOK untuk statistik yang berisi angka atau perbandingan numerik.
+
+JANGAN selalu memilih "portrait_classic". Variasikan pilihan berdasarkan topik. Jika topik tentang proses/langkah, pilih "portrait_timeline". Jika statistik angka/data, pilih "landscape_chart". Jika perbandingan/statistik banyak, pilih "landscape_grid". Jika presentasi/ringkasan, pilih "landscape_split".
+LAYOUT;
         }
+
+        return <<<PROMPT
+Kamu adalah ahli pembuat konten infografis profesional berkelas dunia.
+Buatkan konten terstruktur untuk infografis dengan topik: "{$request->topik}".
+
+Jenis infografis: {$request->jenis}
+Gaya desain: {$request->gaya}
+Panduan konten: {$jenisGuide}
+Panduan gaya: {$gayaGuide}
+{$userPoin}
+
+{$layoutRule}
+
+WAJIB kembalikan HANYA dalam format JSON VALID. TANPA markdown code block, TANPA backtick, TANPA penjelasan tambahan. Langsung JSON saja.
+
+Struktur JSON yang HARUS diikuti:
+
+{
+  "layout": "portrait_classic",
+  "judul": "Judul Utama (maks 6 kata, powerful & menarik)",
+  "subjudul": "Kalimat pendek penjelas judul (maks 15 kata)",
+  "intro": "Paragraf pengantar singkat 1-2 kalimat yang menjelaskan topik secara menarik",
+  "image_prompt": "A realistic 2D digital illustration of [describe a person/object related to the topic], isolated on pure white background, flat even lighting, clean edges, professional style",
+  "statistik_utama": {
+    "angka": "85%",
+    "label": "Deskripsi singkat angka ini (maks 8 kata)"
+  },
+  "statistik_tambahan": [
+    {
+      "angka": "10x",
+      "label": "Deskripsi singkat (maks 6 kata)"
+    }
+  ],
+  "grafik_data": {
+    "satuan": "Juta / Persen / Ribu (sesuaikan)",
+    "data": [
+      {"label": "Kategori A", "nilai": 75, "warna": "primary"},
+      {"label": "Kategori B", "nilai": 90, "warna": "secondary"},
+      {"label": "Kategori C", "nilai": 45, "warna": "tertiary"}
+    ]
+  },
+  "section_title": "Judul untuk bagian poin-poin (maks 5 kata, contoh: Pentingnya Literasi Anak)",
+  "poin": [
+    {
+      "judul": "Judul Poin (2-4 kata)",
+      "deskripsi": "Penjelasan singkat maksimal 2 kalimat",
+      "asset_image": "book"
+    }
+  ],
+  "call_to_action": "Kalimat ajakan penutup yang memotivasi (maks 8 kata)",
+  "sub_cta": [
+    {
+      "icon": "check-circle",
+      "teks": "Aksi singkat (maks 5 kata)"
+    }
+  ],
+  "kategori_visual": "pendidikan"
+}
+
+ATURAN KETAT:
+- "layout" WAJIB ada dan bernilai SALAH SATU dari: portrait_classic, landscape_grid, portrait_timeline, landscape_split, landscape_chart
+- "image_prompt" WAJIB diisi dengan prompt gambar berbahasa Inggris untuk AI image generator (HARUS ada teks "isolated on pure white background").
+- "grafik_data" WAJIB diisi jika layout "landscape_chart" (buat 3-5 batang). Jika layout lain, isi null atau array kosong.
+- "poin" harus berisi 4-6 item
+- "statistik_tambahan" berisi 2-3 item
+- "sub_cta" berisi 3-4 item aksi singkat
+- Angka statistik harus realistis dan relevan dengan topik
+- Untuk "asset_image" pada "poin", HARUS memilih SATU dari nama berikut yang paling relevan dengan isi poin tersebut: money, chart, book, laptop, lightbulb, rocket, target, trophy, search, shield, heart, briefcase, check, warning, people, globe, education, bank, building, star, idea, time, health, food, car, home, phone, music, art, nature. Jika tidak ada yang cocok sama sekali, gunakan 'star'.
+- "icon" pada "sub_cta" HARUS nama icon Lucide.
+- JANGAN bungkus dengan backtick atau code block. LANGSUNG tulis JSON-nya.
+PROMPT;
     }
 
-    private function drawOverlay($img, $w, $h)
+    private function extractJson(string $raw): ?array
     {
-        $white = imagecolorallocatealpha($img, 255, 255, 255, min(127, 110));
-        imagefilledrectangle($img, 0, 0, $w, $h, $white);
-    }
+        // Direct parse
+        $data = json_decode(trim($raw), true);
+        if ($data && isset($data['judul'])) return $data;
 
-    private function drawLine($img, $x1, $y1, $x2, $y2, $rgb, $thickness)
-    {
-        $c = imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
-        imagesetthickness($img, $thickness);
-        imageline($img, $x1, $y1, $x2, $y2, $c);
-        imagesetthickness($img, 1);
-    }
-
-    private function drawCircleAlpha($img, $cx, $cy, $r, $rgb, $alpha)
-    {
-        $alpha = max(0, min(127, $alpha));
-        $c = imagecolorallocatealpha($img, $rgb[0], $rgb[1], $rgb[2], $alpha);
-        imagefilledellipse($img, $cx, $cy, $r * 2, $r * 2, $c);
-    }
-
-    private function drawRoundedRect($img, $x, $y, $w, $h, $r, $rgba)
-    {
-        $alpha = max(0, min(127, $rgba[3] ?? 0));
-        $c = imagecolorallocatealpha($img, $rgba[0], $rgba[1], $rgba[2], $alpha);
-        if ($c === false) $c = imagecolorallocate($img, $rgba[0], $rgba[1], $rgba[2]);
-        imagefilledrectangle($img, $x + $r, $y, $x + $w - $r, $y + $h, $c);
-        imagefilledrectangle($img, $x, $y + $r, $x + $w, $y + $h - $r, $c);
-        imagefilledellipse($img, $x + $r, $y + $r, $r * 2, $r * 2, $c);
-        imagefilledellipse($img, $x + $w - $r, $y + $r, $r * 2, $r * 2, $c);
-        imagefilledellipse($img, $x + $r, $y + $h - $r, $r * 2, $r * 2, $c);
-        imagefilledellipse($img, $x + $w - $r, $y + $h - $r, $r * 2, $r * 2, $c);
-    }
-
-    private function ttfCenter($img, $text, $x, $y, $size, $rgb, $font)
-    {
-        if (!$font) return;
-        $c = imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
-        $box = imagettfbbox($size, 0, $font, $text);
-        $tw = $box[2] - $box[0];
-        imagettftext($img, $size, 0, (int)($x - $tw / 2), $y, $c, $font, $text);
-    }
-
-    private function ttfWrap($img, $text, $x, $y, $maxW, $lineH, $rgb, $font)
-    {
-        if (!$font) return;
-        $c = imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
-        $words = explode(' ', $text);
-        $line = '';
-        $yy = $y;
-        foreach ($words as $word) {
-            $test = $line . ' ' . $word;
-            $box = imagettfbbox($lineH, 0, $font, ltrim($test));
-            if ($box[2] > $maxW && $line !== '') {
-                imagettftext($img, $lineH, 0, $x, $yy, $c, $font, ltrim($line));
-                $line = $word;
-                $yy += $lineH + 4;
-            } else {
-                $line = $test;
-            }
+        // Extract from markdown code block
+        if (preg_match('/```(?:json)?\s*\n?(.*?)\n?\s*```/s', $raw, $m)) {
+            $data = json_decode(trim($m[1]), true);
+            if ($data && isset($data['judul'])) return $data;
         }
-        imagettftext($img, $lineH, 0, $x, $yy, $c, $font, ltrim($line));
-    }
 
-    private function ttfWrapCenter($img, $text, $cx, $y, $maxW, $lineH, $rgb, $font)
-    {
-        if (!$font) return;
-        $c = imagecolorallocate($img, $rgb[0], $rgb[1], $rgb[2]);
-        $words = explode(' ', $text);
-        $line = '';
-        $yy = $y;
-        foreach ($words as $word) {
-            $test = $line . ' ' . $word;
-            $box = imagettfbbox($lineH, 0, $font, ltrim($test));
-            if ($box[2] > $maxW && $line !== '') {
-                $boxLine = imagettfbbox($lineH, 0, $font, ltrim($line));
-                $x = $cx - ($boxLine[2] - $boxLine[0]) / 2;
-                imagettftext($img, $lineH, 0, (int)$x, $yy, $c, $font, ltrim($line));
-                $line = $word;
-                $yy += $lineH + 6;
-            } else {
-                $line = $test;
-            }
+        // Find JSON object in text
+        if (preg_match('/\{[\s\S]*\}/m', $raw, $m)) {
+            $data = json_decode($m[0], true);
+            if ($data && isset($data['judul'])) return $data;
         }
-        $boxLine = imagettfbbox($lineH, 0, $font, ltrim($line));
-        $x = $cx - ($boxLine[2] - $boxLine[0]) / 2;
-        imagettftext($img, $lineH, 0, (int)$x, $yy, $c, $font, ltrim($line));
+
+        return null;
     }
 
     public function destroy(Request $request)

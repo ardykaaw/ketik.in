@@ -32,6 +32,20 @@
     @endif
 
     <div class="card shadow-lg border-0" style="border-radius: 20px; overflow: hidden;">
+        <div class="card-body border-bottom py-3">
+            <div class="d-flex">
+                <div class="ms-auto text-muted">
+                    <form action="{{ route('admin.users') }}" method="GET">
+                        <div class="input-icon">
+                            <input type="text" name="search" value="{{ request('search') }}" class="form-control" placeholder="Cari nama atau email...">
+                            <span class="input-icon-addon">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="10" cy="10" r="7" /><line x1="21" y1="21" x2="15" y2="15" /></svg>
+                            </span>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
         <div class="table-responsive">
             <table class="table card-table table-vcenter text-nowrap datatable">
                 <thead class="bg-light">

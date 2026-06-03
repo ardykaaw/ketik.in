@@ -161,6 +161,7 @@ Route::middleware(['auth'])->group(function () {
         // Infographic Generator
         Route::get('/admin/infographic', [InfographicController::class, 'index'])->name('admin.infographic.index');
         Route::post('/admin/infographic/generate', [InfographicController::class, 'generate'])->name('admin.infographic.generate');
+        Route::post('/admin/infographic/store-image', [InfographicController::class, 'storeImage'])->name('admin.infographic.store-image');
         Route::delete('/admin/infographic', [InfographicController::class, 'destroy'])->name('admin.infographic.destroy');
 
         // Academy Management (Multi-Course)

@@ -20,9 +20,19 @@ class AdminController extends Controller
         return view('admin.dashboard', compact('stats'));
     }
 
-    public function users()
+    public function users(Request $request)
     {
-        $users = User::where('is_active', true)->latest()->paginate(10);
+        $query = User::where('is_active', true);
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->latest()->paginate(10)->withQueryString();
         return view('admin.users.index', compact('users'));
     }
 
@@ -107,13 +117,21 @@ class AdminController extends Controller
     }
 
     /* --- Verification Logic --- */
-    public function verifications()
+    public function verifications(Request $request)
     {
         // Users who are NOT active and NOT admin
-        $pendingUsers = User::where('is_active', false)
-            ->where('role', '!=', 'admin')
-            ->latest()
-            ->paginate(15);
+        $query = User::where('is_active', false)
+            ->where('role', '!=', 'admin');
+
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $pendingUsers = $query->latest()->paginate(15)->withQueryString();
 
         // Users who are ACTIVE but email NOT sent (Failed)
         $failedEmailUsers = User::where('is_active', true)
