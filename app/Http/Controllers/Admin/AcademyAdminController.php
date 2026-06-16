@@ -33,7 +33,7 @@ class AcademyAdminController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
-                'cover_image' => 'nullable|image|max:10240',
+                'cover_image' => 'nullable|image|max:51200',
             ]);
             \Log::info('storeCourse validation passed', $validated);
 
@@ -114,7 +114,7 @@ class AcademyAdminController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|max:51200',
         ]);
 
         $data = [
@@ -135,7 +135,7 @@ class AcademyAdminController extends Controller
     {
         $request->validate([
             'title' => 'required|string|max:255',
-            'thumbnail' => 'nullable|image|max:2048',
+            'thumbnail' => 'nullable|image|max:51200',
         ]);
 
         $data = ['title' => $request->title];
@@ -186,7 +186,7 @@ class AcademyAdminController extends Controller
             'content' => 'nullable|string',
             'video_url' => 'nullable|url|max:500',
             'video_file' => 'nullable|mimes:mp4,webm,ogg,mov|max:102400',
-            'document_file' => 'nullable|mimes:pdf,doc,docx|max:20480',
+            'document_file' => 'nullable|mimes:pdf,doc,docx|max:71680',
         ]);
 
         $data = [
@@ -225,7 +225,7 @@ class AcademyAdminController extends Controller
             'content' => 'nullable|string',
             'video_url' => 'nullable|url|max:500',
             'video_file' => 'nullable|mimes:mp4,webm,ogg,mov|max:102400',
-            'document_file' => 'nullable|mimes:pdf,doc,docx|max:20480',
+            'document_file' => 'nullable|mimes:pdf,doc,docx|max:71680',
         ]);
 
         $data = $request->only('title', 'content', 'video_url');

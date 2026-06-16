@@ -114,7 +114,7 @@
                             @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
-                            <label class="form-label fw-bold small">Cover Image (opsional, max 10MB)</label>
+                            <label class="form-label fw-bold small">Cover Image (opsional, max 50MB)</label>
                             <input type="file" name="cover_image" class="form-control border-2 @error('cover_image') is-invalid @enderror" accept="image/*" style="border-radius: 12px;">
                             @error('cover_image')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>

@@ -43,7 +43,7 @@
 
                         <input type="file" name="document_file" class="form-control border-2 @error('document_file') is-invalid @enderror"
                                style="border-radius: 12px;" accept=".pdf,.doc,.docx">
-                        <small class="text-muted">Format: PDF, DOC, DOCX. Maksimal 20MB.</small>
+                        <small class="text-muted">Format: PDF, DOC, DOCX. Maksimal 70MB.</small>
                         @error('document_file') <div class="invalid-feedback">{{ $message }}</div> @enderror
                     </div>
 
