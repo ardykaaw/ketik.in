@@ -471,8 +471,8 @@
 
             @if(session('error'))
                 Swal.fire({
-                    icon: 'error',
-                    title: 'Akses Dibatasi',
+                    icon: '{{ str_contains(strtolower(session("error")), "ai") || str_contains(strtolower(session("error")), "tunggu") ? "warning" : "error" }}',
+                    title: '{{ str_contains(strtolower(session("error")), "ai") || str_contains(strtolower(session("error")), "tunggu") ? "Sistem Sedang Sibuk" : "Oops! Terjadi Kesalahan" }}',
                     text: "{{ session('error') }}",
                     confirmButtonColor: '#10b981',
                 });
