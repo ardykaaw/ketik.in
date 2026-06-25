@@ -105,6 +105,7 @@
         <p class="text-center text-muted fst-italic small mb-5">(klik pada materi di bawah thumbnail untuk membuka konten)</p>
     </div>
 
+    @push('modals')
     {{-- Lesson Modal --}}
     <div class="modal modal-blur fade" id="lessonModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -137,6 +138,7 @@
             </div>
         </div>
     </div>
+    @endpush
 
     @push('scripts')
     <script>

@@ -82,10 +82,10 @@
       /* Animations for main content */
       @keyframes fadeInUpKids {
         0% { opacity: 0; transform: translateY(40px) scale(0.95); }
-        100% { opacity: 1; transform: translateY(0) scale(1); }
+        100% { opacity: 1; transform: none; }
       }
       .page-wrapper {
-        animation: fadeInUpKids 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* Bouncy intro */
+        animation: fadeInUpKids 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); /* Bouncy intro */
       }
       @endif
 
@@ -790,5 +790,6 @@
         });
       });
     </script>
+    @stack('modals')
   </body>
 </html>
