@@ -40,7 +40,7 @@ Route::middleware(['auth'])->group(function () {
 
 
     // Features & Wizard (Premium + Device Bound)
-    Route::middleware(['premium', 'device_bound'])->group(function () {
+    Route::middleware(['premium', 'device_bound', 'package'])->group(function () {
         // Wizard
         Route::get('/wizard/step-1', [WizardController::class, 'step1'])->name('wizard.step1');
         Route::post('/wizard/step-1', [WizardController::class, 'storeStep1'])->name('wizard.step1.store');
@@ -120,7 +120,7 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Mode Guru (Semua User yang Login)
-    Route::prefix('guru')->name('guru.')->group(function () {
+    Route::prefix('guru')->name('guru.')->middleware('package')->group(function () {
         Route::get('/', [App\Http\Controllers\TeacherController::class, 'index'])->name('index');
         Route::get('/soal', [App\Http\Controllers\TeacherController::class, 'soal'])->name('soal');
         Route::post('/soal/generate', [App\Http\Controllers\TeacherController::class, 'generateSoal'])->name('soal.generate');

@@ -73,10 +73,17 @@
                     Selamat datang kembali. Mulai buat konten AI berkualitas hari ini — cepat, mudah, dan profesional.
                 </p>
                 <div class="d-flex gap-2 flex-wrap">
+                    @if(Auth::user()->hasUtamaAccess())
                     <a href="{{ route('feature.story-telling') }}" class="btn fw-semibold px-4" style="background:#10b981;color:white;border-radius:10px;border:none;box-shadow:0 4px 14px rgba(16,185,129,.35);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
                         Buat Konten
                     </a>
+                    @elseif(Auth::user()->hasGuruAccess())
+                    <a href="{{ route('guru.index') }}" class="btn fw-semibold px-4" style="background:#10b981;color:white;border-radius:10px;border:none;box-shadow:0 4px 14px rgba(16,185,129,.35);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M12 5l0 14"/><path d="M5 12l14 0"/></svg>
+                        Mode Guru
+                    </a>
+                    @endif
                     <a href="{{ route('library.index') }}" class="btn fw-semibold px-4" style="background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.2);border-radius:10px;backdrop-filter:blur(4px);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="me-1"><path d="M3 12h1m16 0h1M12 3v1m0 16v1M5.6 5.6l.7.7m11.4-.7l-.7.7M5.6 18.4l.7-.7m11.4.7l-.7-.7"/><circle cx="12" cy="12" r="4"/></svg>
                         Pustaka Saya
@@ -181,6 +188,7 @@
     <div class="row g-4 mb-4">
 
         {{-- Feature Cards (kiri) --}}
+        @if(Auth::user()->hasUtamaAccess())
         <div class="col-lg-8">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="fw-bold mb-0">✨ Fitur AI Unggulan</h5>
@@ -231,9 +239,10 @@
                 @endforeach
             </div>
         </div>
+        @endif
 
         {{-- Chart + quick links (kanan) --}}
-        <div class="col-lg-4">
+        <div class="{{ Auth::user()->hasUtamaAccess() ? 'col-lg-4' : 'col-lg-6' }}">
             <div class="d-flex align-items-center justify-content-between mb-3">
                 <h5 class="fw-bold mb-0">📊 Aktivitas 7 Hari</h5>
             </div>
@@ -278,6 +287,7 @@
 
     {{-- ===== DISTRIBUSI FITUR ===== --}}
     <div class="row g-4">
+        @if(Auth::user()->hasUtamaAccess())
         <div class="col-lg-5">
             <div class="card border-0" style="border-radius:16px;box-shadow:0 2px 16px rgba(16,185,129,.07);">
                 <div class="card-body">
@@ -287,7 +297,9 @@
                 </div>
             </div>
         </div>
-        <div class="col-lg-7">
+        @endif
+        
+        <div class="{{ Auth::user()->hasUtamaAccess() ? 'col-lg-7' : 'col-lg-6' }}">
             <div class="card border-0 h-100" style="border-radius:16px;box-shadow:0 2px 16px rgba(16,185,129,.07);background:linear-gradient(135deg,#022c22 0%,#065f46 100%);">
                 <div class="card-body p-4 d-flex flex-column justify-content-between">
                     <div>
@@ -298,8 +310,12 @@
                         </p>
                     </div>
                     <div class="d-flex gap-2 mt-3 flex-wrap">
+                        @if(Auth::user()->hasGuruAccess())
                         <a href="{{ route('guru.index') }}" class="btn btn-sm fw-semibold" style="background:#10b981;color:white;border-radius:8px;border:none;">Coba Mode Guru →</a>
+                        @endif
+                        @if(Auth::user()->hasAcademyAccess())
                         <a href="{{ route('academy.index') }}" class="btn btn-sm fw-semibold" style="background:rgba(255,255,255,.1);color:white;border:1px solid rgba(255,255,255,.2);border-radius:8px;">Belajar di Academy</a>
+                        @endif
                     </div>
                 </div>
             </div>

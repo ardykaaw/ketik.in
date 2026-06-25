@@ -26,6 +26,7 @@ class User extends Authenticatable
         'avatar',
         'password',
         'role',
+        'package_type',
         'premium_until',
         'plan_name',
         'activation_email_sent_at',
@@ -54,6 +55,26 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin' || $this->role === 'superadmin';
+    }
+
+    public function hasUtamaAccess(): bool
+    {
+        if ($this->isAdmin()) return true;
+        return ($this->package_type ?? 'utama') === 'utama';
+    }
+
+    public function hasGuruAccess(): bool
+    {
+        if ($this->isAdmin()) return true;
+        $pkg = $this->package_type ?? 'utama';
+        return in_array($pkg, ['utama', 'guru', 'guru_academy']);
+    }
+
+    public function hasAcademyAccess(): bool
+    {
+        if ($this->isAdmin()) return true;
+        $pkg = $this->package_type ?? 'utama';
+        return in_array($pkg, ['utama', 'academy', 'guru_academy']);
     }
 
     public function isSuperAdmin(): bool

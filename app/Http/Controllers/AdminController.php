@@ -43,6 +43,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:user,admin',
+            'package_type' => 'required|in:utama,guru,guru_academy,academy',
         ]);
 
         User::create([
@@ -50,6 +51,7 @@ class AdminController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => $request->role,
+            'package_type' => $request->package_type,
             'is_active' => true, // Admin-created users are active immediately
             'email_verified_at' => now(), 
         ]);
@@ -63,12 +65,14 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|in:user,admin',
+            'package_type' => 'required|in:utama,guru,guru_academy,academy',
         ]);
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'role' => $request->role,
+            'package_type' => $request->package_type,
         ];
 
         if ($request->filled('password')) {
@@ -143,9 +147,16 @@ class AdminController extends Controller
         return view('admin.verifications.index', compact('pendingUsers', 'failedEmailUsers'));
     }
 
-    public function approveUser(User $user)
+    public function approveUser(Request $request, User $user)
     {
-        $user->update(['is_active' => true]);
+        $request->validate([
+            'package_type' => 'required|in:utama,guru,guru_academy,academy',
+        ]);
+
+        $user->update([
+            'is_active' => true,
+            'package_type' => $request->package_type
+        ]);
 
         // Send Email Notification
         try {

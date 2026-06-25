@@ -276,6 +276,7 @@
                         </a>
                     </li>
                     
+                    @if(Auth::user()->hasUtamaAccess())
                     <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Fitur Penulisan</div>
 
                     <li class="nav-item">
@@ -366,6 +367,9 @@
                         </a>
                     </li>
 
+                    @endif
+
+                    @if(Auth::user()->hasGuruAccess())
                     <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Mode Khusus</div>
 
                     <li class="nav-item">
@@ -376,20 +380,26 @@
                         </a>
                     </li>
 
+                    @endif
+
                     <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Lainnya</div>
 
+                    @if(Auth::user()->hasAcademyAccess())
                     <li class="nav-item">
                         <a href="{{ route('academy.index') }}" class="nav-link {{ request()->routeIs('academy.*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0" /><path d="M3 6l0 13" /><path d="M12 6l0 13" /><path d="M21 6l0 13" /></svg>
                             Academy
                         </a>
                     </li>
+                    @endif
+                    @if(Auth::user()->hasUtamaAccess())
                     <li class="nav-item">
                         <a href="{{ route('billing.index') }}" class="nav-link {{ request()->routeIs('billing.*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                             Pembayaran
                         </a>
                     </li>
+                    @endif
                     <li class="nav-item">
                         <a href="{{ route('profile.edit') }}" class="nav-link {{ request()->routeIs('profile.edit') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>

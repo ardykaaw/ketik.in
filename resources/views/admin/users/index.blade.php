@@ -54,6 +54,7 @@
                         <th class="py-3">Nama Pengguna</th>
                         <th class="py-3">Email</th>
                         <th class="py-3">Role</th>
+                        <th class="py-3">Tingkat / Paket</th>
                         <th class="py-3">Terdaftar Pada</th>
                         <th class="py-3">Status Perangkat</th>
                         <th class="text-end py-3 px-4">Aksi</th>
@@ -79,6 +80,21 @@
                         <td>
                             <span class="badge {{ $user->role === 'admin' ? 'bg-red-lt' : 'bg-blue-lt' }} px-3 py-1" style="border-radius: 6px;">
                                 {{ ucfirst($user->role) }}
+                            </span>
+                        </td>
+                        <td>
+                            @php
+                                $pkgLabels = [
+                                    'utama' => ['text' => 'Paket Utama', 'color' => 'bg-green-lt'],
+                                    'guru' => ['text' => 'Mode Guru', 'color' => 'bg-orange-lt'],
+                                    'guru_academy' => ['text' => 'Guru + Academy', 'color' => 'bg-purple-lt'],
+                                    'academy' => ['text' => 'Academy', 'color' => 'bg-cyan-lt'],
+                                ];
+                                $userPkg = $user->package_type ?? 'utama';
+                                $lbl = $pkgLabels[$userPkg] ?? $pkgLabels['utama'];
+                            @endphp
+                            <span class="badge {{ $lbl['color'] }} px-3 py-1" style="border-radius: 6px;">
+                                {{ $lbl['text'] }}
                             </span>
                         </td>
                         <td>
@@ -116,6 +132,7 @@
                                     data-name="{{ $user->name }}"
                                     data-email="{{ $user->email }}"
                                     data-role="{{ $user->role }}"
+                                    data-package_type="{{ $user->package_type }}"
                                     onclick="populateEditModal(this)">
                                     Edit
                                 </button>
@@ -175,6 +192,15 @@
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipe Paket</label>
+                            <select name="package_type" class="form-select border-2" style="border-radius: 10px;" required>
+                                <option value="utama">Paket Utama (Akses Penuh)</option>
+                                <option value="guru">Mode Guru</option>
+                                <option value="guru_academy">Guru + Academy</option>
+                                <option value="academy">Academy</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
@@ -216,6 +242,15 @@
                                 <option value="admin">Admin</option>
                             </select>
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Tipe Paket</label>
+                            <select name="package_type" id="edit-package_type" class="form-select border-2" style="border-radius: 10px;" required>
+                                <option value="utama">Paket Utama (Akses Penuh)</option>
+                                <option value="guru">Mode Guru</option>
+                                <option value="guru_academy">Guru + Academy</option>
+                                <option value="academy">Academy</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-link link-secondary me-auto" data-bs-dismiss="modal">Batal</button>
@@ -233,11 +268,13 @@
             const name = btn.getAttribute('data-name');
             const email = btn.getAttribute('data-email');
             const role = btn.getAttribute('data-role');
+            const package_type = btn.getAttribute('data-package_type');
             
             document.getElementById('edit-user-form').action = `/admin/users/${id}`;
             document.getElementById('edit-name').value = name;
             document.getElementById('edit-email').value = email;
             document.getElementById('edit-role').value = role;
+            document.getElementById('edit-package_type').value = package_type || 'utama';
         }
 
         // SweetAlert for Reset Device

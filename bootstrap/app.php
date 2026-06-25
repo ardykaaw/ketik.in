@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'single.session' => \App\Http\Middleware\CheckSingleSession::class,
             'premium' => \App\Http\Middleware\CheckSubscription::class,
             'device_bound' => \App\Http\Middleware\EnsureDeviceIsBound::class,
+            'package' => \App\Http\Middleware\EnsurePackageAccess::class,
         ]);
 
         $middleware->appendToGroup('web', [
