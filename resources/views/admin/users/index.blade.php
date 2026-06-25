@@ -89,6 +89,7 @@
                                     'guru' => ['text' => 'Mode Guru', 'color' => 'bg-orange-lt'],
                                     'guru_academy' => ['text' => 'Guru + Academy', 'color' => 'bg-purple-lt'],
                                     'academy' => ['text' => 'Academy', 'color' => 'bg-cyan-lt'],
+                                    'worksheet_anak' => ['text' => 'Worksheet Anak', 'color' => 'bg-pink-lt'],
                                 ];
                                 $userPkg = $user->package_type ?? 'utama';
                                 $lbl = $pkgLabels[$userPkg] ?? $pkgLabels['utama'];
@@ -199,6 +200,7 @@
                                 <option value="guru">Mode Guru</option>
                                 <option value="guru_academy">Guru + Academy</option>
                                 <option value="academy">Academy</option>
+                                <option value="worksheet_anak">Worksheet Anak</option>
                             </select>
                         </div>
                     </div>
@@ -249,6 +251,7 @@
                                 <option value="guru">Mode Guru</option>
                                 <option value="guru_academy">Guru + Academy</option>
                                 <option value="academy">Academy</option>
+                                <option value="worksheet_anak">Worksheet Anak</option>
                             </select>
                         </div>
                     </div>

@@ -114,6 +114,13 @@
                             @error('description')<div class="invalid-feedback">{{ $message }}</div>@enderror
                         </div>
                         <div class="mb-3">
+                            <label class="form-label fw-bold small">Akses Paket</label>
+                            <select name="access_type" class="form-select border-2" style="border-radius: 12px;">
+                                <option value="all">Semua Paket (Utama, Academy, dll)</option>
+                                <option value="worksheet_anak">Khusus Worksheet Anak</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="form-label fw-bold small">Cover Image (opsional, max 50MB)</label>
                             <input type="file" name="cover_image" class="form-control border-2 @error('cover_image') is-invalid @enderror" accept="image/*" style="border-radius: 12px;">
                             @error('cover_image')<div class="invalid-feedback">{{ $message }}</div>@enderror

@@ -58,7 +58,26 @@
 
 <div class="container-xl" style="padding: 1.5rem 1.5rem 2.5rem;">
 
-    {{-- ===== HERO ===== --}}
+    @if(Auth::user()->package_type === 'worksheet_anak')
+    {{-- ===== DASHBOARD ANAK ===== --}}
+    <div class="dash-hero mb-4" style="background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%); text-align: center; border-radius: 32px; padding: 4rem 2rem;">
+        <div style="font-size: 4rem; margin-bottom: 1rem;">🚀🌈✨</div>
+        <h1 class="fw-bold mb-3" style="color:white; font-size:2.5rem; letter-spacing: 1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.2);">Halo, {{ Auth::user()->name }}!</h1>
+        <p style="color:#ccfbf1; font-size:1.2rem; max-width:600px; margin: 0 auto 2rem; line-height:1.6; font-weight: 500;">
+            Selamat datang di Dunia Belajar! Yuk, kita mulai petualangan belajar hari ini dengan menyenangkan.
+        </p>
+        <a href="{{ route('academy.index') }}" class="btn fw-bold px-5 py-3" style="background:#f59e0b; color:white; border-radius:24px; font-size: 1.25rem; border:none; box-shadow:0 8px 24px rgba(245,158,11,.4); transition: transform 0.2s;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="me-2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Mulai Belajar Sekarang!
+        </a>
+    </div>
+    <style>
+        .dash-hero a.btn:hover {
+            transform: scale(1.05) translateY(-4px);
+        }
+    </style>
+    @else
+    {{-- ===== DASHBOARD DEWASA ===== --}}
     <div class="dash-hero mb-4">
         <div class="row align-items-center position-relative" style="z-index:1;">
             <div class="col-lg-7">
@@ -322,6 +341,7 @@
         </div>
     </div>
 
+    @endif
 </div>
 
     @push('scripts')

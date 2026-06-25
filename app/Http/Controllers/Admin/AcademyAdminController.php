@@ -33,6 +33,7 @@ class AcademyAdminController extends Controller
             $validated = $request->validate([
                 'title' => 'required|string|max:255',
                 'description' => 'nullable|string',
+                'access_type' => 'nullable|string',
                 'cover_image' => 'nullable|image|max:51200',
             ]);
             \Log::info('storeCourse validation passed', $validated);
@@ -40,6 +41,7 @@ class AcademyAdminController extends Controller
             $data = [
                 'title' => $request->title,
                 'description' => $request->description,
+                'access_type' => $request->access_type ?? 'all',
                 'status' => 'draft',
                 'sort_order' => (Course::max('sort_order') ?? 0) + 1,
             ];
@@ -98,10 +100,16 @@ class AcademyAdminController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'access_type' => 'nullable|string',
             'status' => 'required|in:draft,published',
         ]);
 
-        $course->update($request->only('title', 'description', 'status'));
+        $data = $request->only('title', 'description', 'status');
+        if ($request->has('access_type')) {
+            $data['access_type'] = $request->access_type;
+        }
+
+        $course->update($data);
 
         return redirect()->route('admin.academy.show', $course)->with('success', 'Pengaturan Academy diperbarui!');
     }

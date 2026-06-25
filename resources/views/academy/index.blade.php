@@ -1,7 +1,21 @@
 <x-dashboard-layout>
     <div class="container-xl py-5">
+        @if(Auth::user()->package_type === 'worksheet_anak')
         {{-- =============================== --}}
-        {{-- WELCOMING CARD                  --}}
+        {{-- WELCOMING CARD ANAK             --}}
+        {{-- =============================== --}}
+        <div class="card mb-5 border-0 shadow-lg overflow-hidden" style="border-radius: 32px; background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);">
+            <div class="card-body p-4 p-lg-5 text-center">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">🌟🎓🎈</div>
+                <h2 class="fw-bold text-white mb-3" style="font-size: 2rem; text-shadow: 1px 1px 3px rgba(0,0,0,0.2);">Halo Anak Hebat!</h2>
+                <p class="text-white mb-0" style="opacity: 0.9; line-height: 1.8; font-size: 1.15rem; max-width: 600px; margin: 0 auto;">
+                    Ayo pilih kelas seru yang ingin kamu ikuti hari ini. Kumpulkan lencana, selesaikan misi, dan jadilah juara! Semangat belajarnya ya! 🚀
+                </p>
+            </div>
+        </div>
+        @else
+        {{-- =============================== --}}
+        {{-- WELCOMING CARD DEWASA           --}}
         {{-- =============================== --}}
         <div class="card mb-5 border-0 shadow-lg overflow-hidden" style="border-radius: 24px;">
             <div class="card-body p-0">
@@ -67,6 +81,7 @@
                 </div>
             </div>
         </div>
+        @endif
 
         {{-- =============================== --}}
         {{-- COURSES GRID                    --}}
@@ -189,5 +204,43 @@
         }
         .wa-card { transition: all 0.2s ease; }
         .wa-card:hover { background: rgba(255,255,255,0.15) !important; }
+
+        @if(Auth::user()->package_type === 'worksheet_anak')
+        /* Gaya khusus Anak-anak */
+        .course-card {
+            background: #ffffff;
+            border-radius: 32px;
+            box-shadow: 0 8px 24px rgba(20, 184, 166, 0.15);
+            border: 4px solid #ccfbf1;
+        }
+        .course-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 32px rgba(20, 184, 166, 0.3);
+            border-color: #5eead4;
+        }
+        .course-card-title {
+            color: #0f766e !important;
+            font-size: 1.3rem;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+        }
+        .course-card-desc {
+            color: #475569 !important;
+        }
+        .course-card-stat {
+            color: #0d9488;
+            font-weight: 600;
+        }
+        .course-card-stat svg {
+            stroke: #14b8a6;
+        }
+        .progress {
+            background: #e2e8f0 !important;
+            height: 10px !important;
+            border-radius: 10px !important;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+        }
+        @endif
     </style>
 </x-dashboard-layout>

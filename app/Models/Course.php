@@ -7,7 +7,7 @@ use Illuminate\Support\Str;
 
 class Course extends Model
 {
-    protected $fillable = ['title', 'slug', 'description', 'cover_image', 'status', 'sort_order'];
+    protected $fillable = ['title', 'slug', 'description', 'cover_image', 'status', 'access_type', 'sort_order'];
 
     protected static function boot()
     {

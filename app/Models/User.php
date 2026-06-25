@@ -74,7 +74,14 @@ class User extends Authenticatable
     {
         if ($this->isAdmin()) return true;
         $pkg = $this->package_type ?? 'utama';
-        return in_array($pkg, ['utama', 'academy', 'guru_academy']);
+        return in_array($pkg, ['utama', 'academy', 'guru_academy', 'worksheet_anak']);
+    }
+
+    public function hasWorksheetAnakAccess(): bool
+    {
+        if ($this->isAdmin()) return true;
+        $pkg = $this->package_type ?? 'utama';
+        return in_array($pkg, ['utama', 'academy', 'guru_academy', 'worksheet_anak']);
     }
 
     public function isSuperAdmin(): bool

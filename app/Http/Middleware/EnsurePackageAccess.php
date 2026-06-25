@@ -49,6 +49,11 @@ class EnsurePackageAccess
             return redirect()->route('dashboard')->with('error', 'Paket Anda (Academy) tidak memiliki akses ke fitur ini.');
         }
 
+        if ($package === 'worksheet_anak') {
+            if ($isAcademy) return $next($request);
+            return redirect()->route('dashboard')->with('error', 'Paket Anda (Worksheet Anak) hanya diizinkan untuk mengakses fitur Academy tertentu.');
+        }
+
         // Fallback
         return redirect()->route('dashboard')->with('error', 'Paket Anda tidak diizinkan mengakses fitur ini.');
     }

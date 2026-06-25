@@ -14,10 +14,17 @@ class AcademyController extends Controller
      */
     public function index()
     {
-        $courses = Course::published()
+        $user = Auth::user();
+        $query = Course::published()
             ->withCount(['modules', 'lessons'])
-            ->orderBy('sort_order')
-            ->get();
+            ->orderBy('sort_order');
+
+        // Filter for specific worksheet_anak package
+        if (!$user->isAdmin() && $user->package_type === 'worksheet_anak') {
+            $query->where('access_type', 'worksheet_anak');
+        }
+
+        $courses = $query->get();
 
         $user = Auth::user();
         $courseProgress = [];
@@ -33,8 +40,12 @@ class AcademyController extends Controller
      */
     public function show(Course $course)
     {
-        if (!Auth::user()->isAdmin() && $course->status !== 'published') {
+        $user = Auth::user();
+        if (!$user->isAdmin() && $course->status !== 'published') {
             abort(404);
+        }
+        if (!$user->isAdmin() && $user->package_type === 'worksheet_anak' && $course->access_type !== 'worksheet_anak') {
+            abort(403, 'Akses ditolak.');
         }
 
         $course->load(['modules.lessons']);
@@ -55,8 +66,12 @@ class AcademyController extends Controller
      */
     public function lesson(Course $course, Lesson $lesson)
     {
-        if (!Auth::user()->isAdmin() && $course->status !== 'published') {
+        $user = Auth::user();
+        if (!$user->isAdmin() && $course->status !== 'published') {
             abort(404);
+        }
+        if (!$user->isAdmin() && $user->package_type === 'worksheet_anak' && $course->access_type !== 'worksheet_anak') {
+            abort(403, 'Akses ditolak.');
         }
 
         $course->load(['modules.lessons']);

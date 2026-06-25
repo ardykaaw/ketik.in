@@ -43,7 +43,7 @@ class AdminController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|in:user,admin',
-            'package_type' => 'required|in:utama,guru,guru_academy,academy',
+            'package_type' => 'required|in:utama,guru,guru_academy,academy,worksheet_anak',
         ]);
 
         User::create([
@@ -65,7 +65,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'role' => 'required|in:user,admin',
-            'package_type' => 'required|in:utama,guru,guru_academy,academy',
+            'package_type' => 'required|in:utama,guru,guru_academy,academy,worksheet_anak',
         ]);
 
         $data = [
@@ -150,7 +150,7 @@ class AdminController extends Controller
     public function approveUser(Request $request, User $user)
     {
         $request->validate([
-            'package_type' => 'required|in:utama,guru,guru_academy,academy',
+            'package_type' => 'required|in:utama,guru,guru_academy,academy,worksheet_anak',
         ]);
 
         $user->update([

@@ -55,6 +55,43 @@
                         <div class="lesson-content" style="line-height: 1.8; font-size: 1.05rem;">
                             {!! $lesson->content !!}
                         </div>
+
+                        {{-- Attached Document / PDF Viewer --}}
+                        @if($lesson->has_file)
+                            <div class="mt-5">
+                                <h4 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /></svg>
+                                    Lampiran Dokumen
+                                </h4>
+                                
+                                @if($lesson->file_extension === 'pdf')
+                                    <div class="card border-0 shadow-sm overflow-hidden" style="border-radius: 16px;">
+                                        <iframe src="{{ $lesson->file_url }}#toolbar=0" width="100%" height="600px" style="border: none;"></iframe>
+                                    </div>
+                                    <div class="text-end mt-2">
+                                        <a href="{{ $lesson->file_url }}" target="_blank" class="btn btn-sm btn-outline-primary" style="border-radius: 8px;">
+                                            Buka di Tab Baru / Download
+                                        </a>
+                                    </div>
+                                @else
+                                    <div class="card border border-2 shadow-none" style="border-radius: 12px; background: #f8fafc;">
+                                        <div class="card-body d-flex justify-content-between align-items-center p-3">
+                                            <div class="d-flex align-items-center gap-3">
+                                                <div class="avatar avatar-sm bg-blue-lt text-blue rounded-circle">
+                                                    {{ strtoupper($lesson->file_extension) }}
+                                                </div>
+                                                <div class="fw-medium text-dark">
+                                                    Materi Tambahan ({{ strtoupper($lesson->file_extension) }})
+                                                </div>
+                                            </div>
+                                            <a href="{{ $lesson->file_url }}" download class="btn btn-primary btn-sm px-3 shadow-sm" style="border-radius: 8px;">
+                                                Download File
+                                            </a>
+                                        </div>
+                                    </div>
+                                @endif
+                            </div>
+                        @endif
                     </div>
                 </div>
 

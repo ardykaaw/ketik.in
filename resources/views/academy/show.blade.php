@@ -19,7 +19,7 @@
                     </div>
                 </div>
             @else
-                <div style="height: 200px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: flex-end;">
+                <div style="height: 200px; background: {{ Auth::user()->package_type === 'worksheet_anak' ? 'linear-gradient(135deg, #34d399 0%, #059669 100%)' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}; position: relative; display: flex; align-items: flex-end;">
                     <div style="padding: 2rem;">
                         <h1 class="display-6 fw-bold text-white mb-1">{{ $course->title }}</h1>
                         <p class="text-white mb-0" style="opacity: 0.85;">{{ $course->description }}</p>
@@ -109,7 +109,7 @@
     <div class="modal modal-blur fade" id="lessonModal" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
             <div class="modal-content border-0 shadow-lg" style="border-radius: 24px; overflow: hidden;">
-                <div id="modal-thumbnail-header" class="d-none" style="position: relative; width: 100%; max-height: 280px; overflow: hidden; background: linear-gradient(135deg, #1e1b4b 0%, #581c87 50%, #7e22ce 100%);">
+                <div id="modal-thumbnail-header" class="d-none" style="position: relative; width: 100%; max-height: 280px; overflow: hidden; background: {{ Auth::user()->package_type === 'worksheet_anak' ? 'linear-gradient(135deg, #14b8a6 0%, #0d9488 100%)' : 'linear-gradient(135deg, #1e1b4b 0%, #581c87 50%, #7e22ce 100%)' }};">
                     <img id="modal-thumbnail-img" src="" alt="" style="width: 100%; height: 280px; object-fit: cover; display: none;">
                     <div id="modal-thumbnail-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; padding: 20px 24px; background: linear-gradient(transparent, rgba(0,0,0,0.8));">
                         <h3 class="text-white fw-bold mb-0" id="modal-module-title" style="font-size: 1.1rem;"></h3>
@@ -366,5 +366,75 @@
         .lesson-content table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
         .lesson-content table td, .lesson-content table th { border: 1px solid #e2e8f0; padding: 8px 12px; }
         .lesson-content table th { background: #f8fafc; font-weight: 600; }
+
+        @if(Auth::user()->package_type === 'worksheet_anak')
+        /* Gaya khusus Anak-anak untuk Show Course */
+        .card {
+            border-radius: 32px !important;
+            box-shadow: 0 8px 24px rgba(20, 184, 166, 0.1) !important;
+            border: 4px solid #ccfbf1 !important;
+        }
+        .module-card {
+            background: #ffffff !important;
+            border-radius: 32px !important;
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.15) !important;
+            border: 4px solid #fef3c7 !important;
+        }
+        .module-card:hover {
+            transform: translateY(-8px) !important;
+            box-shadow: 0 16px 32px rgba(245, 158, 11, 0.25) !important;
+            border-color: #fcd34d !important;
+        }
+        .module-card-thumb-fallback {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%) !important;
+        }
+        .module-fallback-title {
+            color: #ffffff !important;
+            text-shadow: 1px 1px 0px rgba(0,0,0,0.1) !important;
+        }
+        .module-lesson-item {
+            background: #f8fafc !important;
+            color: #334155 !important;
+            border: 2px solid #e2e8f0 !important;
+            font-weight: 600 !important;
+        }
+        .module-lesson-item:hover {
+            background: #f0fdf4 !important;
+            border-color: #86efac !important;
+            transform: scale(1.02);
+            color: #166534 !important;
+        }
+        .lesson-icon {
+            background: #fde68a !important;
+            color: #d97706 !important;
+        }
+        .progress {
+            background: #e2e8f0 !important;
+            height: 12px !important;
+            border-radius: 12px !important;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #f59e0b, #fbbf24) !important;
+        }
+        .modal-content {
+            border-radius: 32px !important;
+            border: 4px solid #ccfbf1 !important;
+        }
+        .btn-primary {
+            background: #f59e0b !important;
+            border-color: #f59e0b !important;
+            border-radius: 16px !important;
+            font-weight: 700 !important;
+        }
+        .btn-primary:hover {
+            background: #d97706 !important;
+            border-color: #d97706 !important;
+            transform: scale(1.05);
+        }
+        #progress-text {
+            color: #d97706 !important;
+            font-size: 1.2rem !important;
+        }
+        @endif
     </style>
 </x-dashboard-layout>

@@ -19,9 +19,76 @@
     <link href="{{ asset('css/ketik-override.css') }}" rel="stylesheet"/>
     <style>
       @import url('https://rsms.me/inter/inter.css');
+      @import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+      
       :root {
       	--tblr-font-sans-serif: 'Inter', -apple-system, BlinkMacSystemFont, San Francisco, Segoe UI, Roboto, Helvetica Neue, sans-serif;
       }
+      
+      @if(Auth::check() && Auth::user()->package_type === 'worksheet_anak')
+      :root {
+        --tblr-font-sans-serif: 'Quicksand', 'Inter', sans-serif !important;
+      }
+      body {
+        background-color: #f0fdf4 !important; /* Lighter, more pastel green/mint */
+        background-image: radial-gradient(#86efac 1px, transparent 1px);
+        background-size: 30px 30px;
+      }
+      .sidebar-content {
+        background: linear-gradient(180deg, #14b8a6 0%, #0d9488 100%) !important; /* Teal, more vibrant than dark green */
+        border-radius: 24px !important;
+        margin: 1rem !important;
+        height: calc(100% - 2rem) !important;
+        box-shadow: 0 12px 32px rgba(13, 148, 136, 0.25) !important;
+        border: 4px solid #ccfbf1;
+        position: relative;
+        overflow: hidden !important;
+      }
+      /* Bubble effect in sidebar */
+      .sidebar-content::before {
+        content: '';
+        position: absolute;
+        top: -20px; left: -20px;
+        width: 100px; height: 100px;
+        background: rgba(255,255,255,0.1);
+        border-radius: 50%;
+      }
+      .sidebar-content::after {
+        content: '';
+        position: absolute;
+        bottom: 20px; right: -30px;
+        width: 150px; height: 150px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+      }
+
+      .nav-link.active {
+        background: linear-gradient(135deg, #f59e0b, #d97706) !important; /* Orange/Yellow vibrant */
+        border-radius: 16px !important;
+        transform: scale(1.02);
+        box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4) !important;
+      }
+      .nav-link {
+        font-weight: 700 !important;
+        font-size: 1.05rem !important;
+        border-radius: 16px !important;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important; /* Bouncy transition */
+      }
+      .nav-link:hover {
+        transform: translateX(10px) scale(1.05) !important;
+        background-color: rgba(255,255,255,0.2) !important;
+      }
+
+      /* Animations for main content */
+      @keyframes fadeInUpKids {
+        0% { opacity: 0; transform: translateY(40px) scale(0.95); }
+        100% { opacity: 1; transform: translateY(0) scale(1); }
+      }
+      .page-wrapper {
+        animation: fadeInUpKids 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; /* Bouncy intro */
+      }
+      @endif
+
       body {
       	font-feature-settings: "cv03", "cv04", "cv11";
         background-color: #f0fdf9;
@@ -269,12 +336,14 @@
                             Beranda
                         </a>
                     </li>
+                    @if(Auth::user()->package_type !== 'worksheet_anak')
                     <li class="nav-item">
                         <a href="{{ route('library.index') }}" class="nav-link {{ request()->routeIs('library.*') ? 'active' : '' }}">
                             <svg xmlns="http://www.w3.org/2000/svg" class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                             Pustaka Saya
                         </a>
                     </li>
+                    @endif
                     
                     @if(Auth::user()->hasUtamaAccess())
                     <div class="hr-text text-muted small mt-3 mb-2" style="opacity: 0.5;">Fitur Penulisan</div>

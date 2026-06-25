@@ -37,6 +37,13 @@
                                 <label class="form-label fw-bold small text-uppercase text-muted">Deskripsi</label>
                                 <textarea name="description" class="form-control border-2" rows="3" style="border-radius: 12px;">{{ $course->description }}</textarea>
                             </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold small text-uppercase text-muted">Akses Paket</label>
+                                <select name="access_type" class="form-select border-2" style="border-radius: 12px;">
+                                    <option value="all" {{ $course->access_type === 'all' ? 'selected' : '' }}>Semua Paket (Utama, Academy, dll)</option>
+                                    <option value="worksheet_anak" {{ $course->access_type === 'worksheet_anak' ? 'selected' : '' }}>Khusus Worksheet Anak</option>
+                                </select>
+                            </div>
                             <div class="mb-4">
                                 <label class="form-label fw-bold small text-uppercase text-muted">Status</label>
                                 <select name="status" class="form-select border-2" style="border-radius: 12px;">
