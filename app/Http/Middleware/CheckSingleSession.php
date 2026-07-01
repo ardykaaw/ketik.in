@@ -17,6 +17,12 @@ class CheckSingleSession
     {
         if (auth()->check()) {
             $user = auth()->user();
+
+            // Exempt admins from single session constraint (Allow multiple device login for Live Streaming/Reviews)
+            if ($user->isAdmin()) {
+                return $next($request);
+            }
+
             $currentSessionId = session()->getId();
 
             if ($user->session_id && $user->session_id !== $currentSessionId) {

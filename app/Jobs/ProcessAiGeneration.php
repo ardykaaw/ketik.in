@@ -27,6 +27,15 @@ class ProcessAiGeneration implements ShouldQueue
     public function __construct($queueId)
     {
         $this->queueId = $queueId;
+
+        // Cek apakah user yang request adalah admin (Jalur VIP)
+        $aiQueue = AiQueue::find($queueId);
+        if ($aiQueue) {
+            $user = \App\Models\User::find($aiQueue->user_id);
+            if ($user && in_array($user->role, ['superadmin', 'admin'])) {
+                $this->onQueue('high');
+            }
+        }
     }
 
     /**
@@ -42,6 +51,11 @@ class ProcessAiGeneration implements ShouldQueue
 
         // Mark as processing
         $aiQueue->update(['status' => 'processing']);
+
+        // Tandai AiService jika user adalah admin
+        $user = \App\Models\User::find($aiQueue->user_id);
+        $isAdmin = $user && in_array($user->role, ['superadmin', 'admin']);
+        $aiService->setForAdmin($isAdmin);
 
         try {
             $payload = $aiQueue->payload;

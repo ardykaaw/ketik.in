@@ -8,6 +8,7 @@ use Gemini;
 class AiService
 {
     protected array $apiKeys;
+    protected bool $isAdmin = false;
 
     public function __construct()
     {
@@ -16,6 +17,15 @@ class AiService
         if (empty($this->apiKeys)) {
             throw new \Exception('Gemini API Keys are not configured.');
         }
+    }
+
+    /**
+     * Set context if the request is from an admin
+     */
+    public function setForAdmin(bool $isAdmin): self
+    {
+        $this->isAdmin = $isAdmin;
+        return $this;
     }
 
     /**
@@ -33,6 +43,14 @@ class AiService
         // If one fails, we fall back to the next one in the list.
         $keys = $this->apiKeys;
         shuffle($keys); 
+
+        $adminKey = config('gemini.api_key_admin');
+        if ($this->isAdmin && !empty($adminKey)) {
+            // Jalur VIP: Taruh admin key di urutan pertama. 
+            // Jika limit, dia otomatis fallback ke keys reguler di bawahnya.
+            $keys = array_filter($keys, fn($k) => $k !== $adminKey);
+            array_unshift($keys, $adminKey);
+        }
 
         foreach ($keys as $apiKey) {
             try {

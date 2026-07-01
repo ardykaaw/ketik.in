@@ -10,7 +10,7 @@ Artisan::command('inspire', function () {
 use Illuminate\Support\Facades\Schedule;
 
 // Jalankan queue worker setiap menit. 
-// withoutOverlapping() mencegah cron memanggil worker baru jika worker lama belum selesai.
-Schedule::command('queue:work --stop-when-empty')
+// withoutOverlapping() mencegah cron menumpuk jika worker belum selesai.
+Schedule::command('queue:work --queue=high,default --stop-when-empty')
     ->everyMinute()
     ->withoutOverlapping();
