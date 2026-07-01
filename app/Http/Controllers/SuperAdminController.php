@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class SuperAdminController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         // 1. Overview Stats
         $stats = [
@@ -42,7 +42,41 @@ class SuperAdminController extends Controller
             ->limit(10)
             ->get();
 
-        return view('admin.super.dashboard', compact('stats', 'dailyContent', 'topUsers', 'errorLogs'));
+        // 5. Queues
+        $query = \App\Models\AiQueue::with('user')->latest();
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        $queues = $query->paginate(20);
+
+        $queueStats = [
+            'total' => \App\Models\AiQueue::count(),
+            'pending' => \App\Models\AiQueue::where('status', 'pending')->count(),
+            'processing' => \App\Models\AiQueue::where('status', 'processing')->count(),
+            'completed' => \App\Models\AiQueue::where('status', 'completed')->count(),
+            'failed' => \App\Models\AiQueue::where('status', 'failed')->count(),
+        ];
+
+        return view('admin.super.dashboard', compact('stats', 'dailyContent', 'topUsers', 'errorLogs', 'queues', 'queueStats'));
+    }
+
+    public function queueData(Request $request)
+    {
+        $query = \App\Models\AiQueue::with('user')->latest();
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+        $queues = $query->paginate(20);
+
+        $queueStats = [
+            'total' => \App\Models\AiQueue::count(),
+            'pending' => \App\Models\AiQueue::where('status', 'pending')->count(),
+            'processing' => \App\Models\AiQueue::where('status', 'processing')->count(),
+            'completed' => \App\Models\AiQueue::where('status', 'completed')->count(),
+            'failed' => \App\Models\AiQueue::where('status', 'failed')->count(),
+        ];
+
+        return view('admin.super.partials.queue_table', compact('queues', 'queueStats'));
     }
 
     public function traffic()
@@ -86,5 +120,24 @@ class SuperAdminController extends Controller
             'api_success' => $apiSuccess,
             'api_errors' => $apiErrors,
         ]);
+    }
+
+
+    public function retryQueue($id)
+    {
+        $queue = \App\Models\AiQueue::findOrFail($id);
+        
+        if ($queue->status === 'completed') {
+            return back()->with('error', 'Antrean sudah selesai, tidak perlu diulang.');
+        }
+
+        $queue->update([
+            'status' => 'pending',
+            'error_message' => null
+        ]);
+
+        \App\Jobs\ProcessAiGeneration::dispatch($queue->id);
+
+        return back()->with('success', 'Antrean berhasil dikembalikan ke status Pending dan akan diproses ulang.');
     }
 }

@@ -183,10 +183,15 @@ Route::middleware(['auth'])->group(function () {
         // Super Admin Monitoring
         Route::middleware(['superadmin'])->group(function () {
             Route::get('/admin/super', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('admin.super.dashboard');
+            Route::get('/admin/super/queue-data', [App\Http\Controllers\SuperAdminController::class, 'queueData'])->name('admin.super.queue_data');
             Route::get('/admin/super/traffic', [App\Http\Controllers\SuperAdminController::class, 'traffic'])->name('admin.super.traffic');
             Route::get('/admin/super/analytics', [App\Http\Controllers\SuperAdminController::class, 'getAnalyticsData'])->name('admin.super.analytics');
+            Route::post('/admin/super/queues/{id}/retry', [App\Http\Controllers\SuperAdminController::class, 'retryQueue'])->name('admin.super.queues.retry');
         });
     });
+
+    // API Polling for background jobs
+    Route::get('/api/queue/{id}', [App\Http\Controllers\QueueStatusController::class, 'checkStatus'])->name('api.queue.status');
 });
 
 require __DIR__.'/auth.php';

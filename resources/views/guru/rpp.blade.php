@@ -133,21 +133,48 @@ document.getElementById('rpp-form').addEventListener('submit', async function(e)
             headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
         });
         const data = await res.json();
-        if (data.success) {
-            document.getElementById('result-content').innerHTML = marked.parse(data.result);
-            document.getElementById('result-area').classList.remove('d-none');
-            guruToast('success', 'RPP berhasil dibuat!');
+        
+        if (data.success && data.queue_id) {
+            pollQueue(data.queue_id);
         } else {
             guruAlert('error', 'Generate Gagal', data.message || 'Terjadi kesalahan saat membuat RPP. Silakan coba lagi.');
-            document.getElementById('empty-area').classList.remove('d-none');
+            resetUI();
         }
     } catch(err) {
         guruAlert('error', 'Koneksi Berputus', 'Tidak dapat terhubung ke server. Periksa koneksi internet Anda dan coba lagi.');
-        document.getElementById('empty-area').classList.remove('d-none');
-    } finally {
-        document.getElementById('loading-area').classList.add('d-none');
-        document.getElementById('btn-generate').disabled = false;
+        resetUI();
     }
 });
+
+function pollQueue(queueId) {
+    const checkInterval = setInterval(async () => {
+        try {
+            const response = await fetch(`/api/queue/${queueId}`);
+            const result = await response.json();
+
+            if (result.status === 'completed') {
+                clearInterval(checkInterval);
+                document.getElementById('result-content').innerHTML = marked.parse(result.content);
+                document.getElementById('result-area').classList.remove('d-none');
+                guruToast('success', 'RPP berhasil dibuat!');
+                resetUI(true);
+            } else if (result.status === 'failed') {
+                clearInterval(checkInterval);
+                guruAlert('error', 'Generate Gagal', result.message || 'Gagal menyusun RPP. Coba lagi dengan topik berbeda.');
+                resetUI();
+            }
+        } catch (e) {
+            clearInterval(checkInterval);
+            guruAlert('error', 'Koneksi Error', 'Terputus dari server saat mengecek status.');
+            resetUI();
+        }
+    }, 3000);
+}
+
+function resetUI(success = false) {
+    document.getElementById('loading-area').classList.add('d-none');
+    document.getElementById('btn-generate').disabled = false;
+    if (!success) document.getElementById('empty-area').classList.remove('d-none');
+}
 </script>
 </x-guru-layout>

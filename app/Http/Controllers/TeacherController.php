@@ -52,16 +52,16 @@ class TeacherController extends Controller
             'kesulitan'  => 'required|in:Mudah,Sedang,Sulit,Campuran',
         ]);
 
-        $result = $this->ai->generateSoal($request->only('mapel', 'kelas', 'topik', 'jumlah', 'jenis', 'kesulitan'));
-
-        $content = Content::create([
+        $aiQueue = \App\Models\AiQueue::create([
             'user_id' => Auth::id(),
-            'type'    => 'guru-soal',
-            'title'   => "Soal {$request->jenis} — {$request->mapel} {$request->kelas}: {$request->topik}",
-            'content' => $result,
+            'feature_type' => 'guru-soal',
+            'payload' => $request->only('mapel', 'kelas', 'topik', 'jumlah', 'jenis', 'kesulitan'),
+            'status' => 'pending'
         ]);
 
-        return response()->json(['success' => true, 'result' => $result, 'content_id' => $content->id]);
+        \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+        return response()->json(['success' => true, 'queue_id' => $aiQueue->id]);
     }
 
     public function modul()
@@ -85,16 +85,16 @@ class TeacherController extends Controller
         $data = $request->only('mapel', 'fase', 'kelas', 'semester', 'topik', 'waktu', 'pertemuan');
         $data['tahun_ajar'] = $request->tahun_ajar ?: date('Y') . '/' . (date('Y') + 1);
 
-        $result = $this->ai->generateModulAjar($data);
-
-        $content = Content::create([
+        $aiQueue = \App\Models\AiQueue::create([
             'user_id' => Auth::id(),
-            'type'    => 'guru-modul',
-            'title'   => "Modul Ajar — {$request->mapel} {$request->fase} {$request->kelas}: {$request->topik}",
-            'content' => $result,
+            'feature_type' => 'guru-modul',
+            'payload' => $data,
+            'status' => 'pending'
         ]);
 
-        return response()->json(['success' => true, 'result' => $result, 'content_id' => $content->id]);
+        \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+        return response()->json(['success' => true, 'queue_id' => $aiQueue->id]);
     }
 
     public function rpp()
@@ -116,16 +116,16 @@ class TeacherController extends Controller
             'kd'         => 'required|string|max:500',
         ]);
 
-        $result = $this->ai->generateRPP($request->only('mapel', 'kelas', 'topik', 'waktu', 'pertemuan', 'jp', 'kurikulum', 'metode', 'kd'));
-
-        $content = Content::create([
+        $aiQueue = \App\Models\AiQueue::create([
             'user_id' => Auth::id(),
-            'type'    => 'guru-rpp',
-            'title'   => "RPP — {$request->mapel} {$request->kelas}: {$request->topik}",
-            'content' => $result,
+            'feature_type' => 'guru-rpp',
+            'payload' => $request->only('mapel', 'kelas', 'topik', 'waktu', 'pertemuan', 'jp', 'kurikulum', 'metode', 'kd'),
+            'status' => 'pending'
         ]);
 
-        return response()->json(['success' => true, 'result' => $result, 'content_id' => $content->id]);
+        \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+        return response()->json(['success' => true, 'queue_id' => $aiQueue->id]);
     }
 
     public function rekap()
@@ -143,16 +143,16 @@ class TeacherController extends Controller
             'nilai_raw' => 'required|string|max:5000',
         ]);
 
-        $result = $this->ai->generateRekapNilai($request->only('mapel', 'kelas', 'periode', 'kkm', 'nilai_raw'));
-
-        $content = Content::create([
+        $aiQueue = \App\Models\AiQueue::create([
             'user_id' => Auth::id(),
-            'type'    => 'guru-rekap',
-            'title'   => "Rekap Nilai — {$request->mapel} {$request->kelas} ({$request->periode})",
-            'content' => $result,
+            'feature_type' => 'guru-rekap',
+            'payload' => $request->only('mapel', 'kelas', 'periode', 'kkm', 'nilai_raw'),
+            'status' => 'pending'
         ]);
 
-        return response()->json(['success' => true, 'result' => $result, 'content_id' => $content->id]);
+        \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+        return response()->json(['success' => true, 'queue_id' => $aiQueue->id]);
     }
 
     public function pustaka()

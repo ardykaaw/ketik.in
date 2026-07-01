@@ -332,34 +332,21 @@ class FeatureController extends Controller
         ]);
 
         try {
-            $generatedText = $this->aiService->generateEKinerja($request->all());
-
-            \App\Models\AiUsageLog::create([
-                'user_id' => Auth::id(),
-                'feature_type' => 'e-kinerja',
-                'model' => config('gemini.model', 'gemini-flash-latest'),
-                'is_success' => true
+            $aiQueue = \App\Models\AiQueue::create([
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'feature_type' => 'ekinerja',
+                'payload' => $request->all(),
+                'status' => 'pending'
             ]);
 
-            $content = Content::create([
-                'user_id' => Auth::id(),
-                'type' => 'e-kinerja',
-                'title' => 'SKP ASN: ' . $request->pegawai_nama . ' - ' . $request->periode,
-                'content' => $generatedText,
-                'prompt' => 'Data E-Kinerja Pegawai: ' . json_encode($request->all(), JSON_PRETTY_PRINT),
-                'parameters' => $request->all(),
-            ]);
+            \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
 
-            return redirect()->route('library.show', $content)->with('success', 'Rincian SKP ASN berhasil disusun!');
+            return view('features.queue-loading', [
+                'queueId' => $aiQueue->id,
+                'title' => 'Menyusun SKP ASN...'
+            ]);
         } catch (\Exception $e) {
-            \App\Models\AiUsageLog::create([
-                'user_id' => Auth::id(),
-                'feature_type' => 'e-kinerja',
-                'model' => config('gemini.model', 'gemini-flash-latest'),
-                'is_success' => false,
-                'error_message' => $e->getMessage()
-            ]);
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memasukkan ke antrean: ' . $e->getMessage());
         }
     }
 
@@ -368,7 +355,7 @@ class FeatureController extends Controller
         return view('features.e-kinerja-atasan');
     }
 
-    public function generateEKinerjaAtasan(Request $request)
+    public function generateEKinerjaAtasan(\Illuminate\Http\Request $request)
     {
         $request->validate([
             'atasan_nama' => 'required|string',
@@ -382,34 +369,21 @@ class FeatureController extends Controller
         ]);
 
         try {
-            $generatedText = $this->aiService->generateEKinerjaAtasan($request->all());
-
-            \App\Models\AiUsageLog::create([
-                'user_id' => Auth::id(),
-                'feature_type' => 'e-kinerja-atasan',
-                'model' => config('gemini.model', 'gemini-flash-latest'),
-                'is_success' => true
+            $aiQueue = \App\Models\AiQueue::create([
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'feature_type' => 'ekinerja_atasan',
+                'payload' => $request->all(),
+                'status' => 'pending'
             ]);
 
-            $content = Content::create([
-                'user_id' => Auth::id(),
-                'type' => 'e-kinerja-atasan',
-                'title' => 'Ekspektasi Pimpinan: ' . $request->bawahan_nama . ' - ' . $request->periode,
-                'content' => $generatedText,
-                'prompt' => 'Data E-Kinerja Atasan: ' . json_encode($request->all(), JSON_PRETTY_PRINT),
-                'parameters' => $request->all(),
-            ]);
+            \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
 
-            return redirect()->route('library.show', $content)->with('success', 'Ekspektasi Pimpinan berhasil disusun!');
+            return view('features.queue-loading', [
+                'queueId' => $aiQueue->id,
+                'title' => 'Menyusun Ekspektasi Atasan...'
+            ]);
         } catch (\Exception $e) {
-            \App\Models\AiUsageLog::create([
-                'user_id' => Auth::id(),
-                'feature_type' => 'e-kinerja-atasan',
-                'model' => config('gemini.model', 'gemini-flash-latest'),
-                'is_success' => false,
-                'error_message' => $e->getMessage()
-            ]);
-            return back()->withInput()->with('error', $e->getMessage());
+            return back()->withInput()->with('error', 'Gagal memasukkan ke antrean: ' . $e->getMessage());
         }
     }
 
