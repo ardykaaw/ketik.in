@@ -1,6 +1,4 @@
-@extends('layouts.dashboard')
-
-@section('content')
+<x-dashboard-layout>
 <div class="container-xl mt-5 text-center">
     <div class="row justify-content-center">
         <div class="col-md-6">
@@ -82,4 +80,4 @@
     });
 </script>
 @endpush
-@endsection
+</x-dashboard-layout>
