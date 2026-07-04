@@ -25,7 +25,9 @@ class QueueStatusController extends Controller
 
         // If completed, return the content HTML or ID so frontend can render it
         if ($queue->status === 'completed' && $queue->content) {
-            $response['content'] = $queue->content->content; 
+            // Encode content to Base64 to bypass ModSecurity / WAF
+            $response['content'] = base64_encode($queue->content->content); 
+            $response['is_base64'] = true;
             $response['content_id'] = $queue->content->id;
         }
 

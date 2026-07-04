@@ -715,10 +715,6 @@
                 saveTimeout = setTimeout(saveDraft, 1000); // Save 1s after typing stops
             });
 
-            // 3. Clear Logic on Success
-            // If the user submits, we don't clear immediately because it might fail.
-            // We only clear if likely successful or specifically requested. 
-            // Actually, keeping the draft until manually cleared or successfully redirected is safer.
             // For now, let's keep it. If they come back, it restores. If they change it, it updates.
         });
 
@@ -790,6 +786,7 @@
         });
       });
     </script>
+    @include('components.push-notification')
     @stack('modals')
   </body>
 </html>

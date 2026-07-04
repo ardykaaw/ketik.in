@@ -12,6 +12,8 @@ use App\Models\Content;
 use App\Models\AiUsageLog;
 use App\Services\AiService;
 use Illuminate\Support\Str;
+use App\Notifications\AiGenerationCompleted;
+use App\Models\User;
 
 class ProcessAiGeneration implements ShouldQueue
 {
@@ -149,6 +151,12 @@ class ProcessAiGeneration implements ShouldQueue
                 'status' => 'completed',
                 'content_id' => $content->id,
             ]);
+
+            // Send Push Notification
+            $user = User::find($aiQueue->user_id);
+            if ($user) {
+                $user->notify(new AiGenerationCompleted($aiQueue->id, $aiQueue->feature_type, $content->id));
+            }
 
         } catch (\Exception $e) {
             // Update queue to failed

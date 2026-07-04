@@ -360,6 +360,7 @@ function guruCopy(contentId) {
     });
 }
 </script>
+@include('components.push-notification')
 @stack('scripts')
 </body>
 </html>

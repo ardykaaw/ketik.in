@@ -154,7 +154,8 @@ function pollQueue(queueId) {
 
             if (result.status === 'completed') {
                 clearInterval(checkInterval);
-                document.getElementById('result-content').innerHTML = marked.parse(result.content);
+                const decodedContent = result.is_base64 ? decodeURIComponent(escape(window.atob(result.content))) : result.content;
+                document.getElementById('result-content').innerHTML = marked.parse(decodedContent);
                 document.getElementById('result-area').classList.remove('d-none');
                 guruToast('success', 'RPP berhasil dibuat!');
                 resetUI(true);
