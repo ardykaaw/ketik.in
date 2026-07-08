@@ -29,6 +29,19 @@ class PasswordResetLinkController extends Controller
             'email' => ['required', 'email'],
         ]);
 
+        // Cek apakah user ada dan aktif
+        $user = \App\Models\User::where('email', $request->email)->first();
+
+        if (!$user) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Email tidak ditemukan dalam sistem kami.']);
+        }
+
+        if (!$user->is_active) {
+            return back()->withInput($request->only('email'))
+                ->withErrors(['email' => 'Akun Anda belum aktif. Silakan hubungi admin untuk aktivasi.']);
+        }
+
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
         // need to show to the user. Finally, we'll send out a proper response.
