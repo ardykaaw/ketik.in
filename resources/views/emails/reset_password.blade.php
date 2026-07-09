@@ -103,7 +103,7 @@
             </div>
             
             <div class="warning">
-                <strong>⚠️ Penting:</strong> Link reset kata sandi ini akan kadaluarsa dalam 60 menit.
+                <strong>⚠️ Penting:</strong> Link reset kata sandi ini akan kadaluarsa dalam 10 menit.
             </div>
             
             <p class="text">

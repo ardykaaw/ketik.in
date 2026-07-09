@@ -18,8 +18,16 @@ class NewPasswordController extends Controller
     /**
      * Display the password reset view.
      */
-    public function create(Request $request): View
+    public function create(Request $request): View|RedirectResponse
     {
+        // Validasi token sebelum menampilkan form
+        $status = Password::tokenExists($request->email, $request->token);
+        
+        if (!$status) {
+            return redirect()->route('password.request')
+                ->with('error', 'Link reset password sudah kadaluarsa. Silakan request ulang.');
+        }
+        
         return view('auth.reset-password', ['request' => $request]);
     }
 
