@@ -87,6 +87,44 @@
         }
         .monitor-table tbody tr:hover { background: #FAFAFA; }
 
+        /* Pagination styling fix */
+        .pagination {
+            margin: 0;
+            display: flex;
+            list-style: none;
+            padding: 0;
+            gap: 4px;
+        }
+        .pagination .page-item {
+            margin: 0;
+        }
+        .pagination .page-link {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            color: #6c757d;
+            padding: 6px 12px;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background: #fff;
+            transition: all 0.2s;
+        }
+        .pagination .page-link:hover {
+            background: #f8f9fa;
+            color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .pagination .page-item.active .page-link {
+            background: #e8735a;
+            border-color: #e8735a;
+            color: #fff;
+        }
+        .pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            background: #fff;
+            border-color: #dee2e6;
+        }
+
         /* Header btn */
         .btn-warm {
             background: #fff;
