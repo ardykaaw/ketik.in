@@ -19,7 +19,9 @@ class ProcessAiGeneration implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    public $timeout = 120; // 2 minutes max execution
+    public $timeout = 600; // 10 minutes max execution (untuk prompt panjang seperti modul ajar)
+    public $tries = 3; // Retry 3 times if job fails
+    public $backoff = [60, 120, 180]; // Wait 1, 2, 3 minutes between retries
 
     protected $queueId;
 
@@ -159,22 +161,39 @@ class ProcessAiGeneration implements ShouldQueue
             }
 
         } catch (\Exception $e) {
-            // Update queue to failed
-            $aiQueue->update([
-                'status' => 'failed',
-                'error_message' => $e->getMessage(),
+            // Log the error with attempt info
+            $attemptInfo = " (Attempt {$this->attempts()} of {$this->tries})";
+            \Log::error("ProcessAiGeneration Job Failed: {$e->getMessage()}{$attemptInfo}", [
+                'queue_id' => $this->queueId,
+                'feature_type' => $aiQueue->feature_type ?? null,
+                'user_id' => $aiQueue->user_id ?? null,
             ]);
 
-            // Log AI Usage failure
-            AiUsageLog::create([
-                'user_id' => $aiQueue->user_id,
-                'feature_type' => $aiQueue->feature_type,
-                'model' => config('gemini.model', 'gemini-flash-latest'),
-                'is_success' => false
-            ]);
+            // If this is the last attempt, mark as failed
+            if ($this->attempts() >= $this->tries) {
+                $aiQueue->update([
+                    'status' => 'failed',
+                    'error_message' => "Job failed after {$this->tries} attempts: {$e->getMessage()}",
+                ]);
 
-            // We can rethrow if we want Laravel to handle retries based on maxTries, 
-            // but we are using custom error logging in SuperAdmin, so failing gracefully is fine.
+                // Log AI Usage failure
+                AiUsageLog::create([
+                    'user_id' => $aiQueue->user_id,
+                    'feature_type' => $aiQueue->feature_type,
+                    'model' => config('gemini.model', 'gemini-flash-latest'),
+                    'is_success' => false,
+                    'error_message' => $e->getMessage()
+                ]);
+            } else {
+                // Still have retries left - update status to retrying
+                $aiQueue->update([
+                    'status' => 'retrying',
+                    'error_message' => "Retry attempt {$this->attempts()} of {$this->tries}: {$e->getMessage()}",
+                ]);
+
+                // Throw exception to trigger retry
+                throw $e;
+            }
         }
     }
 }
