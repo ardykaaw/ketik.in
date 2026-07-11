@@ -21,14 +21,21 @@ class NewPasswordController extends Controller
     public function create(Request $request): View|RedirectResponse
     {
         // Validasi token sebelum menampilkan form
-        $status = Password::tokenExists($request->email, $request->token);
+        $token = $request->route('token');
+        $email = $request->query('email');
+        
+        $status = Password::tokenExists($email, $token);
         
         if (!$status) {
             return redirect()->route('password.request')
                 ->with('error', 'Link reset password sudah kadaluarsa. Silakan request ulang.');
         }
         
-        return view('auth.reset-password', ['request' => $request]);
+        return view('auth.reset-password', [
+            'request' => $request,
+            'token' => $token,
+            'email' => $email
+        ]);
     }
 
     /**

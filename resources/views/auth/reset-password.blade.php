@@ -9,12 +9,12 @@
                 @csrf
 
                 <!-- Password Reset Token -->
-                <input type="hidden" name="token" value="{{ $request->route('token') }}">
+                <input type="hidden" name="token" value="{{ $token }}">
 
                 <!-- Email Address -->
                 <div class="mb-3">
                     <label class="form-label fw-bold">Alamat Email</label>
-                    <input type="email" name="email" class="form-control border-2 @error('email') is-invalid @enderror" value="{{ old('email', $request->email) }}" required readonly style="border-radius: 10px; background-color: #f8fafc;">
+                    <input type="email" name="email" class="form-control border-2 @error('email') is-invalid @enderror" value="{{ old('email', $email) }}" required readonly style="border-radius: 10px; background-color: #f8fafc;">
                     @error('email')
                     <div class="invalid-feedback d-block">{{ $message }}</div>
                     @enderror
