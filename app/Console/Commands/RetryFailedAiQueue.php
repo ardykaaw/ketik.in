@@ -13,7 +13,7 @@ class RetryFailedAiQueue extends Command
      *
      * @var string
      */
-    protected $signature = 'ai-queue:retry-failed {--limit=10 : Max jobs to retry}';
+    protected $signature = 'ai-queue:retry-failed {--limit=10 : Max jobs to retry} {--yes : Skip confirmation prompts}';
 
     /**
      * The description of the console command.
@@ -43,7 +43,7 @@ class RetryFailedAiQueue extends Command
 
         $this->warn("⚠ Menemukan {$count} failed jobs. Akan di-dispatch ulang ke queue.");
 
-        if (!$this->confirm('Lanjutkan retry?')) {
+        if (!$this->option('yes') && !$this->confirm('Lanjutkan retry?')) {
             $this->info('Dibatalkan.');
             return 1;
         }

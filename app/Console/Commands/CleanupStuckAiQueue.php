@@ -13,7 +13,7 @@ class CleanupStuckAiQueue extends Command
      *
      * @var string
      */
-    protected $signature = 'ai-queue:cleanup-stuck {--minutes=30 : Minutes to consider a job as stuck}';
+    protected $signature = 'ai-queue:cleanup-stuck {--minutes=30 : Minutes to consider a job as stuck} {--yes : Skip confirmation prompts}';
 
     /**
      * The description of the console command.
@@ -45,7 +45,7 @@ class CleanupStuckAiQueue extends Command
         $this->warn("⚠ Menemukan {$count} jobs yang stuck (lebih dari {$minutes} menit).");
         $this->info('Job akan ditandai sebagai failed dan error message akan dicatat.');
 
-        if (!$this->confirm('Lanjutkan cleanup?')) {
+        if (!$this->option('yes') && !$this->confirm('Lanjutkan cleanup?')) {
             $this->info('Dibatalkan.');
             return 1;
         }
