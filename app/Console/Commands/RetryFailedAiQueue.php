@@ -43,7 +43,7 @@ class RetryFailedAiQueue extends Command
 
         $this->warn("⚠ Menemukan {$count} failed jobs. Akan di-dispatch ulang ke queue.");
 
-        if (!$this->option('yes') && !$this->confirm('Lanjutkan retry?')) {
+        if (!($this->option('yes') || $this->option('no-interaction')) && !$this->confirm('Lanjutkan retry?')) {
             $this->info('Dibatalkan.');
             return 1;
         }

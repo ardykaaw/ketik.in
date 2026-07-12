@@ -45,7 +45,7 @@ class CleanupStuckAiQueue extends Command
         $this->warn("⚠ Menemukan {$count} jobs yang stuck (lebih dari {$minutes} menit).");
         $this->info('Job akan ditandai sebagai failed dan error message akan dicatat.');
 
-        if (!$this->option('yes') && !$this->confirm('Lanjutkan cleanup?')) {
+        if (!($this->option('yes') || $this->option('no-interaction')) && !$this->confirm('Lanjutkan cleanup?')) {
             $this->info('Dibatalkan.');
             return 1;
         }
