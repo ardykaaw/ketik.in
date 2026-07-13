@@ -9,8 +9,4 @@ Artisan::command('inspire', function () {
 
 use Illuminate\Support\Facades\Schedule;
 
-// Jalankan queue worker setiap menit. 
-// withoutOverlapping() mencegah cron menumpuk jika worker belum selesai.
-Schedule::command('queue:work --queue=high,default --stop-when-empty')
-    ->everyMinute()
-    ->withoutOverlapping();
+// Gunakan Cron Job Hostinger langsung alih-alih scheduler ini untuk menghindari Cache Lock.
