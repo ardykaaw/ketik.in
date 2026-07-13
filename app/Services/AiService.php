@@ -54,8 +54,16 @@ class AiService
 
         foreach ($keys as $apiKey) {
             try {
-                // Initialize client with the current key
-                $client = Gemini::client($apiKey);
+                // Initialize client with the current key and extended timeout (5 minutes)
+                $httpClient = new \GuzzleHttp\Client([
+                    'timeout' => 300,
+                    'connect_timeout' => 60,
+                ]);
+                
+                $client = \Gemini::factory()
+                    ->withApiKey($apiKey)
+                    ->withHttpClient($httpClient)
+                    ->make();
                 
                 $result = $client->generativeModel($model)->generateContent($prompt);
                 
