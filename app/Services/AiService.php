@@ -114,7 +114,7 @@ class AiService
 
                 // Jika error adalah High Demand atau Quota Exceeded (429), kita tunggu sebentar
                 if (str_contains(strtolower($errorMessage), 'high demand') || str_contains(strtolower($errorMessage), 'quota exceeded') || str_contains(strtolower($errorMessage), '429')) {
-                    sleep(2); // Tunggu 2 detik sebelum mencoba key berikutnya untuk menghindari spam
+                    sleep(10); // Tunggu 10 detik sebelum mencoba key berikutnya agar server Google sempat bernapas
                     continue;
                 }
 
