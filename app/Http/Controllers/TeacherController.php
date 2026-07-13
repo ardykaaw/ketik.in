@@ -66,7 +66,7 @@ class TeacherController extends Controller
 
     public function modul()
     {
-        return view('guru.modul');
+        return view('guru.maintenance');
     }
 
     public function generateModul(Request $request)

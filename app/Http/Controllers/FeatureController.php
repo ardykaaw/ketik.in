@@ -309,7 +309,7 @@ class FeatureController extends Controller
 
     public function eKinerja()
     {
-        return view('features.e-kinerja');
+        return view('features.maintenance');
     }
 
     public function generateEKinerja(Request $request)
@@ -352,7 +352,7 @@ class FeatureController extends Controller
 
     public function eKinerjaAtasan()
     {
-        return view('features.e-kinerja-atasan');
+        return view('features.maintenance');
     }
 
     public function generateEKinerjaAtasan(\Illuminate\Http\Request $request)
