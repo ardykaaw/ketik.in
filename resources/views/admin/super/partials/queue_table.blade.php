@@ -161,14 +161,26 @@
                             @endif
                         </td>
                         <td>
-                            @if($queue->status === 'failed' || $queue->status === 'pending')
-                            <form action="{{ route('admin.super.queues.retry', $queue->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memproses ulang antrean ini?');">
-                                @csrf
-                                <button type="submit" class="btn btn-sm text-white rounded-pill px-3" style="background:#10b981;">
-                                    <i class="ti ti-refresh me-1"></i> Retry
-                                </button>
-                            </form>
-                            @endif
+                            <div class="d-flex gap-2 flex-wrap">
+                                @if($queue->status === 'failed' || $queue->status === 'pending')
+                                <form action="{{ route('admin.super.queues.retry', $queue->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin memproses ulang antrean ini?');">
+                                    @csrf
+                                    <button type="submit" class="btn btn-sm text-white rounded-pill px-3" style="background:#10b981;">
+                                        <i class="ti ti-refresh me-1"></i> Retry
+                                    </button>
+                                </form>
+                                @endif
+
+                                @if($queue->status === 'pending')
+                                <form action="{{ route('admin.super.queues.delete', $queue->id) }}" method="POST" onsubmit="return confirm('Apakah Anda yakin ingin menghapus antrean pending ini?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-3">
+                                        <i class="ti ti-trash me-1"></i> Hapus
+                                    </button>
+                                </form>
+                                @endif
+                            </div>
                         </td>
                     </tr>
                     @empty

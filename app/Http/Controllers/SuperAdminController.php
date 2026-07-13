@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Content;
+use App\Models\AiQueue;
 use App\Models\AiUsageLog;
 use App\Models\SystemLog;
 use Carbon\Carbon;
@@ -125,7 +126,7 @@ class SuperAdminController extends Controller
 
     public function retryQueue($id)
     {
-        $queue = \App\Models\AiQueue::findOrFail($id);
+        $queue = AiQueue::findOrFail($id);
         
         if ($queue->status === 'completed') {
             return back()->with('error', 'Antrean sudah selesai, tidak perlu diulang.');
@@ -133,11 +134,24 @@ class SuperAdminController extends Controller
 
         $queue->update([
             'status' => 'pending',
-            'error_message' => null
+            'error_message' => null,
         ]);
 
         \App\Jobs\ProcessAiGeneration::dispatch($queue->id);
 
         return back()->with('success', 'Antrean berhasil dikembalikan ke status Pending dan akan diproses ulang.');
+    }
+
+    public function deleteQueue($id)
+    {
+        $queue = AiQueue::findOrFail($id);
+
+        if ($queue->status !== 'pending') {
+            return back()->with('error', 'Hanya antrean dengan status Pending yang dapat dihapus.');
+        }
+
+        $queue->delete();
+
+        return back()->with('success', 'Antrean Pending berhasil dihapus.');
     }
 }

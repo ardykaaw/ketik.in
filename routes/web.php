@@ -187,6 +187,7 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/admin/super/traffic', [App\Http\Controllers\SuperAdminController::class, 'traffic'])->name('admin.super.traffic');
             Route::get('/admin/super/analytics', [App\Http\Controllers\SuperAdminController::class, 'getAnalyticsData'])->name('admin.super.analytics');
             Route::post('/admin/super/queues/{id}/retry', [App\Http\Controllers\SuperAdminController::class, 'retryQueue'])->name('admin.super.queues.retry');
+            Route::delete('/admin/super/queues/{id}', [App\Http\Controllers\SuperAdminController::class, 'deleteQueue'])->name('admin.super.queues.delete');
         });
     });
 
