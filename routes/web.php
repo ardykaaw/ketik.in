@@ -192,6 +192,7 @@ Route::middleware(['auth'])->group(function () {
 
     // API Polling for background jobs
     Route::get('/api/queue/{id}', [App\Http\Controllers\QueueStatusController::class, 'checkStatus'])->name('api.queue.status');
+    Route::post('/api/queue/{id}/cancel', [App\Http\Controllers\QueueStatusController::class, 'cancelStatus'])->name('api.queue.cancel');
 
     // Web Push Subscriptions
     Route::post('/push/subscribe', [App\Http\Controllers\PushSubscriptionController::class, 'subscribe'])->name('push.subscribe');

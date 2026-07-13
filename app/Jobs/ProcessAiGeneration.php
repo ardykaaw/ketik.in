@@ -56,6 +56,13 @@ class ProcessAiGeneration implements ShouldQueue
         // Mark as processing
         $aiQueue->update(['status' => 'processing']);
 
+        // Re-fetch and allow early exit if user cancelled immediately after enqueue
+        $aiQueue->refresh();
+        if ($aiQueue->status === 'cancelled') {
+            \Log::info("ProcessAiGeneration aborted: queue {$this->queueId} already cancelled.");
+            return;
+        }
+
         // Tandai AiService jika user adalah admin
         $user = \App\Models\User::find($aiQueue->user_id);
         $isAdmin = $user && in_array($user->role, ['superadmin', 'admin']);
@@ -132,6 +139,13 @@ class ProcessAiGeneration implements ShouldQueue
                 }
             }
 
+            // After generation, verify user didn't cancel while processing
+            $aiQueue = AiQueue::find($this->queueId);
+            if ($aiQueue && $aiQueue->status === 'cancelled') {
+                \Log::info("ProcessAiGeneration aborted after generation: queue {$this->queueId} was cancelled by user.");
+                return;
+            }
+
             // Save the generated content
             $content = Content::create([
                 'user_id' => $aiQueue->user_id,
@@ -169,11 +183,22 @@ class ProcessAiGeneration implements ShouldQueue
                 'user_id' => $aiQueue->user_id ?? null,
             ]);
 
+            // Map internal exceptions to friendly messages for users
+            $raw = strtolower($e->getMessage());
+            $userMessage = 'Terjadi kesalahan pada sistem. Silakan coba lagi beberapa saat.';
+            if (str_contains($raw, 'quota') || str_contains($raw, 'rate limit') || str_contains($raw, 'exceeded')) {
+                $userMessage = 'Sistem AI sedang mencapai batas penggunaan. Mohon tunggu beberapa menit dan coba lagi.';
+            } elseif (str_contains($raw, 'high demand') || str_contains($raw, 'busy') || str_contains($raw, 'temporarily')) {
+                $userMessage = 'Sistem AI sedang sibuk. Mohon tunggu sebentar dan coba lagi.';
+            } elseif (str_contains($raw, 'database is locked') || str_contains($raw, 'database is locked')) {
+                $userMessage = 'Sistem sedang sibuk mengolah antrean. Coba lagi sebentar.';
+            }
+
             // If this is the last attempt, mark as failed
             if ($this->attempts() >= $this->tries) {
                 $aiQueue->update([
                     'status' => 'failed',
-                    'error_message' => "Job failed after {$this->tries} attempts: {$e->getMessage()}",
+                    'error_message' => $userMessage,
                 ]);
 
                 // Log AI Usage failure
@@ -185,10 +210,10 @@ class ProcessAiGeneration implements ShouldQueue
                     'error_message' => $e->getMessage()
                 ]);
             } else {
-                // Still have retries left - update status to retrying
+                // Still have retries left - update status to retrying with friendly message
                 $aiQueue->update([
                     'status' => 'retrying',
-                    'error_message' => "Retry attempt {$this->attempts()} of {$this->tries}: {$e->getMessage()}",
+                    'error_message' => "Retry attempt {$this->attempts()} of {$this->tries}: {$userMessage}",
                 ]);
 
                 // Throw exception to trigger retry

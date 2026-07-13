@@ -40,6 +40,55 @@
             }
         }, 1000);
 
+        const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
+
+        const cancelQueue = () => {
+            if (!csrfToken) {
+                console.warn('CSRF token tidak ditemukan, batal tidak akan dikirim.');
+                return;
+            }
+
+            const url = `/api/queue/${queueId}/cancel`;
+            const payload = JSON.stringify({ _token: csrfToken });
+
+            if (navigator.sendBeacon) {
+                const blob = new Blob([payload], { type: 'application/json' });
+                navigator.sendBeacon(url, blob);
+                return;
+            }
+
+            try {
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken
+                    },
+                    body: payload,
+                    keepalive: true
+                });
+            } catch (err) {
+                console.warn('Tidak dapat membatalkan antrean saat unload:', err);
+            }
+        };
+
+        const handleBeforeUnload = (event) => {
+            event.preventDefault();
+            event.returnValue = 'Proses generate sedang berjalan. Jika Anda refresh atau menutup halaman, job akan dibatalkan.';
+        };
+
+        const handleUnload = () => {
+            cancelQueue();
+        };
+
+        window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener('unload', handleUnload);
+
+        const removeUnloadListeners = () => {
+            window.removeEventListener('beforeunload', handleBeforeUnload);
+            window.removeEventListener('unload', handleUnload);
+        };
+
         const checkStatus = async () => {
             try {
                 const response = await fetch(`/api/queue/${queueId}`);
@@ -53,16 +102,18 @@
                     statusText.innerHTML = '<span class="text-success fw-bold">Selesai! Mengalihkan ke hasil...</span>';
                     
                     setTimeout(() => {
+                        removeUnloadListeners();
                         window.location.href = `/library/${data.content_id}`;
                     }, 1000);
-                } else if (data.status === 'failed') {
+                } else if (data.status === 'failed' || data.status === 'cancelled') {
                     clearInterval(timer);
+                    removeUnloadListeners();
                     progressBar.style.width = '100%';
                     progressBar.classList.remove('progress-bar-animated', 'bg-primary');
-                    progressBar.classList.add('bg-danger');
-                    statusText.innerHTML = `<span class="text-danger fw-bold">Gagal: ${data.message}</span>`;
+                    progressBar.classList.add(data.status === 'failed' ? 'bg-danger' : 'bg-warning');
+                    statusText.innerHTML = `<span class="text-${data.status === 'failed' ? 'danger' : 'warning'} fw-bold">${data.status === 'failed' ? 'Gagal' : 'Dibatalkan'}: ${data.message}</span>`;
                     
-                    Swal.fire('Oops!', `Terjadi kesalahan: ${data.message}`, 'error').then(() => {
+                    Swal.fire(data.status === 'failed' ? 'Oops!' : 'Dibatalkan', `Terjadi: ${data.message}`, data.status === 'failed' ? 'error' : 'warning').then(() => {
                         window.history.back();
                     });
                 } else {

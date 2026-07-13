@@ -38,4 +38,44 @@ class QueueStatusController extends Controller
 
         return response()->json($response);
     }
+
+    public function cancelStatus($id, Request $request)
+    {
+        $queue = AiQueue::find($id);
+
+        if (!$queue) {
+            return response()->json([
+                'status' => 'not_found',
+                'message' => 'Antrean tidak ditemukan'
+            ], 404);
+        }
+
+        // Only allow the job owner or admins to cancel
+        $user = $request->user();
+        if (!$user) {
+            return response()->json(['message' => 'Unauthorized'], 401);
+        }
+
+        if ($user->id !== $queue->user_id && !in_array($user->role, ['superadmin', 'admin'])) {
+            return response()->json(['message' => 'Forbidden'], 403);
+        }
+
+        // Allow cancelling if it's still pending, retrying or processing.
+        if (in_array($queue->status, ['pending', 'retrying', 'processing'])) {
+            $queue->update([
+                'status' => 'cancelled',
+                'error_message' => 'Job dibatalkan oleh pengguna saat halaman direfresh atau ditutup sebelum selesai.'
+            ]);
+
+            return response()->json([
+                'status' => 'cancelled',
+                'message' => 'Job berhasil dibatalkan.'
+            ]);
+        }
+
+        return response()->json([
+            'status' => $queue->status,
+            'message' => 'Job tidak dapat dibatalkan karena sudah selesai atau gagal.'
+        ], 400);
+    }
 }
