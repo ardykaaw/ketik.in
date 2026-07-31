@@ -220,44 +220,41 @@ class AiService
             $rhk_list .= "- RHK Pegawai: \"{$pegawai_rhk}\" (Jenis: {$jenis})\n\n";
         }
 
-        $prompt = "Anda adalah asisten ahli penyusunan SKP ASN.
-                   Tugas: Buat dokumen SKP lengkap dalam 3 TABEL TERPISAH berdasarkan data berikut.
+        $prompt = "Anda adalah asisten ahli penyusunan SKP ASN berstandar BKN (Permenpan RB No. 6 Tahun 2022).
+                   Tugas Anda: Menghasilkan rincian tabel SKP yang sangat akurat dan formal seperti contoh dokumen resmi untuk BEBERAPA RHK sekaligus.
 
                    CONTEXT:
                    - PEGAWAI: {$pegawai}
-                   - ATASAN: {$atasan}
+                   - ATASAN PENILAI: {$atasan}
                    - PERIODE: {$periode}
                    
-                   DATA RHK:
+                   LIST RHK YANG HARUS DISUSUN:
                    {$rhk_list}
 
-                   INSTRUKSI OUTPUT (WAJIB FORMAT MARKDOWN):
+                   OUTPUT FORMAT (WAJIB):
+                   Gunakan format Markdown.
 
-                   ### Tabel 1: Rencana Hasil Kinerja (RHK)
-                   Buat tabel dengan kolom: | No | Rencana Hasil Kerja | Indikator Kinerja | Target |
-                   - Bariskan setiap RHK.
-                   - Pada kolom Indikator Kinerja, sebutkan aspek (Kuantitas, Kualitas, Waktu).
-                   - Pada kolom Target, tentukan angka/deskripsi target yang relevan (misal: 1 Dokumen, 100%, 1 Bulan).
+                   Tampilkan data pegawai dan atasan penilai dalam bentuk tabel kecil di bagian paling atas.
 
-                   ### Tabel 2: Rencana Aksi
-                   Buat tabel dengan kolom: | No RHK | Rencana Aksi | Target Output | Target Waktu |
-                   - Setiap RHK WAJIB memiliki MINIMAL 5 Rencana Aksi.
-                   - Target Output maksimal 45 karakter (singkat & padat).
-                   - Target Waktu jelas (misal: Jan 2024, Mingguan).
+                   ### 1. EVALUASI HASIL KERJA (TABEL SKP)
+                   Buatlah SATU tabel besar yang mencakup SEMUA RHK di atas.
+                   Kolom tabel: | No | Rencana Hasil Kerja Pimpinan yang Diintervensi | Rencana Hasil Kerja | Aspek | Indikator Kinerja Individu | Target |
+                   Pastikan setiap satu RHK memiliki 3 baris Aspek: Kuantitas, Kualitas, dan Waktu.
 
-                   ### Tabel 3: Perilaku Kerja Individu
-                   Buat tabel Perilaku Kerja berdasarkan Core Value ASN (BerAKHLAK) yang disesuaikan dengan aktivitas RHK di atas.
-                   Kolom: | No | Core Value | Panduan Perilaku (Kode Etik) |
-                   Isi untuk 7 nilai:
-                   1. Berorientasi Pelayanan
-                   2. Akuntabel
-                   3. Kompeten
-                   4. Harmonis
-                   5. Loyal
-                   6. Adaptif
-                   7. Kolaboratif
-                   
-                   Gunakan Bahasa Indonesia formal & baku.";
+                   ### 2. RENCANA AKSI
+                   Berikan daftar langkah strategis untuk mencapai RHK-RHK di atas. 
+                   Tuliskan dalam format list sederhana agar mudah diedit pengguna:
+                   - [Aksi 1]
+                   - [Aksi 2]
+                   ...dan seterusnya.
+
+                   ### 3. PERILAKU KERJA (BerAKHLAK)
+                   Buat tabel Perilaku Kerja dengan kolom: | No | Core Value | Panduan Perilaku (Kode Etik) | Ekspektasi Khusus Pimpinan |
+                   Isi untuk semua 7 Core Value ASN (Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif).
+                   - Kolom Panduan Perilaku: Berikan panduan kode etik yang relevan dengan tugas pegawai.
+                   - Kolom Ekspektasi Khusus Pimpinan: Berikan 2-3 kalimat ekspektasi formal dari atasan untuk setiap core value, relevan dengan konteks tugas pegawai.
+
+                   Gunakan Bahasa Indonesia Kedinasan yang baku. Pastikan Target angka logis sesuai periode.";
         
         return $this->generate($prompt);
     }
@@ -363,26 +360,24 @@ class AiService
             $tugas_list .= "- Tugas " . ($index + 1) . ": \"{$tugas}\"\n";
         }
 
-        $prompt = "Anda adalah asisten ahli kepegawaian (HR) instansi pemerintah.
-                   Tugas: Buat dokumen Penilaian Atasan (Ekspektasi & Umpan Balik) dalam 2 TABEL TERPISAH.
+        $prompt = "Anda adalah asisten ahli kepegawaian (HR) untuk instansi pemerintah.
+                   Tugas Anda: Membantu ATASAN menyusun 'Ekspektasi Khusus Pimpinan' dan 'Umpan Balik' untuk SKP bawahannya.
 
                    CONTEXT:
                    - ATASAN (Penilai): {$atasan}
                    - BAWAHAN (Dinilai): {$bawahan}
                    - PERIODE: {$periode}
-                   - TUGAS POKOK BAWAHAN: \n{$tugas_list}
 
-                   INSTRUKSI OUTPUT (WAJIB FORMAT MARKDOWN):
+                   TUGAS POKOK BAWAHAN:
+                   {$tugas_list}
 
-                   ### Tabel 1: Ekspektasi Pimpinan (Perilaku Kerja BerAKHLAK)
-                   Kolom: | No | Core Value ASN | Ekspektasi Pimpinan |
-                   Isi untuk 7 nilai (Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif).
-                   - Kolom Ekspektasi: Deskripsikan harapan spesifik pimpinan terhadap bawahan untuk setiap value.
+                   OUTPUT FORMAT (Markdown):
+                   
+                   ### 1. EKSPEKTASI KHUSUS PIMPINAN
+                   (Berikan 3-5 poin ekspektasi spesifik dari atasan kepada bawahan terkait perilaku kerja BerAKHLAK dan pencapaian target di atas. Gunakan bahasa motivasi namun tegas).
 
-                   ### Tabel 2: Umpan Balik (Perilaku Kerja & Pengembangan)
-                   Kolom: | No | Core Value ASN | Deskripsi Umpan Balik (Positif & Konstruktif) |
-                   Isi untuk 7 nilai tersebut.
-                   - Berikan feedback seimbang: apresiasi positif dan saran perbaikan/pengembangan (konstruktif).
+                   ### 2. UMPAN BALIK BERKELANJUTAN
+                   (Berikan narasi feedback konstruktif untuk pengembangan bawahan kedepan berdasarkan tugas pokoknya).
 
                    Gunakan Bahasa Indonesia Kedinasan yang profesional.";
         
