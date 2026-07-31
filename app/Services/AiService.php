@@ -242,11 +242,10 @@ class AiService
                    Pastikan setiap satu RHK memiliki 3 baris Aspek: Kuantitas, Kualitas, dan Waktu.
 
                    ### 2. RENCANA AKSI
-                   Berikan daftar langkah strategis untuk mencapai RHK-RHK di atas. 
-                   Tuliskan dalam format list sederhana agar mudah diedit pengguna:
-                   - [Aksi 1]
-                   - [Aksi 2]
-                   ...dan seterusnya.
+                   Buat tabel Rencana Aksi dengan kolom: | No RHK | Rencana Aksi | Target Output | Target Waktu |
+                   - Setiap RHK WAJIB memiliki MINIMAL 5 Rencana Aksi.
+                   - Target Output maksimal 45 karakter (singkat & padat).
+                   - Target Waktu jelas (misal: Jan 2024, Mingguan).
 
                    ### 3. PERILAKU KERJA (BerAKHLAK)
                    Buat tabel Perilaku Kerja dengan kolom: | No | Core Value | Panduan Perilaku (Kode Etik) | Ekspektasi Khusus Pimpinan |
