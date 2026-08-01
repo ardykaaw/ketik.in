@@ -240,6 +240,9 @@ class AiService
                    Buatlah SATU tabel besar yang mencakup SEMUA RHK di atas.
                    Kolom tabel: | No | Rencana Hasil Kerja Pimpinan yang Diintervensi | Rencana Hasil Kerja | Aspek | Indikator Kinerja Individu | Target |
                    Pastikan setiap satu RHK memiliki 3 baris Aspek: Kuantitas, Kualitas, dan Waktu.
+                   KOLOM RENCANA HASIL KERJA WAJIB ditulis dalam bentuk HASIL/OUTPUT yang ingin dicapai, bukan aktivitas.
+                   Contoh bentuk output: Tersusunnya ..., Tersedianya ..., Terselesaikannya ..., Terlaksananya ..., Meningkatnya ..., Terwujudnya ....
+                   DILARANG menulis bentuk aktivitas seperti Menyusun ..., Membuat ..., Melaksanakan ... pada kolom tersebut.
 
                    ### 2. RENCANA AKSI
                    Buat tabel Rencana Aksi dengan kolom: | No RHK | Rencana Aksi | Target Output | Target Waktu |
