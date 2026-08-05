@@ -362,8 +362,8 @@ class AiService
             $tugas_list .= "- Tugas " . ($index + 1) . ": \"{$tugas}\"\n";
         }
 
-        $prompt = "Anda adalah asisten ahli kepegawaian (HR) untuk instansi pemerintah.
-                   Tugas Anda: Membantu ATASAN menyusun 'Ekspektasi Khusus Pimpinan' dan 'Umpan Balik' untuk SKP bawahannya.
+        $prompt = "Anda adalah asisten ahli kepegawaian (HR) instansi pemerintah yang sangat profesional.
+                   Tugas Anda: Menyusun dokumen Ekspektasi Khusus Pimpinan dan Umpan Balik Berkelanjutan untuk SKP bawahannya, dengan kualitas setara konsultan kepegawaian senior.
 
                    CONTEXT:
                    - ATASAN (Penilai): {$atasan}
@@ -373,15 +373,29 @@ class AiService
                    TUGAS POKOK BAWAHAN:
                    {$tugas_list}
 
-                   OUTPUT FORMAT (Markdown):
-                   
-                   ### 1. EKSPEKTASI KHUSUS PIMPINAN
-                   (Berikan 3-5 poin ekspektasi spesifik dari atasan kepada bawahan terkait perilaku kerja BerAKHLAK dan pencapaian target di atas. Gunakan bahasa motivasi namun tegas).
+                   OUTPUT FORMAT (WAJIB MARKDOWN, ikuti struktur berikut):
 
-                   ### 2. UMPAN BALIK BERKELANJUTAN
-                   (Berikan narasi feedback konstruktif untuk pengembangan bawahan kedepan berdasarkan tugas pokoknya).
+                   1. PARAGRAF PEMBUKA:
+                   (1-2 paragraf). Kalimat pertama menjelaskan peran strategis [Nama Bawahan] berdasarkan jabatannya dan tugas pokok di atas, dalam konteks instansinya. Kalimat kedua menyatakan bahwa berikut adalah rancangan ekspektasi khusus pimpinan dan umpan balik berkelanjutan untuk periode penilaian, yang disusun berdasarkan Nilai Dasar ASN BerAKHLAK (Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, dan Kolaboratif).
 
-                   Gunakan Bahasa Indonesia Kedinasan yang profesional.";
+                   2. BAGIAN 1 - EKSPEKTASI KHUSUS PIMPINAN BERDASARKAN PERILAKU ASN BERAKHLAK:
+                   Awali dengan 1 kalimat pengantar berisi ekspektasi umum pimpinan terhadap bawahan, disesuaikan dengan jabatan dan tugas pokoknya.
+                   Lalu buat SATU tabel matriks dengan kolom:
+                   | NILAI DASAR ASN BERAKHLAK | DI BAWAH EKSPEKTASI | SESUAI EKSPEKTASI (KUNCI SUKSES) | DI ATAS EKSPEKTASI |
+                   Isi untuk SEMUA 7 nilai: Berorientasi Pelayanan, Akuntabel, Kompeten, Harmonis, Loyal, Adaptif, Kolaboratif.
+                   Aturan pengisian setiap sel:
+                   - DI BAWAH EKSPEKTASI: Deskripsi perilaku negatif/kegagalan yang relevan dengan jabatan bawahan (2-3 poin singkat, spesifik dan realistis).
+                   - SESUAI EKSPEKTASI (KUNCI SUKSES): Perilaku yang diharapkan tercapai, spesifik terhadap tugas pokok bawahan, sebaiknya memuat ukuran terukur (misal: 100%, minimal 20%, tepat waktu, sebelum batas akhir).
+                   - DI ATAS EKSPEKTASI: Perilaku luar biasa yang melampaui standar, seperti inisiatif strategis, inovasi, menjadi teladan, atau kemitraan eksternal yang berdampak.
+                   Pastikan konten setiap sel DAPAT DIBEDAKAN jelas antara ketiga tingkat dan semuanya relevan dengan konteks tugas bawahan.
+
+                   3. BAGIAN 2 - UMPAN BALIK BERKELANJUTAN (AREAS OF DEVELOPMENT):
+                   Awali dengan 1 paragraf yang menjelaskan peran sentral jabatan bawahan dalam instansi serta arah pengembangan yang perlu diperkuat (misal: dari pengelola rutinitas menjadi manajer risiko dan agen perubahan).
+                   Lalu tulis subjudul: Area Pengembangan Utama:
+                   Berikan 3-5 poin bernomor (1., 2., 3., dst). Setiap poin berisi: NAMA AREA PENGEMBANGAN (huruf kapital di awal) diikuti titik dua, lalu penjelasan 2-3 kalimat yang spesifik: kondisi saat ini yang perlu diperbaiki, alasan pentingnya, dan saran langkah konkret.
+                   Contoh gaya: 1. Penguatan Fungsi Manajemen Risiko Administrasi: [penjelasan].
+
+                   Gunakan Bahasa Indonesia Kedinasan yang formal, baku, dan profesional. Gunakan sapaan hormat (Bapak/Ibu) sesuai gender bawahan. Jangan menambahkan bagian lain di luar struktur di atas.";
         
         return $this->generate($prompt);
     }
