@@ -389,27 +389,16 @@ class FeatureController extends Controller
 
     public function eKinerjaHarian(Request $request)
     {
-        $user = \Illuminate\Support\Facades\Auth::user();
-        $previousSkpsQuery = \App\Models\Content::whereIn('type', ['ekinerja', 'e-kinerja']);
+        $userId = \Illuminate\Support\Facades\Auth::id();
 
-        if ($user && $user->isAdmin()) {
-            $adminSkps = (clone $previousSkpsQuery)->where('user_id', $user->id)->latest()->get();
-            if ($adminSkps->count() > 0) {
-                $previousSkps = $adminSkps;
-            } else {
-                // If admin account has no SKP yet, list recent SKPs in system for development testing
-                $previousSkps = (clone $previousSkpsQuery)->latest()->take(20)->get();
-            }
-        } else {
-            $previousSkps = $previousSkpsQuery->where('user_id', \Illuminate\Support\Facades\Auth::id())->latest()->get();
-        }
+        $previousSkps = \App\Models\Content::where('user_id', $userId)
+            ->whereIn('type', ['ekinerja', 'e-kinerja'])
+            ->latest()
+            ->get();
 
         $selectedSkp = null;
         if ($request->has('from_content')) {
-            $selectedSkp = \App\Models\Content::find($request->from_content);
-            if ($selectedSkp && !$previousSkps->contains('id', $selectedSkp->id)) {
-                $previousSkps->prepend($selectedSkp);
-            }
+            $selectedSkp = $previousSkps->firstWhere('id', $request->from_content);
         }
 
         return view('features.e-kinerja-harian', compact('previousSkps', 'selectedSkp'));
@@ -433,11 +422,8 @@ class FeatureController extends Controller
             $payload = $request->all();
 
             if ($request->filled('skp_content_id')) {
-                $sourceSkpQuery = \App\Models\Content::query();
-                if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
-                    $sourceSkpQuery->where('user_id', \Illuminate\Support\Facades\Auth::id());
-                }
-                $sourceSkp = $sourceSkpQuery->find($request->skp_content_id);
+                $sourceSkp = \App\Models\Content::where('user_id', \Illuminate\Support\Facades\Auth::id())
+                    ->find($request->skp_content_id);
                 if ($sourceSkp) {
                     $payload['skp_full_text'] = $sourceSkp->content;
                 }
