@@ -286,7 +286,7 @@ class AiService
 
         $skpContext = "";
         if (!empty($data['skp_full_text'])) {
-            $skpContext = "\n--- DOKUMEN SKP SUMBER (SEBELUMNYA) ---\n" . substr($data['skp_full_text'], 0, 4000) . "\n\nINSTRUKSI SAMBUNGAN: Dokumen ini adalah KELANJUTAN LANGSUNG dari Dokumen SKP Sumber di atas. Rujuk dan dukung langsung Indikator Kinerja Individu (IKI) yang ada di dokumen sumber tersebut untuk merumuskan Rencana Aksi (Trajektori/Non-Trajektori) dan Aktivitas Harian.\n";
+            $skpContext = "\n--- DOKUMEN SKP SUMBER (SEBELUMNYA) ---\n" . substr($data['skp_full_text'], 0, 15000) . "\n\nINSTRUKSI SAMBUNGAN: Dokumen ini adalah KELANJUTAN LANGSUNG dari Dokumen SKP Sumber di atas. Rujuk dan ambil langsung seluruh butir RHK dan Indikator Kinerja Individu (IKI) yang ada di dokumen sumber tersebut untuk diturunkan menjadi Rencana Aksi (Trajektori/Non-Trajektori) dan Aktivitas Harian. Jika data identitas pegawai di atas belum lengkap, lengkapi berdasarkan identitas yang tercantum dalam dokumen SKP sumber.\n";
         }
 
         $prompt = "Kamu adalah Konsultan & Pakar Manajemen Kinerja ASN Badan Kepegawaian Negara (BKN) yang sangat ahli dalam Permenpan RB No. 6 Tahun 2022 dan sistem e-Kinerja BKN.

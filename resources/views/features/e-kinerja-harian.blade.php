@@ -45,7 +45,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary me-2" width="22" height="22" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M9 11l3 3l8 -8" /><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" /></svg>
                                         <h4 class="fw-bold mb-0 text-dark">Gunakan Data dari SKP Sebelumnya (Opsional)</h4>
                                     </div>
-                                    <p class="text-muted small mb-3">Pilih dokumen SKP tahunan yang pernah Anda buat untuk otomatis mengisi identitas dan mengintervensi RHK/IKI yang ada.</p>
+                                    <p class="text-muted small mb-3">Pilih dokumen SKP tahunan yang pernah Anda buat untuk otomatis mengambil identitas dan seluruh RHK/IKI yang ada.</p>
                                     <select name="skp_content_id" id="skp_selector" class="form-select border-2 bg-white" style="border-radius: 10px;" onchange="handleSkpSelection(this)">
                                         <option value="">-- Buat Mandiri / Input Manual Baru --</option>
                                         @foreach($previousSkps as $skp)
@@ -54,9 +54,18 @@
                                         </option>
                                         @endforeach
                                     </select>
-                                    <div id="skp-linked-notice" class="mt-2 text-primary small fw-semibold d-none">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
-                                        Data pegawai & RHK telah disinkronkan dari SKP sumber.
+                                    <div id="skp-linked-notice" class="mt-3 p-3 bg-white border border-primary-subtle rounded-3 shadow-xs d-none">
+                                        <div class="d-flex align-items-start">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary me-2 mt-1" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                                            <div>
+                                                <div class="fw-bold text-dark mb-1">Dokumen SKP Terpilih & Terhubung!</div>
+                                                <div class="text-muted small">
+                                                    Seluruh data identitas pegawai, RHK, dan target IKI akan otomatis dianalisis langsung oleh AI dari dokumen SKP ini. 
+                                                    <strong>Anda tidak perlu mengisi formulir di bawah ini lagi dan bisa langsung klik tombol generate di bawah</strong>. 
+                                                    Namun jika Anda tetap ingin mengubah atau menambahkan penyesuaian khusus, kolom di bawah tetap dapat Anda isi/edit.
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -70,28 +79,28 @@
                                 </h3>
                                 <div class="row g-3">
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">Nama Lengkap & Gelar</label>
-                                        <input type="text" name="pegawai_nama" class="form-control border-2" placeholder="Nama Anda" value="{{ Auth::user()->name }}" required style="border-radius: 10px;">
+                                        <label class="form-label fw-semibold">Nama Lengkap & Gelar <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                                        <input type="text" name="pegawai_nama" class="form-control border-2 field-required-toggle" placeholder="Nama Anda" value="{{ Auth::user()->name }}" required style="border-radius: 10px;">
                                     </div>
                                     <div class="col-md-6">
-                                        <label class="form-label fw-semibold">NIP</label>
-                                        <input type="text" name="pegawai_nip" class="form-control border-2" placeholder="19XXXXXXXXXXXXXX" required style="border-radius: 10px;">
+                                        <label class="form-label fw-semibold">NIP <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                                        <input type="text" name="pegawai_nip" class="form-control border-2 field-required-toggle" placeholder="19XXXXXXXXXXXXXX" required style="border-radius: 10px;">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Pangkat / Golongan</label>
-                                        <input type="text" name="pegawai_golongan" class="form-control border-2" placeholder="Misal: Penata Muda / III.a" required style="border-radius: 10px;">
+                                        <label class="form-label fw-semibold">Pangkat / Golongan <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                                        <input type="text" name="pegawai_golongan" class="form-control border-2" placeholder="Misal: Penata Muda / III.a" style="border-radius: 10px;">
                                     </div>
                                     <div class="col-md-4">
-                                        <label class="form-label fw-semibold">Jabatan</label>
-                                        <input type="text" name="pegawai_jabatan" class="form-control border-2" placeholder="Misal: Pranata Komputer Ahli Pertama" required style="border-radius: 10px;">
+                                        <label class="form-label fw-semibold">Jabatan <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                                        <input type="text" name="pegawai_jabatan" class="form-control border-2 field-required-toggle" placeholder="Misal: Pranata Komputer Ahli Pertama" required style="border-radius: 10px;">
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label fw-semibold">Periode Kinerja</label>
                                         <input type="text" name="periode" class="form-control border-2" value="Tahun 2024" required style="border-radius: 10px;">
                                     </div>
                                     <div class="col-md-12">
-                                        <label class="form-label fw-semibold">Unit Kerja</label>
-                                        <input type="text" name="pegawai_unit" class="form-control border-2" placeholder="Misal: Dinas Komunikasi dan Informatika" required style="border-radius: 10px;">
+                                        <label class="form-label fw-semibold">Unit Kerja <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                                        <input type="text" name="pegawai_unit" class="form-control border-2 field-required-toggle" placeholder="Misal: Dinas Komunikasi dan Informatika" required style="border-radius: 10px;">
                                     </div>
                                 </div>
                             </div>
@@ -104,13 +113,19 @@
                                     <h3 class="fw-bold mb-0 d-flex align-items-center">
                                         <span class="badge bg-blue text-white me-2" style="width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; background-color: #0284c7 !important;">2</span>
                                         Rencana Hasil Kerja (RHK) & Tugas Pokok
+                                        <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span>
                                     </h3>
                                     <button type="button" class="btn btn-outline-primary btn-sm fw-bold shadow-sm" onclick="addRHK()" style="border-radius: 8px;">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
                                         Tambah RHK
                                     </button>
                                 </div>
-                                <p class="text-muted fs-5 mb-4">Tuliskan tugas utama atau RHK Anda. AI akan merumuskan Indikator Kinerja Individu (IKI), Rencana Aksi (Trajektori/Non-Trajektori), waktu pelaksanaan, dan aktivitas hariannya.</p>
+                                <p class="text-muted fs-5 mb-3">Tuliskan tugas utama atau RHK Anda. AI akan merumuskan Indikator Kinerja Individu (IKI), Rencana Aksi (Trajektori/Non-Trajektori), waktu pelaksanaan, dan aktivitas hariannya.</p>
+
+                                <div id="rhk-optional-hint" class="alert alert-info py-2 px-3 small mb-3 d-none" style="border-radius: 10px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 9h.01" /><path d="M11 12h1v4h1" /></svg>
+                                    Seluruh butir RHK dan target IKI akan otomatis dibaca dan diekstrak dari dokumen SKP sumber. Anda tidak wajib mengisi kolom ini kecuali ingin menambahkan tugas spesifik lainnya.
+                                </div>
 
                                 <div id="rhk_container">
                                     <div class="rhk-item card p-4 border-2 mb-3 shadow-sm" style="border-radius: 16px; border-left: 5px solid #0284c7 !important; background: #f8fafc;">
@@ -119,7 +134,7 @@
                                             <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn d-none" onclick="removeRHK(this)">Hapus</button>
                                         </div>
                                         <div>
-                                            <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda</label>
+                                            <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
                                             <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" placeholder="Contoh: Terkelola dan terpeliharanya sistem informasi daerah serta infrastruktur jaringan pendukung..." style="border-radius: 10px;" required></textarea>
                                         </div>
                                     </div>
@@ -154,6 +169,7 @@
 
         function addRHK() {
             rhkCount++;
+            const isSkpSelected = !!(document.getElementById('skp_selector') && document.getElementById('skp_selector').value);
             const newRHK = document.createElement('div');
             newRHK.className = 'rhk-item card p-4 border-2 mb-3 shadow-sm';
             newRHK.style = 'border-radius: 16px; border-left: 5px solid #0284c7 !important; background: #f8fafc;';
@@ -163,8 +179,8 @@
                     <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn" onclick="removeRHK(this)">Hapus</button>
                 </div>
                 <div>
-                    <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda</label>
-                    <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" placeholder="Tuliskan tugas spesifik Anda..." style="border-radius: 10px;" required></textarea>
+                    <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge ${isSkpSelected ? '' : 'd-none'}" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                    <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" placeholder="Tuliskan tugas spesifik Anda..." style="border-radius: 10px;" ${isSkpSelected ? '' : 'required'}></textarea>
                 </div>
             `;
             container.appendChild(newRHK);
@@ -200,14 +216,31 @@
         function handleSkpSelection(selectEl) {
             const skpId = selectEl.value;
             const noticeEl = document.getElementById('skp-linked-notice');
+            const optionalBadges = document.querySelectorAll('.skp-optional-badge');
+            const rhkOptionalHint = document.getElementById('rhk-optional-hint');
+            const requiredFields = document.querySelectorAll('.field-required-toggle');
 
-            if (!skpId || !previousSkpsData[skpId]) {
+            if (!skpId) {
+                // Mode Manual: Kembalikan validasi required
                 if (noticeEl) noticeEl.classList.add('d-none');
+                if (rhkOptionalHint) rhkOptionalHint.classList.add('d-none');
+                optionalBadges.forEach(b => b.classList.add('d-none'));
+
+                requiredFields.forEach(f => f.setAttribute('required', 'required'));
+                document.querySelectorAll('textarea[name="rhk[]"]').forEach(t => t.setAttribute('required', 'required'));
                 return;
             }
 
+            // Mode Dari SKP: Bebaskan validasi required agar formulir bisa langsung digenerate
             if (noticeEl) noticeEl.classList.remove('d-none');
+            if (rhkOptionalHint) rhkOptionalHint.classList.remove('d-none');
+            optionalBadges.forEach(b => b.classList.remove('d-none'));
+
+            requiredFields.forEach(f => f.removeAttribute('required'));
+            document.querySelectorAll('textarea[name="rhk[]"]').forEach(t => t.removeAttribute('required'));
+
             const skp = previousSkpsData[skpId];
+            if (!skp) return;
             const params = skp.parameters || {};
 
             if (params.pegawai_nama) document.querySelector('input[name="pegawai_nama"]').value = params.pegawai_nama;
@@ -229,8 +262,8 @@
                             <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn ${idx === 0 ? 'd-none' : ''}" onclick="removeRHK(this)">Hapus</button>
                         </div>
                         <div>
-                            <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda</label>
-                            <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" style="border-radius: 10px;" required>${rhkText}</textarea>
+                            <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
+                            <textarea name="rhk[]" class="form-control border-2 bg-white" rows="2" style="border-radius: 10px;">${rhkText}</textarea>
                         </div>
                     `;
                     container.appendChild(div);

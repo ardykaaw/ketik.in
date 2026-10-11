@@ -406,26 +406,49 @@ class FeatureController extends Controller
 
     public function generateEKinerjaHarian(Request $request)
     {
+        $isFromSkp = $request->filled('skp_content_id');
+
         $request->validate([
-            'pegawai_nama' => 'required|string',
-            'pegawai_nip' => 'required|string',
-            'pegawai_golongan' => 'nullable|string',
-            'pegawai_jabatan' => 'required|string',
-            'pegawai_unit' => 'required|string',
-            'rhk' => 'required|array',
-            'rhk.*' => 'required|string',
-            'periode' => 'required|string',
             'skp_content_id' => 'nullable|integer',
+            'pegawai_nama' => $isFromSkp ? 'nullable|string' : 'required|string',
+            'pegawai_nip' => $isFromSkp ? 'nullable|string' : 'required|string',
+            'pegawai_golongan' => 'nullable|string',
+            'pegawai_jabatan' => $isFromSkp ? 'nullable|string' : 'required|string',
+            'pegawai_unit' => $isFromSkp ? 'nullable|string' : 'required|string',
+            'periode' => 'required|string',
+            'rhk' => $isFromSkp ? 'nullable|array' : 'required|array',
+            'rhk.*' => 'nullable|string',
         ]);
 
         try {
             $payload = $request->all();
 
-            if ($request->filled('skp_content_id')) {
+            if ($isFromSkp) {
                 $sourceSkp = \App\Models\Content::where('user_id', \Illuminate\Support\Facades\Auth::id())
                     ->find($request->skp_content_id);
                 if ($sourceSkp) {
                     $payload['skp_full_text'] = $sourceSkp->content;
+                    $payload['skp_title'] = $sourceSkp->title;
+
+                    $params = $sourceSkp->parameters ?? [];
+                    if (empty($payload['pegawai_nama'])) {
+                        $payload['pegawai_nama'] = $params['pegawai_nama'] ?? \Illuminate\Support\Facades\Auth::user()->name;
+                    }
+                    if (empty($payload['pegawai_nip'])) {
+                        $payload['pegawai_nip'] = $params['pegawai_nip'] ?? '- (Sesuai SKP)';
+                    }
+                    if (empty($payload['pegawai_golongan'])) {
+                        $payload['pegawai_golongan'] = $params['pegawai_golongan'] ?? '-';
+                    }
+                    if (empty($payload['pegawai_jabatan'])) {
+                        $payload['pegawai_jabatan'] = $params['pegawai_jabatan'] ?? 'Pegawai ASN';
+                    }
+                    if (empty($payload['pegawai_unit'])) {
+                        $payload['pegawai_unit'] = $params['pegawai_unit'] ?? '- (Sesuai SKP)';
+                    }
+                    if (empty($payload['rhk']) || count(array_filter($payload['rhk'])) === 0) {
+                        $payload['rhk'] = $params['rhk'] ?? ['Seluruh Rencana Hasil Kerja (RHK) pada dokumen SKP sumber'];
+                    }
                 }
             }
 
