@@ -90,6 +90,10 @@ class ProcessAiGeneration implements ShouldQueue
                         $generatedText = $aiService->generateEKinerjaAtasan($payload);
                         $contentTitle = 'SKP Atasan: ' . Str::words($payload['pegawai_nama'] ?? 'Pegawai', 3, '...');
                         break;
+                    case 'ekinerja_harian':
+                        $generatedText = $aiService->generateEKinerjaHarian($payload);
+                        $contentTitle = 'E-Kinerja Harian: ' . Str::words($payload['pegawai_nama'] ?? 'Pegawai', 3, '...');
+                        break;
                     case 'story':
                         $generatedText = $aiService->generateStory($payload['topic'], $payload['genre'], $payload['target']);
                         $contentTitle = 'Cerita: ' . Str::words($payload['topic'], 5, '...');
@@ -152,6 +156,7 @@ class ProcessAiGeneration implements ShouldQueue
                 'type' => $aiQueue->feature_type, // Maintain the original type string
                 'title' => $contentTitle,
                 'content' => $generatedText,
+                'parameters' => $payload,
             ]);
 
             // Log AI Usage success

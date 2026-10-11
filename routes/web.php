@@ -180,6 +180,10 @@ Route::middleware(['auth'])->group(function () {
         Route::put('/admin/academy/lessons/{lesson}', [AcademyAdminController::class, 'updateLesson'])->name('admin.academy.lessons.update');
         Route::delete('/admin/academy/lessons/{lesson}', [AcademyAdminController::class, 'destroyLesson'])->name('admin.academy.lessons.destroy');
 
+        // E-Kinerja Harian (Development - Admin Only)
+        Route::get('/admin/e-kinerja-harian', [FeatureController::class, 'eKinerjaHarian'])->name('feature.e-kinerja-harian');
+        Route::post('/admin/e-kinerja-harian', [FeatureController::class, 'generateEKinerjaHarian'])->name('feature.e-kinerja-harian.generate')->middleware('throttle:ai');
+
         // Super Admin Monitoring
         Route::middleware(['superadmin'])->group(function () {
             Route::get('/admin/super', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('admin.super.dashboard');

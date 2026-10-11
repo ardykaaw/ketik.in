@@ -387,6 +387,80 @@ class FeatureController extends Controller
         }
     }
 
+    public function eKinerjaHarian(Request $request)
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $previousSkpsQuery = \App\Models\Content::whereIn('type', ['ekinerja', 'e-kinerja']);
+
+        if ($user && $user->isAdmin()) {
+            $adminSkps = (clone $previousSkpsQuery)->where('user_id', $user->id)->latest()->get();
+            if ($adminSkps->count() > 0) {
+                $previousSkps = $adminSkps;
+            } else {
+                // If admin account has no SKP yet, list recent SKPs in system for development testing
+                $previousSkps = (clone $previousSkpsQuery)->latest()->take(20)->get();
+            }
+        } else {
+            $previousSkps = $previousSkpsQuery->where('user_id', \Illuminate\Support\Facades\Auth::id())->latest()->get();
+        }
+
+        $selectedSkp = null;
+        if ($request->has('from_content')) {
+            $selectedSkp = \App\Models\Content::find($request->from_content);
+            if ($selectedSkp && !$previousSkps->contains('id', $selectedSkp->id)) {
+                $previousSkps->prepend($selectedSkp);
+            }
+        }
+
+        return view('features.e-kinerja-harian', compact('previousSkps', 'selectedSkp'));
+    }
+
+    public function generateEKinerjaHarian(Request $request)
+    {
+        $request->validate([
+            'pegawai_nama' => 'required|string',
+            'pegawai_nip' => 'required|string',
+            'pegawai_golongan' => 'nullable|string',
+            'pegawai_jabatan' => 'required|string',
+            'pegawai_unit' => 'required|string',
+            'rhk' => 'required|array',
+            'rhk.*' => 'required|string',
+            'periode' => 'required|string',
+            'skp_content_id' => 'nullable|integer',
+        ]);
+
+        try {
+            $payload = $request->all();
+
+            if ($request->filled('skp_content_id')) {
+                $sourceSkpQuery = \App\Models\Content::query();
+                if (!\Illuminate\Support\Facades\Auth::user()->isAdmin()) {
+                    $sourceSkpQuery->where('user_id', \Illuminate\Support\Facades\Auth::id());
+                }
+                $sourceSkp = $sourceSkpQuery->find($request->skp_content_id);
+                if ($sourceSkp) {
+                    $payload['skp_full_text'] = $sourceSkp->content;
+                }
+            }
+
+            $aiQueue = \App\Models\AiQueue::create([
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'feature_type' => 'ekinerja_harian',
+                'payload' => $payload,
+                'status' => 'pending'
+            ]);
+
+            \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+            return view('features.queue-loading', [
+                'queueId' => $aiQueue->id,
+                'title' => 'Menyusun E-Kinerja Harian & Aktivitas...'
+            ]);
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal memasukkan ke antrean: ' . $e->getMessage());
+        }
+    }
+
     public function news()
     {
         return view('features.news');

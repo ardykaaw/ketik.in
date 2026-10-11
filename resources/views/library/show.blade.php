@@ -14,6 +14,12 @@
                         <h1 class="display-6 fw-bold m-0">{{ $content->title }}</h1>
                     </div>
                     <div class="ms-auto d-flex gap-2">
+                        @if(in_array($content->type, ['e-kinerja', 'ekinerja']) && auth()->check() && auth()->user()->isAdmin())
+                        <a href="{{ route('feature.e-kinerja-harian', ['from_content' => $content->id]) }}" class="btn btn-success fw-bold shadow-sm" style="border-radius: 10px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3v3m0 12v3" /><path d="M3 12h3m12 0h3" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                            Lanjut: Rencana Aksi & Harian <span class="badge bg-white text-success ms-1" style="font-size:0.65rem;">DEV</span>
+                        </a>
+                        @endif
                         <button class="btn btn-outline-primary fw-bold" style="border-radius: 10px;" onclick="copyToClipboard()">
                             <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
                             Salin Teks
@@ -201,6 +207,21 @@
             
             // Parse Markdown
             contentDiv.innerHTML = marked.parse(rawContent);
+
+            // Wrap tables in responsive container for smooth horizontal scrolling
+            const tables = contentDiv.querySelectorAll('table');
+            tables.forEach(table => {
+                table.classList.add('table', 'table-bordered', 'table-hover', 'align-middle', 'mb-0');
+                const wrapper = document.createElement('div');
+                wrapper.className = 'table-responsive mb-4 shadow-sm rounded-3 border';
+                table.parentNode.insertBefore(wrapper, table);
+                wrapper.appendChild(table);
+            });
+
+            // Convert Trajektori & Non-Trajektori into modern badge pills
+            contentDiv.innerHTML = contentDiv.innerHTML
+                .replace(/<strong>\s*Trajektori\s*<\/strong>/gi, '<span class="badge bg-blue text-white px-2 py-1 shadow-xs">Trajektori</span>')
+                .replace(/<strong>\s*Non-Trajektori\s*<\/strong>/gi, '<span class="badge bg-secondary-lt px-2 py-1">Non-Trajektori</span>');
 
             // Add upload buttons and attachments to list items
             const listItems = contentDiv.querySelectorAll('li');
@@ -581,22 +602,45 @@
         .group-hover-action:hover .actions {
             opacity: 1 !important;
         }
+        .prose h3 {
+            background: linear-gradient(90deg, #f0fdf4 0%, #f8fafc 100%);
+            border-left: 5px solid #0284c7;
+            padding: 10px 16px;
+            border-radius: 0 8px 8px 0;
+            margin-top: 2.2rem;
+            margin-bottom: 1.2rem;
+            color: #0f172a;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: 0.3px;
+        }
         .prose th {
-            background-color: #f8fafc;
-            border-bottom: 2px solid #e2e8f0;
-            padding: 12px 15px;
-            text-align: left;
+            background-color: #1e293b !important;
+            color: #ffffff !important;
+            border-color: #0f172a !important;
+            padding: 12px 14px;
+            text-align: center;
             font-weight: 700;
-            color: #334155;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .prose td {
-            border-bottom: 1px solid #e2e8f0;
-            padding: 12px 15px;
+            border-color: #e2e8f0;
+            padding: 12px 14px;
             vertical-align: top;
-            color: #475569;
+            color: #334155;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .prose tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+        .prose tr:hover td {
+            background-color: #f0f9ff;
         }
         .prose tr:last-child td {
-            border-bottom: none;
+            border-bottom: 1px solid #e2e8f0;
         }
     </style>
     @endpush

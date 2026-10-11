@@ -82,7 +82,24 @@ class LibraryController extends Controller
         $parsedown = new Parsedown();
         $htmlContent = $parsedown->text($content->content);
 
-        if ($content->type === 'e-kinerja') {
+        if ($content->type === 'ekinerja_harian') {
+            // Transform Trajektori / Non-Trajektori into elegant styled badge spans
+            $htmlContent = preg_replace(
+                '/<strong>\s*Trajektori\s*<\/strong>/i',
+                '<span class="badge-trajektori">Trajektori</span>',
+                $htmlContent
+            );
+            $htmlContent = preg_replace(
+                '/<strong>\s*Non-Trajektori\s*<\/strong>/i',
+                '<span class="badge-nontrajektori">Non-Trajektori</span>',
+                $htmlContent
+            );
+
+            $pdf = Pdf::loadView('exports.e-kinerja-harian', [
+                'content' => $content,
+                'html' => $htmlContent
+            ])->setPaper('a4', 'landscape');
+        } elseif ($content->type === 'e-kinerja') {
             $pdf = Pdf::loadView('exports.e-kinerja', [
                 'content' => $content,
                 'html' => $htmlContent

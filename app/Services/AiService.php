@@ -262,6 +262,120 @@ class AiService
     }
 
     /**
+     * Generate E-Kinerja Harian: RHK, IKI, Target Tahunan, Rencana Aksi (Trajektori/Non-Trajektori), dan Aktivitas Harian.
+     */
+    public function generateEKinerjaHarian(array $data): string
+    {
+        $pegawaiNama = $data['pegawai_nama'] ?? 'Pegawai';
+        $pegawaiNip = $data['pegawai_nip'] ?? '-';
+        $pegawaiJabatan = $data['pegawai_jabatan'] ?? 'Staf / ASN';
+        $pegawaiUnit = $data['pegawai_unit'] ?? '-';
+        $pegawaiGolongan = $data['pegawai_golongan'] ?? '-';
+        $periode = $data['periode'] ?? 'Tahun Berjalan';
+
+        $rhkList = "";
+        if (isset($data['rhk']) && is_array($data['rhk'])) {
+            foreach ($data['rhk'] as $index => $item) {
+                $rhkList .= ($index + 1) . ". {$item}\n";
+            }
+        } elseif (isset($data['rhk_input']) && !empty($data['rhk_input'])) {
+            $rhkList = $data['rhk_input'];
+        } else {
+            $rhkList = "Tugas dan fungsi utama jabatan {$pegawaiJabatan}";
+        }
+
+        $skpContext = "";
+        if (!empty($data['skp_full_text'])) {
+            $skpContext = "\n--- DOKUMEN SKP SUMBER (SEBELUMNYA) ---\n" . substr($data['skp_full_text'], 0, 4000) . "\n\nINSTRUKSI SAMBUNGAN: Dokumen ini adalah KELANJUTAN LANGSUNG dari Dokumen SKP Sumber di atas. Rujuk dan dukung langsung Indikator Kinerja Individu (IKI) yang ada di dokumen sumber tersebut untuk merumuskan Rencana Aksi (Trajektori/Non-Trajektori) dan Aktivitas Harian.\n";
+        }
+
+        $prompt = "Kamu adalah Konsultan & Pakar Manajemen Kinerja ASN Badan Kepegawaian Negara (BKN) yang sangat ahli dalam Permenpan RB No. 6 Tahun 2022 dan sistem e-Kinerja BKN.
+Tugas Anda: Susun dokumen lengkap 'E-KINERJA HARIAN' yang mencakup RHK, IKI, Target Tahunan, Rencana Aksi (Trajektori/Non-Trajektori), dan Aktivitas Harian Pegawai berdasarkan data berikut:
+
+DATA PEGAWAI:
+- Nama Pegawai: {$pegawaiNama}
+- NIP: {$pegawaiNip}
+- Pangkat / Golongan: {$pegawaiGolongan}
+- Jabatan: {$pegawaiJabatan}
+- Unit Kerja: {$pegawaiUnit}
+- Periode Penilaian: {$periode}
+
+RENCANA HASIL KERJA (RHK) / TUGAS POKOK:
+{$rhkList}
+{$skpContext}
+
+INSTRUKSI KHUSUS & STRUKTUR OUTPUT WAJIB:
+Dokumen harus tersusun rapi menggunakan format Markdown dengan bahasa kedinasan resmi, presisi, dan realistis.
+
+Tampilkan struktur berikut secara lengkap dan tanpa placeholder:
+
+# DOKUMEN E-KINERJA & LOG AKTIVITAS HARIAN ASN
+## Standar Permenpan RB No. 6 Tahun 2022
+
+---
+
+### I. IDENTITAS PEGAWAI
+| Data Pegawai | Keterangan |
+|---|---|
+| Nama Lengkap | {$pegawaiNama} |
+| NIP | {$pegawaiNip} |
+| Pangkat / Golongan | {$pegawaiGolongan} |
+| Jabatan | {$pegawaiJabatan} |
+| Unit Kerja | {$pegawaiUnit} |
+| Periode Penilaian | {$periode} |
+
+---
+
+### II. RENCANA HASIL KERJA (RHK), INDIKATOR KINERJA INDIVIDU (IKI), & TARGET TAHUNAN
+Buat tabel evaluasi kinerja tahunan dengan ketentuan:
+- RHK wajib berorientasi HASIL (output), gunakan kata kerja pasif seperti: Tersusunnya..., Terlaksananya..., Terkelolanya..., Meningkatnya.... DILARANG kata aktif seperti Menyusun, Melaksanakan.
+- Setiap RHK wajib memiliki 3 aspek: Kuantitas, Kualitas, dan Waktu.
+- Target Tahunan harus terukur secara angka/persentase/bulan yang logis.
+
+Format Tabel:
+| No | Rencana Hasil Kerja (RHK) | Aspek | Indikator Kinerja Individu (IKI) | Target Tahunan | Satuan |
+|---|---|---|---|---|---|
+(Isi secara substantif dan detail untuk setiap RHK yang diinput)
+
+---
+
+### III. MATRIKS RENCANA AKSI (KATEGORI TRAJEKTORI & NON-TRAJEKTORI)
+Berdasarkan IKI di atas, rumuskan rencana aksi operasional.
+Ketentuan Wajib Rencana Aksi:
+1. **Kategori Target:** Tentukan apakah masuk:
+   - **Trajektori (Trajectory):** Rencana aksi yang targetnya berprogres secara bertahap sepanjang waktu (memiliki kurva kenaikan/progres bulanan/triwulanan, misal: penyusunan regulasi, modul, proyek bertahap).
+   - **Non-Trajektori (Non-Trajectory):** Rencana aksi yang sifatnya kegiatan rutin berkala, stabil sepanjang tahun, atau kegiatan insidental/sekali selesai (misal: pelayanan harian, pengarsipan rutin, pemeliharaan berkala).
+2. **Target Waktu Pelaksanaan (WAJIB DITENTUKAN):** Tentukan waktu pelaksanaannya secara jelas dan spesifik:
+   - Sebutkan bulan spesifik atau rentang bulannya (misal: 'Januari - Maret / Triwulan I', 'Bulan Mei - Juli', 'Bulan Oktober - Desember / Triwulan IV', 'Bulan November', atau 'Januari s.d. Desember').
+   - Atau periode rutin: 'Setiap Bulan (Jan - Des)', 'Mingguan (Setiap Senin & Kamis)', atau 'Harian sepanjang tahun kerja'.
+
+Format Tabel:
+| No | IKI yang Diintervensi | Rencana Aksi | Kategori Target | Target Waktu Pelaksanaan (Bulan / Periode) | Pola Distribusi Target & Penjelasan |
+|---|---|---|---|---|---|
+(Jabarkan minimal 2-4 Rencana Aksi untuk setiap RHK/IKI, tentukan Kategori Trajektori/Non-Trajektori, dan tentukan Target Waktu bulan/periodenya secara presisi).
+
+---
+
+### IV. MATRIKS AKTIVITAS HARIAN & TARGET HARIAN
+Pecah setiap Rencana Aksi di atas menjadi butir-butir AKTIVITAS KERJA HARIAN yang konkret, operasional, dan dapat diisi pegawai pada Log Harian e-Kinerja BKN.
+Pastikan target hariannya memiliki satuan hitung harian yang rasional, sehingga jika pegawai mengerjakannya secara konsisten setiap hari kerja, akumulasi target Rencana Aksi Tahunan tercapai tepat sasaran.
+
+Format Tabel:
+| No | Rencana Aksi Terkait | Butir Aktivitas Harian (Uraian Log Harian) | Output Satuan Harian | Target per Hari / Sesi | Waktu / Bulan Pelaksanaan | Frekuensi Pelaksanaan |
+|---|---|---|---|---|---|---|
+(Isi secara lengkap dan terinci. Cantumkan waktu/bulan pelaksanaannya secara jelas. Berikan contoh aktivitas harian nyata yang bisa langsung dicopy-paste oleh pegawai ke e-Kinerja BKN).
+
+---
+
+### V. REKOMENDASI PEMANTAUAN KINERJA HARIAN
+Berikan 3-4 poin ringkas arahan bagi pegawai dan atasan penilai dalam mengontrol log harian agar target triwulanan dan tahunan tidak mengalami deviasi minus (underperformance).
+
+Pastikan isi dokumen sangat detail, profesional, baku, dan langsung siap dipakai/dinilai atasan.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
      * Generate a News Article.
      */
     public function generateNews(string $topic, string $style)
