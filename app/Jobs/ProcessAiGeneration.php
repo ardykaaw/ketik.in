@@ -94,6 +94,10 @@ class ProcessAiGeneration implements ShouldQueue
                         $generatedText = $aiService->generateEKinerjaHarian($payload);
                         $contentTitle = 'E-Kinerja Harian: ' . Str::words($payload['pegawai_nama'] ?? 'Pegawai', 3, '...');
                         break;
+                    case 'ekinerja_evidence':
+                        $generatedText = $aiService->generateEKinerjaEvidence($payload);
+                        $contentTitle = 'Evidence: ' . ($payload['judul_laporan'] ?? ('Laporan ' . ($payload['nama_kegiatan'] ?? 'Harian')));
+                        break;
                     case 'story':
                         $generatedText = $aiService->generateStory($payload['topic'], $payload['genre'], $payload['target']);
                         $contentTitle = 'Cerita: ' . Str::words($payload['topic'], 5, '...');

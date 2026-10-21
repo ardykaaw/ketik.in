@@ -115,7 +115,7 @@
                                         Rencana Hasil Kerja (RHK) & Tugas Pokok
                                         <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span>
                                     </h3>
-                                    <button type="button" class="btn btn-outline-primary btn-sm fw-bold shadow-sm" onclick="addRHK()" style="border-radius: 8px;">
+                                    <button type="button" class="btn btn-sm fw-bold px-3 py-2 shadow-xs d-flex align-items-center gap-1 hover-lift" onclick="addRHK()" style="border-radius: 10px; background: rgba(2, 132, 199, 0.1); color: #0284c7; border: 1px solid rgba(2, 132, 199, 0.25);">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 5l0 14" /><path d="M5 12l14 0" /></svg>
                                         Tambah RHK
                                     </button>
@@ -131,7 +131,10 @@
                                     <div class="rhk-item card p-4 border-2 mb-3 shadow-sm" style="border-radius: 16px; border-left: 5px solid #0284c7 !important; background: #f8fafc;">
                                         <div class="d-flex justify-content-between align-items-center mb-3">
                                             <span class="badge bg-blue-lt px-3">RHK #1</span>
-                                            <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn d-none" onclick="removeRHK(this)">Hapus</button>
+                                            <button type="button" class="btn btn-sm btn-outline-danger remove-rhk-btn d-none align-items-center gap-1 px-2 py-1" onclick="removeRHK(this)" style="border-radius: 8px; font-size: 0.8rem;">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                                                Hapus
+                                            </button>
                                         </div>
                                         <div>
                                             <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge d-none" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
@@ -141,16 +144,13 @@
                                 </div>
                             </div>
 
-                            <!-- Tombol Generate -->
-                            <div class="text-end mt-4">
-                                <button type="submit" class="btn btn-primary btn-lg px-5 fw-bold shadow-sm hover-lift" id="submitBtn" style="border-radius: 12px; background-color: #0284c7; border-color: #0284c7;">
+                            <!-- Tombol Generate Full-Width Premier -->
+                            <div class="form-footer pt-3 mt-4">
+                                <button type="submit" class="btn w-100 py-3 fs-3 fw-bold text-white shadow-lg hover-lift" id="submitBtn" style="border-radius: 16px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.45);">
                                     <span class="spinner-border spinner-border-sm me-2 d-none" role="status" id="loader"></span>
-                                    <span id="btnText">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                            <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                                            <path d="M13 3l0 7l6 0l-8 11l0 -7l-6 0z" />
-                                        </svg>
-                                        Generate E-Kinerja Harian
+                                    <span id="btnText" class="d-flex align-items-center justify-content-center">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-sparkles me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M16 18a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm0 -12a2 2 0 0 1 2 2a2 2 0 0 1 2 -2a2 2 0 0 1 -2 -2a2 2 0 0 1 -2 2zm-7 12a6 6 0 0 1 6 -6a6 6 0 0 1 -6 -6a6 6 0 0 1 -6 6a6 6 0 0 1 6 6z" /></svg>
+                                        Susun E-Kinerja Harian & Rencana Aksi
                                     </span>
                                 </button>
                             </div>
@@ -176,7 +176,10 @@
             newRHK.innerHTML = `
                 <div class="d-flex justify-content-between align-items-center mb-3">
                     <span class="badge bg-blue-lt px-3">RHK #${rhkCount}</span>
-                    <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn" onclick="removeRHK(this)">Hapus</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger remove-rhk-btn align-items-center gap-1 px-2 py-1" onclick="removeRHK(this)" style="border-radius: 8px; font-size: 0.8rem;">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                        Hapus
+                    </button>
                 </div>
                 <div>
                     <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge ${isSkpSelected ? '' : 'd-none'}" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>
@@ -199,8 +202,10 @@
             btns.forEach(btn => {
                 if (items.length > 1) {
                     btn.classList.remove('d-none');
+                    btn.classList.add('d-flex');
                 } else {
                     btn.classList.add('d-none');
+                    btn.classList.remove('d-flex');
                 }
             });
         }
@@ -208,7 +213,8 @@
         function reindexRHK() {
             const items = document.querySelectorAll('.rhk-item');
             items.forEach((item, index) => {
-                item.querySelector('.badge').innerText = `RHK #${index + 1}`;
+                const badge = item.querySelector('.badge');
+                if (badge) badge.innerText = `RHK #${index + 1}`;
             });
             rhkCount = items.length;
         }
@@ -259,7 +265,10 @@
                     div.innerHTML = `
                         <div class="d-flex justify-content-between align-items-center mb-3">
                             <span class="badge bg-blue-lt px-3">RHK #${idx + 1}</span>
-                            <button type="button" class="btn btn-link text-danger p-0 remove-rhk-btn ${idx === 0 ? 'd-none' : ''}" onclick="removeRHK(this)">Hapus</button>
+                            <button type="button" class="btn btn-sm btn-outline-danger remove-rhk-btn align-items-center gap-1 px-2 py-1 ${idx === 0 ? 'd-none' : 'd-flex'}" onclick="removeRHK(this)" style="border-radius: 8px; font-size: 0.8rem;">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="14" height="14" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
+                                Hapus
+                            </button>
                         </div>
                         <div>
                             <label class="form-label fw-semibold">Rencana Hasil Kerja (RHK) / Tugas Pokok Anda <span class="badge bg-secondary-lt ms-2 skp-optional-badge" style="font-size: 0.72rem;">Opsional (dari SKP)</span></label>

@@ -376,6 +376,125 @@ Pastikan isi dokumen sangat detail, profesional, baku, dan langsung siap dipakai
     }
 
     /**
+     * Generate Evidence Laporan Harian e-Kinerja ASN.
+     */
+    public function generateEKinerjaEvidence(array $data): string
+    {
+        $judulLaporan = !empty($data['judul_laporan']) ? $data['judul_laporan'] : 'Laporan Pelaksanaan Tugas Harian Pegawai';
+        $pegawaiNama = !empty($data['pegawai_nama']) ? $data['pegawai_nama'] : 'Pegawai ASN';
+        $pegawaiNip = !empty($data['pegawai_nip']) ? $data['pegawai_nip'] : '-';
+        $pegawaiJabatan = !empty($data['pegawai_jabatan']) ? $data['pegawai_jabatan'] : 'Aparatur Sipil Negara';
+        $pegawaiUnit = !empty($data['pegawai_unit']) ? $data['pegawai_unit'] : '-';
+        $tanggalPelaksanaan = !empty($data['tanggal_pelaksanaan']) ? $data['tanggal_pelaksanaan'] : date('d F Y');
+
+        $namaKegiatan = !empty($data['nama_kegiatan']) ? $data['nama_kegiatan'] : '-';
+        $uraianKegiatan = !empty($data['uraian_kegiatan']) ? $data['uraian_kegiatan'] : '-';
+        $tahapanPelaksanaan = !empty($data['tahapan_pelaksanaan']) ? $data['tahapan_pelaksanaan'] : '-';
+        $objekKegiatan = !empty($data['objek_kegiatan']) ? $data['objek_kegiatan'] : '-';
+        $hasilKegiatan = !empty($data['hasil_kegiatan']) ? $data['hasil_kegiatan'] : '-';
+        $outputPekerjaan = !empty($data['output_pekerjaan']) ? $data['output_pekerjaan'] : 'Laporan Tertulis Pelaksanaan Tugas';
+        $statusPenyelesaian = !empty($data['status_penyelesaian']) ? $data['status_penyelesaian'] : 'Selesai';
+        $buktiPendukung = !empty($data['bukti_pendukung']) ? $data['bukti_pendukung'] : 'Dokumen Laporan dan Dokumentasi Kegiatan';
+
+        $arahanAtasan = !empty($data['arahan_atasan']) ? $data['arahan_atasan'] : 'Melaksanakan tugas kedinasan sesuai SOP dan ketentuan yang berlaku.';
+        $kendala = !empty($data['kendala']) ? $data['kendala'] : 'Tidak terdapat kendala yang signifikan selama pelaksanaan kegiatan.';
+        $tindakLanjut = !empty($data['tindak_lanjut']) ? $data['tindak_lanjut'] : 'Menyampaikan laporan hasil pelaksanaan kegiatan kepada atasan langsung.';
+
+        $prompt = "MASTER PROMPT PEMBUATAN EVIDENCE LAPORAN HARIAN E-KINERJA ASN
+
+A. PERAN ANDA
+Bertindaklah sebagai Analis Administrasi Pemerintahan dan Penyusun Dokumen Evidence e-Kinerja ASN yang sangat profesional, teliti, mendalam, dan memahami standar penyusunan laporan bukti fisik pelaksanaan tugas harian Aparatur Sipil Negara (ASN) sesuai Permenpan RB No. 6 Tahun 2022.
+Tugas Anda adalah menyusun dokumen laporan evidence pelaksanaan tugas harian yang LENGKAP, KOMPREHENSIF, SISTEMATIS, dan DETAIL (bukan sekadar ringkasan singkat) untuk dijadikan bukti dukung sah bagi penilai kinerja/atasan langsung.
+Laporan wajib menggunakan bahasa Indonesia baku kedinasan, objektif, padat analisis teknis, dan dilengkapi TABEL MARKDOWN untuk bagian-bagian data terstruktur agar rapi, padat, dan elegan.
+
+B. DATA IDENTITAS LAPORAN (WAJIB FORMAT TABEL 2 KOLOM)
+Tampilkan judul utama dan identitas pegawai dalam bentuk Tabel Markdown 2 Kolom yang rapi:
+
+# {$judulLaporan}
+
+### IDENTITAS PEGAWAI
+| Komponen Data | Keterangan |
+| :--- | :--- |
+| **Nama Lengkap** | {$pegawaiNama} |
+| **NIP** | {$pegawaiNip} |
+| **Jabatan** | {$pegawaiJabatan} |
+| **Unit Kerja** | {$pegawaiUnit} |
+| **Hari / Tanggal** | {$tanggalPelaksanaan} |
+
+---
+
+C. STRUKTUR DAN TINGKAT KEDALAMAN LAPORAN
+Susun laporan secara LENGKAP, ELABORATIF, dan MENDALAM menggunakan 5 bagian berikut:
+
+## I. PENDAHULUAN
+- Latar Belakang & Urgensi Operasional: Jelaskan konteks tugas kedinasan, urgensi kegiatan terhadap kelancaran operasional unit kerja, dasar penugasan, dan relevansinya dengan sasaran strategis instansi. Uraikan minimal 2 paragraf padat dan berbobot.
+- Maksud dan Tujuan: Jabarkan secara eksplisit maksud kegiatan serta minimal 3-4 tujuan atau target konkret pelaksanaan tugas pada hari tersebut.
+
+## II. URAIAN PELAKSANAAN KEGIATAN & TAHAPAN OPERASIONAL
+- Penjelasan Naratif Komprehensif: Uraikan alur kerja dari tahap awal (persiapan & koordinasi), tahap inti pelaksanaan teknis/administratif di lapangan, hingga tahap akhir (verifikasi, pengujian, dan penataan administrasi). Gunakan kata kerja operasional konkret (mengidentifikasi, memverifikasi, menganalisis, mengonfigurasi, mendokumentasikan, merekonsiliasi).
+- TABEL MATRIKS RINCIAN PELAKSANAAN TUGAS:
+Wajib tampilkan tabel matriks operasional yang membedah tahapan pekerjaan secara kronologis dan terperinci:
+| No | Tahapan Pelaksanaan | Aktivitas Konkret & Uraian Pekerjaan | Objek / Sasaran Kegiatan | Alokasi Waktu | Hasil Capaian Tahapan |
+|:--:|:---|:---|:---|:---|:---|
+(Jabarkan minimal 3 sampai 4 tahapan riil dan berbobot sesuai lingkup tugas).
+
+## III. HASIL PELAKSANAAN KEGIATAN & ANALISIS CAPAIAN
+- Hasil Nyata / Temuan Faktual: Jelaskan capaian kuantitatif dan kualitatif yang diperoleh (kondisi objek sebelum vs sesudah kegiatan, volume data/berkas/perangkat yang ditangani, parameter keberhasilan operasional).
+- Evaluasi & Efektivitas: Analisis apakah kegiatan berjalan sesuai target waktu, standar operasional prosedur, dan kepatuhan administrasi.
+
+## IV. OUTPUT ATAU BUKTI DUKUNG (EVIDENCE)
+Tampilkan spesifikasi dokumen bukti dukung dalam bentuk TABEL MARKDOWN FORMAL:
+| No | Komponen Bukti Dukung | Uraian Spesifikasi Evidence |
+|:--:|:---|:---|
+| 1 | **Nama Output / Dokumen** | {$outputPekerjaan} |
+| 2 | **Format / Bentuk Fisik Output** | (Jelaskan bentuk konkret dokumen, misal: Laporan Tertulis, Lembar Logsheet Sistem, Berita Acara, dsb.) |
+| 3 | **Fungsi & Kegunaan Dokumen** | (Jelaskan fungsi dokumen sebagai alat bukti sah kinerja harian untuk verifikasi atasan) |
+| 4 | **Status Penyelesaian** | {$statusPenyelesaian} |
+| 5 | **Bukti Pendukung Terlampir** | {$buktiPendukung} |
+
+## V. KESIMPULAN DAN REKOMENDASI TINDAK LANJUT
+- Kesimpulan Umum: Rangkuman menyeluruh atas keberhasilan pelaksanaan kegiatan dan kontribusinya terhadap kinerja unit.
+- Realisasi Arahan Atasan: Jelaskan bagaimana arahan atasan diimplementasikan dalam pekerjaan hari ini.
+- Mitigasi Kendala & Tindak Lanjut: Uraikan kendala (jika ada) dan rencana tindak lanjut terukur untuk hari kerja berikutnya.
+
+D. STANDAR PENULISAN
+1. Gunakan bahasa Indonesia baku, formal, dan bergaya tata naskah dinas profesional.
+2. JANGAN membuat teks terlalu singkat, satu baris, atau ringkas seadanya. Buat laporan yang mendalam dan berbobot.
+3. Gunakan Heading Markdown (## I. ..., ## II. ...) dan Tabel Markdown secara presisi.
+4. Hindari emoji, bahasa santai, atau kalimat yang berulang-ulang tanpa substansi.
+5. Langsung sajikan isi dokumen mulai dari Judul, Tabel Identitas Pegawai, hingga Bab V tanpa ada teks pembuka/salam pengantar AI.
+
+DATA DARI PENGGUNA:
+1. IDENTITAS LAPORAN
+- Judul Laporan : {$judulLaporan}
+- Nama : {$pegawaiNama}
+- NIP : {$pegawaiNip}
+- Jabatan : {$pegawaiJabatan}
+- Unit Kerja : {$pegawaiUnit}
+- Hari/Tanggal : {$tanggalPelaksanaan}
+
+2. INFORMASI KEGIATAN
+- Nama Kegiatan : {$namaKegiatan}
+- Uraian Kegiatan : {$uraianKegiatan}
+- Tahapan Pelaksanaan : {$tahapanPelaksanaan}
+- Objek Kegiatan : {$objekKegiatan}
+- Hasil Kegiatan : {$hasilKegiatan}
+- Output Pekerjaan : {$outputPekerjaan}
+- Status Penyelesaian : {$statusPenyelesaian}
+- Bukti Pendukung : {$buktiPendukung}
+
+3. INFORMASI TAMBAHAN
+- Arahan Atasan : {$arahanAtasan}
+- Kendala : {$kendala}
+- Tindak Lanjut : {$tindakLanjut}
+
+INSTRUKSI AKHIR:
+Langsung susun laporan lengkap sesuai struktur dan format tabel di atas tanpa kata pengantar atau penutup AI.";
+
+        return $this->generate($prompt);
+    }
+
+    /**
      * Generate a News Article.
      */
     public function generateNews(string $topic, string $style)

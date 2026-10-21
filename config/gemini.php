@@ -15,5 +15,5 @@ return [
     /**
      * Default model to use for generations.
      */
-    'model' => env('GEMINI_MODEL', 'gemini-flash-latest'),
+    'model' => env('GEMINI_MODEL', 'gemini-flash-lite-latest'),
 ];

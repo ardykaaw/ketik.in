@@ -184,6 +184,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/e-kinerja-harian', [FeatureController::class, 'eKinerjaHarian'])->name('feature.e-kinerja-harian');
         Route::post('/admin/e-kinerja-harian', [FeatureController::class, 'generateEKinerjaHarian'])->name('feature.e-kinerja-harian.generate')->middleware('throttle:ai');
 
+        // E-Kinerja Evidence Harian (Development - Admin Only)
+        Route::get('/admin/e-kinerja-evidence', [FeatureController::class, 'eKinerjaEvidence'])->name('feature.e-kinerja-evidence');
+        Route::post('/admin/e-kinerja-evidence', [FeatureController::class, 'generateEKinerjaEvidence'])->name('feature.e-kinerja-evidence.generate')->middleware('throttle:ai');
+
         // Super Admin Monitoring
         Route::middleware(['superadmin'])->group(function () {
             Route::get('/admin/super', [App\Http\Controllers\SuperAdminController::class, 'index'])->name('admin.super.dashboard');

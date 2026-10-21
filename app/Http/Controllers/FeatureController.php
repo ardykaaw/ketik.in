@@ -470,6 +470,68 @@ class FeatureController extends Controller
         }
     }
 
+    public function eKinerjaEvidence(Request $request)
+    {
+        $userId = \Illuminate\Support\Facades\Auth::id();
+
+        // Fetch user's previous E-Kinerja Harian and SKP documents for auto-fill & connection
+        $previousDocs = \App\Models\Content::where('user_id', $userId)
+            ->whereIn('type', ['ekinerja_harian', 'e-kinerja-harian', 'ekinerja', 'e-kinerja'])
+            ->latest()
+            ->get();
+
+        $selectedDoc = null;
+        if ($request->has('from_content')) {
+            $selectedDoc = $previousDocs->firstWhere('id', $request->from_content);
+        }
+
+        return view('features.e-kinerja-evidence', compact('previousDocs', 'selectedDoc'));
+    }
+
+    public function generateEKinerjaEvidence(Request $request)
+    {
+        $request->validate([
+            'judul_laporan' => 'required|string|max:255',
+            'pegawai_nama' => 'required|string|max:255',
+            'pegawai_nip' => 'required|string|max:100',
+            'pegawai_jabatan' => 'required|string|max:255',
+            'pegawai_unit' => 'required|string|max:255',
+            'tanggal_pelaksanaan' => 'required|string|max:100',
+            'nama_kegiatan' => 'required|string|max:255',
+            'uraian_kegiatan' => 'required|string',
+            'tahapan_pelaksanaan' => 'nullable|string',
+            'objek_kegiatan' => 'required|string|max:255',
+            'hasil_kegiatan' => 'required|string',
+            'output_pekerjaan' => 'required|string|max:255',
+            'status_penyelesaian' => 'required|string|max:100',
+            'bukti_pendukung' => 'required|string|max:255',
+            'arahan_atasan' => 'nullable|string',
+            'kendala' => 'nullable|string',
+            'tindak_lanjut' => 'nullable|string',
+            'source_content_id' => 'nullable|integer',
+        ]);
+
+        try {
+            $payload = $request->all();
+
+            $aiQueue = \App\Models\AiQueue::create([
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'feature_type' => 'ekinerja_evidence',
+                'payload' => $payload,
+                'status' => 'pending'
+            ]);
+
+            \App\Jobs\ProcessAiGeneration::dispatch($aiQueue->id);
+
+            return view('features.queue-loading', [
+                'queueId' => $aiQueue->id,
+                'title' => 'Menyusun Evidence Laporan Harian e-Kinerja...'
+            ]);
+        } catch (\Exception $e) {
+            return back()->withInput()->with('error', 'Gagal memasukkan ke antrean: ' . $e->getMessage());
+        }
+    }
+
     public function news()
     {
         return view('features.news');

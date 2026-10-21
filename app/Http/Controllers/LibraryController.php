@@ -99,6 +99,11 @@ class LibraryController extends Controller
                 'content' => $content,
                 'html' => $htmlContent
             ])->setPaper('a4', 'landscape');
+        } elseif ($content->type === 'ekinerja_evidence') {
+            $pdf = Pdf::loadView('exports.e-kinerja-evidence', [
+                'content' => $content,
+                'html' => $htmlContent
+            ])->setPaper('a4', 'portrait');
         } elseif ($content->type === 'e-kinerja') {
             $pdf = Pdf::loadView('exports.e-kinerja', [
                 'content' => $content,

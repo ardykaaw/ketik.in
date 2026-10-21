@@ -10,30 +10,90 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l14 0" /><path d="M5 12l6 6" /><path d="M5 12l6 -6" /></svg>
                     </a>
                     <div>
-                        <span class="badge bg-primary-lt mb-1">{{ strtoupper($content->type) }}</span>
+                        @if($content->type === 'ekinerja_evidence')
+                            <span class="badge bg-green-lt mb-1 fw-bold">EVIDENCE e-KINERJA ASN</span>
+                        @else
+                            <span class="badge bg-primary-lt mb-1">{{ strtoupper($content->type) }}</span>
+                        @endif
                         <h1 class="display-6 fw-bold m-0">{{ $content->title }}</h1>
                     </div>
-                    <div class="ms-auto d-flex gap-2">
+                    <div class="ms-auto d-flex flex-wrap gap-2">
                         @if(in_array($content->type, ['e-kinerja', 'ekinerja']) && auth()->check() && auth()->user()->isAdmin())
-                        <a href="{{ route('feature.e-kinerja-harian', ['from_content' => $content->id]) }}" class="btn btn-success fw-bold shadow-sm" style="border-radius: 10px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3v3m0 12v3" /><path d="M3 12h3m12 0h3" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
-                            Lanjut: Rencana Aksi & Harian <span class="badge bg-white text-success ms-1" style="font-size:0.65rem;">DEV</span>
+                        <a href="{{ route('feature.e-kinerja-harian', ['from_content' => $content->id]) }}" class="btn fw-bold shadow-xs hover-lift px-3 py-2 text-white" style="border-radius: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3v3m0 12v3" /><path d="M3 12h3m12 0h3" /><path d="M9 12a3 3 0 1 0 6 0a3 3 0 0 0 -6 0" /></svg>
+                            Lanjut: Rencana Aksi & Harian <span class="badge bg-white text-primary ms-1" style="font-size:0.65rem;">DEV</span>
                         </a>
                         @endif
-                        <button class="btn btn-outline-primary fw-bold" style="border-radius: 10px;" onclick="copyToClipboard()">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
+                        @if(in_array($content->type, ['ekinerja_harian', 'e-kinerja-harian']) && auth()->check() && auth()->user()->isAdmin())
+                        <a href="{{ route('feature.e-kinerja-evidence', ['from_content' => $content->id]) }}" class="btn fw-bold shadow-xs hover-lift px-3 py-2 text-white" style="border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="20" height="20" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M14 3v4a1 1 0 0 0 1 1h4" /><path d="M17 21h-10a2 2 0 0 1 -2 -2v-14a2 2 0 0 1 2 -2h7l5 5v11a2 2 0 0 1 -2 2z" /><path d="M9 15l2 2l4 -4" /></svg>
+                            Lanjut: Buat Evidence Harian <span class="badge bg-white text-success ms-1" style="font-size:0.65rem;">DEV</span>
+                        </a>
+                        @endif
+                        <button class="btn btn-outline-secondary fw-semibold no-print shadow-xs hover-lift px-3 py-2" style="border-radius: 12px; border-color: #cbd5e1;" onclick="window.print()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M17 17h2a2 2 0 0 0 2 -2v-4a2 2 0 0 0 -2 -2h-14a2 2 0 0 0 -2 2v4a2 2 0 0 0 2 2h2" /><path d="M17 9v-4a2 2 0 0 0 -2 -2h-6a2 2 0 0 0 -2 2v4" /><rect x="7" y="13" width="10" height="8" rx="2" /></svg>
+                            Cetak
+                        </button>
+                        <button class="btn btn-outline-primary fw-semibold no-print shadow-xs hover-lift px-3 py-2" style="border-radius: 12px;" onclick="copyToClipboard()">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M8 8m0 2a2 2 0 0 1 2 -2h8a2 2 0 0 1 2 2v8a2 2 0 0 1 -2 2h-8a2 2 0 0 1 -2 -2z" /><path d="M16 8v-2a2 2 0 0 0 -2 -2h-8a2 2 0 0 0 -2 2v8a2 2 0 0 0 2 2h2" /></svg>
                             Salin Teks
                         </button>
-                        <a href="{{ route('library.export', $content) }}" class="btn btn-primary fw-bold" style="border-radius: 10px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-2" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><polyline points="7 11 12 16 17 11" /><line x1="12" y1="4" x2="12" y2="16" /></svg>
+                        @if($content->type === 'ekinerja_evidence')
+                        <a href="{{ route('library.export', $content) }}" class="btn fw-bold text-white no-print shadow-sm hover-lift px-3 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #10b981, #059669); border: none; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><polyline points="7 11 12 16 17 11" /><line x1="12" y1="4" x2="12" y2="16" /></svg>
+                            Export PDF (A4)
+                        </a>
+                        @elseif($content->type === 'ekinerja_harian')
+                        <a href="{{ route('library.export', $content) }}" class="btn fw-bold text-white no-print shadow-sm hover-lift px-3 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #0284c7, #0369a1); border: none; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><polyline points="7 11 12 16 17 11" /><line x1="12" y1="4" x2="12" y2="16" /></svg>
                             Export PDF
                         </a>
+                        @else
+                        <a href="{{ route('library.export', $content) }}" class="btn btn-primary fw-bold text-white no-print shadow-sm hover-lift px-3 py-2" style="border-radius: 12px; background: linear-gradient(135deg, #2563eb, #1d4ed8); border: none; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="18" height="18" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><polyline points="7 11 12 16 17 11" /><line x1="12" y1="4" x2="12" y2="16" /></svg>
+                            Export PDF
+                        </a>
+                        @endif
                     </div>
                 </div>
 
+                @if($content->type === 'ekinerja_evidence' && !empty($content->parameters))
+                <!-- Evidence Quick Summary Banner -->
+                <div class="card mb-4 border-2 shadow-sm no-print" style="border-radius: 16px; background: #ecfdf5; border-color: #a7f3d0 !important;">
+                    <div class="card-body p-4">
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+                            <div>
+                                <div class="d-flex align-items-center gap-2 mb-2">
+                                    <span class="badge" style="background:#059669; color:#fff; font-size:0.75rem;">STANDAR PERMENPAN RB NO. 6/2022</span>
+                                    <span class="badge bg-green-lt">{{ $content->parameters['status_penyelesaian'] ?? 'Selesai (100%)' }}</span>
+                                </div>
+                                <h3 class="fw-bold text-dark mb-1">{{ $content->parameters['judul_laporan'] ?? $content->title }}</h3>
+                                <div class="text-muted small">
+                                    <strong>Pegawai:</strong> {{ $content->parameters['pegawai_nama'] ?? '-' }} &bull; 
+                                    <strong>NIP:</strong> {{ $content->parameters['pegawai_nip'] ?? '-' }} &bull; 
+                                    <strong>Unit:</strong> {{ $content->parameters['pegawai_unit'] ?? '-' }} &bull; 
+                                    <strong>Hari/Tanggal:</strong> {{ $content->parameters['tanggal_pelaksanaan'] ?? '-' }}
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-white text-success border border-success-subtle px-3 py-2 fw-semibold">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-inline me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M5 12l5 5l10 -10" /></svg>
+                                    Bukti Dukung: {{ $content->parameters['output_pekerjaan'] ?? 'Laporan Tertulis' }}
+                                </span>
+                                <a href="{{ route('library.export', $content) }}" class="btn btn-sm fw-bold text-white shadow-xs hover-lift px-3 py-2" style="border-radius: 10px; background: linear-gradient(135deg, #10b981, #059669); border: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="icon me-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2 -2v-2" /><polyline points="7 11 12 16 17 11" /><line x1="12" y1="4" x2="12" y2="16" /></svg>
+                                    Download PDF Resmi
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @endif
+
                 <div class="card border-0 shadow-lg mb-4 paper-card">
                     <div class="card-body p-5">
-                        <div id="generated-content" class="prose max-w-none">{{ $content->content }}</div>
+                        <textarea id="raw-markdown-content" style="display: none;">{{ $content->content }}</textarea>
+                        <div id="generated-content" class="prose max-w-none"></div>
                     </div>
                     <div class="card-footer bg-light border-0 p-4" style="border-bottom-left-radius: 24px; border-bottom-right-radius: 24px;">
                         <div class="row align-items-center">
@@ -203,7 +263,8 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             const contentDiv = document.getElementById('generated-content');
-            const rawContent = contentDiv.innerText;
+            const rawEl = document.getElementById('raw-markdown-content');
+            const rawContent = rawEl ? rawEl.value : contentDiv.textContent;
             
             // Parse Markdown
             contentDiv.innerHTML = marked.parse(rawContent);
@@ -223,16 +284,13 @@
                 .replace(/<strong>\s*Trajektori\s*<\/strong>/gi, '<span class="badge bg-blue text-white px-2 py-1 shadow-xs">Trajektori</span>')
                 .replace(/<strong>\s*Non-Trajektori\s*<\/strong>/gi, '<span class="badge bg-secondary-lt px-2 py-1">Non-Trajektori</span>');
 
-            // Add upload buttons and attachments to list items
+            // Add upload buttons and attachments to list items ONLY for E-Kinerja SKP Action Items
+            @if(in_array($content->type, ['e-kinerja', 'e-kinerja-atasan']))
             const listItems = contentDiv.querySelectorAll('li');
             listItems.forEach((li, index) => {
-                // IMPORTANT: Use innerHTML to preserve Bold/Italic/Links from AI
                 const originalHtml = li.innerHTML;
-                
-                // Get attachments for this action item
                 const itemAttachments = attachmentsData.filter(att => att.action_item_index === index);
                 
-                // Build attachments HTML
                 let attachmentsHtml = '';
                 if (itemAttachments.length > 0) {
                     attachmentsHtml = '<div class="mt-2 text-start"><small class="text-muted fw-bold">Bukti Dukung:</small><div class="d-flex flex-wrap gap-2 mt-1">';
@@ -254,54 +312,18 @@
                     attachmentsHtml += '</div></div>';
                 }
                 
-                // CONDITIONAL LOGIC: Only add upload button for E-Kinerja types
-                @if(in_array($content->type, ['e-kinerja', 'e-kinerja-atasan']))
-                li.innerHTML = `
-                    <div class="d-flex align-items-start justify-content-between group-hover-action">
-                        <div class="flex-grow-1 list-content">
-                            ${originalHtml}
-                            ${attachmentsHtml}
-                        </div>
-                        <div class="actions ms-2 d-flex gap-1" style="opacity: 0; transition: opacity 0.2s;">
-                            <button onclick="openUploadModal(${index}, this)" class="btn btn-sm btn-ghost-success p-1 border-0" title="Upload Bukti Dukung">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paperclip" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" /></svg>
-                            </button>
-                            <button onclick="editItem(this)" class="btn btn-sm btn-ghost-primary p-1 border-0" title="Edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
-                            </button>
-                            <button onclick="removeItem(this)" class="btn btn-sm btn-ghost-danger p-1 border-0" title="Hapus">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                @else
-                // For other types, just preserve the HTML and handle edits if needed (or minimal actions)
-                // Currently just keeping it simple: no extra buttons unless needed.
-                // But wait, what if they want to edit text? 
-                // Let's keep Edit button but REMOVE Upload button for non-E-Kinerja
-                
-                li.innerHTML = `
-                    <div class="d-flex align-items-start justify-content-between group-hover-action">
-                        <div class="flex-grow-1 list-content">
-                            ${originalHtml}
-                        </div>
-                        <div class="actions ms-2 d-flex gap-1" style="opacity: 0; transition: opacity 0.2s;">
-                            <button onclick="editItem(this)" class="btn btn-sm btn-ghost-primary p-1 border-0" title="Edit">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                @endif
+                li.innerHTML = `<div class="d-flex align-items-start justify-content-between group-hover-action"><div class="flex-grow-1 list-content">${originalHtml}${attachmentsHtml}</div><div class="actions ms-2 d-flex gap-1" style="opacity: 0; transition: opacity 0.2s;"><button onclick="openUploadModal(${index}, this)" class="btn btn-sm btn-ghost-success p-1 border-0" title="Upload Bukti Dukung"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-paperclip" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M15 7l-6.5 6.5a1.5 1.5 0 0 0 3 3l6.5 -6.5a3 3 0 0 0 -6 -6l-6.5 6.5a4.5 4.5 0 0 0 9 9l6.5 -6.5" /></svg></button><button onclick="editItem(this)" class="btn btn-sm btn-ghost-primary p-1 border-0" title="Edit"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-pencil" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" /><path d="M13.5 6.5l4 4" /></svg></button><button onclick="removeItem(this)" class="btn btn-sm btn-ghost-danger p-1 border-0" title="Hapus"><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-trash" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M4 7l16 0" /><path d="M10 11l0 6" /><path d="M14 11l0 6" /><path d="M5 7l1 12a2 2 0 0 0 2 2h8a2 2 0 0 0 2 -2l1 -12" /><path d="M9 7v-3a1 1 0 0 1 1 -1h4a1 1 0 0 1 1 1v3" /></svg></button></div></div>`;
                 
                 li.addEventListener('mouseenter', () => {
-                    li.querySelector('.actions').style.opacity = '1';
+                    const act = li.querySelector('.actions');
+                    if (act) act.style.opacity = '1';
                 });
                 li.addEventListener('mouseleave', () => {
-                    li.querySelector('.actions').style.opacity = '0';
+                    const act = li.querySelector('.actions');
+                    if (act) act.style.opacity = '0';
                 });
             });
+            @endif
         });
 
         function openUploadModal(index, btn) {
@@ -478,35 +500,38 @@
             transition: background-color 0.3s, color 0.3s;
         }
         .prose {
-            font-size: 1.1rem;
-            line-height: 1.6; /* Reduced from 1.8 */
+            font-size: 1.05rem;
+            line-height: 1.6;
             color: #334155;
-            white-space: pre-wrap;
+            word-break: break-word;
         }
         .prose h1, .prose h2, .prose h3 {
-            margin-top: 1.5rem; /* Reduced from 2rem */
-            margin-bottom: 0.75rem; /* Reduced from 1rem */
+            margin-top: 1.5rem;
+            margin-bottom: 0.75rem;
             font-weight: 700;
             color: #064e3b;
         }
         .prose p {
-            margin-bottom: 0.85rem; /* Reduced from 1.25rem */
+            margin-bottom: 0.85rem;
         }
         .prose ul, .prose ol {
             margin-bottom: 1rem;
             padding-left: 1.5rem;
         }
         .prose li {
-            margin-bottom: 0.5rem; /* Slightly more space between items */
+            margin-bottom: 0.35rem;
             position: relative;
+            line-height: 1.5;
         }
         /* FIX: Remove margins from paragraphs inside lists to align text with numbers */
-        /* Target the new .list-content wrapper's first child */
+        .prose li p {
+            margin-top: 0 !important;
+            margin-bottom: 0.25rem !important;
+        }
         .prose li .list-content > :first-child {
             margin-top: 0 !important;
             margin-bottom: 0.25rem !important;
         }
-        /* Keep spacing for subsequent paragraphs */
         .prose li .list-content p + p {
             margin-top: 0.5rem !important;
         }
@@ -520,10 +545,31 @@
         .prose table {
             width: 100%;
             border-collapse: collapse;
-            margin: 1.5rem 0;
+            margin: 1.25rem 0;
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            font-size: 0.925rem;
+            border-radius: 6px;
+        }
+        .prose th {
+            background-color: #f8fafc;
+            color: #0f172a;
+            font-weight: 700;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            text-align: left;
+            font-size: 0.9rem;
+        }
+        .prose td {
+            padding: 8px 12px;
             border: 1px solid #e2e8f0;
-            background: white;
-            font-size: 0.95rem;
+            color: #334155;
+            vertical-align: top;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .prose tr:nth-child(even) td {
+            background-color: #fbfcfd;
         }
 
         /* Dark Mode Overrides */
@@ -641,6 +687,48 @@
         }
         .prose tr:last-child td {
             border-bottom: 1px solid #e2e8f0;
+        }
+
+        .hover-lift {
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .hover-lift:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.15) !important;
+        }
+
+        /* Print Media Styles */
+        @media print {
+            body {
+                background: #ffffff !important;
+                color: #0f172a !important;
+            }
+            .no-print, .btn, .navbar, .sidebar, header, footer, .card-footer, #promptCollapse, .alert {
+                display: none !important;
+            }
+            .container-xl {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+            }
+            .paper-card {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+            }
+            .prose {
+                font-size: 11pt !important;
+                line-height: 1.5 !important;
+                color: #0f172a !important;
+            }
+            .prose h1, .prose h2, .prose h3 {
+                color: #064e3b !important;
+                page-break-after: avoid;
+            }
+            .prose table {
+                page-break-inside: avoid;
+            }
         }
     </style>
     @endpush
